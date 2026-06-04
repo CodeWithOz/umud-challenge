@@ -52,15 +52,23 @@ The Kaggle CLI is installed in `.venv`; use the full path in shell commands when
 
 ## Notes on labels and data splits
 
-Competition data (from Kaggle file listing and download metadata):
+Local extracted data under `data/umud-challenge/` (full Kaggle bundle, ~2.6 GB zip):
 
-- **Images** — B-mode ultrasound stored as `.tif` files under `apo_imgs_v1/apo_images_new_model_v1/` (e.g. `image_0000.tif`, `image_0001.tif`, …). Total download size is approximately **2.5 GB**.
-- **Targets** — Models predict three muscle-architecture measures per image: pennation angle (`pa_deg`), fascicle length (`fl_mm`), and muscle thickness (`mt_mm`). Community notebooks write these columns to `submission.csv`.
-- **Splits** — Confirm train/validation/test CSV filenames and row counts after extracting the zip locally; update this section with exact file names and counts once extraction completes.
+| Path | Contents | File count |
+|------|----------|------------|
+| `apo_imgs_v1/apo_images_new_model_v1/` | Aponeurosis-region ultrasound images (`.tif`) | 1,049 |
+| `apo_masks_v1/apo_masks_new_model_v1/` | Matching aponeurosis masks (`.tif`) | 1,048 |
+| `fasc_imgs_v1/fasc_images_new_model_v1/` | Fascicle-region ultrasound images (`.tif`) | 2,762 |
+| `fasc_masks_v1/fasc_masks_new_model_v1/` | Matching fascicle masks (`.tif`) | 2,761 |
+| `test_images_v2/test_set_v2/` | Held-out test images (`.tif` + `.png` variants) | 309 (251 `.tif`, 58 `.png`) |
 
-After download, extract into `data/umud-challenge/`:
+- **Submission** — `sample_submission.csv` uses semicolon separators with columns `image_id`, `pa_deg`, `fl_mm`, `mt_mm`. Predict the three architecture measures for each test `image_id` (251 test `.tif` files in `test_images_v2/`).
+- **Training labels** — Ground-truth CSVs are not a separate top-level file in this zip; training signal is provided via the paired image/mask directories above (use masks or derived geometry for supervision).
+
+Download and extract:
 
 ```bash
+.venv/bin/kaggle competitions download -c umud-challenge-muscle-architecture-in-ultrasound-data -p data
 cd data && unzip -q umud-challenge-muscle-architecture-in-ultrasound-data.zip -d umud-challenge
 ```
 

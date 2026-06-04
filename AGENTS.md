@@ -5,7 +5,7 @@
 
 ## Workspace Facts
 
-- Local competition data lives under `data/umud-challenge/` (gitignored). Download with `.venv/bin/kaggle competitions download -c umud-challenge-muscle-architecture-in-ultrasound-data -p data`, extract into `data/umud-challenge/`, and move the zip to repo root as `umud-challenge.zip` if desired.
+- Local competition data lives under `data/umud-challenge/` (gitignored). Archive at repo root: `umud-challenge.zip`. Download with `.venv/bin/kaggle competitions download -c umud-challenge-muscle-architecture-in-ultrasound-data -p data`, then `unzip -q data/umud-challenge-muscle-architecture-in-ultrasound-data.zip -d data/umud-challenge`. Wait for the download to finish before extracting — a partial zip will fail `unzip`.
 - Competition bundle is ~2.5 GB (ultrasound TIFF images under `apo_imgs_v1/`).
 
 ## Research log

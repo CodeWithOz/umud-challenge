@@ -8,7 +8,7 @@ _Last updated: 2026-06-04. Refresh this section at the start and end of each ses
 
 **Active notebooks:** _(none yet)_
 
-**Where we are:** Repo scaffolded; full competition data download in progress (~2.5 GB). No training or submission notebooks yet.
+**Where we are:** Repo scaffolded; full competition data downloaded and extracted to `data/umud-challenge/`. No training or submission notebooks yet.
 
 **Open questions:**
 
@@ -31,8 +31,8 @@ _(none yet)_
 
 ### Domain facts
 
-- Task: predict muscle architecture from B-mode ultrasound — pennation angle (`pa_deg`), fascicle length (`fl_mm`), and muscle thickness (`mt_mm`) per image. (Confirmed: 2026-06-04)
-- Training images are TIFF files under `apo_imgs_v1/apo_images_new_model_v1/` (e.g. `image_0000.tif`). Competition download is ~2.5 GB. (Confirmed: 2026-06-04)
+- Task: predict muscle architecture from B-mode ultrasound — pennation angle (`pa_deg`), fascicle length (`fl_mm`), and muscle thickness (`mt_mm`) per test `image_id`. (Confirmed: 2026-06-04)
+- Training data: paired TIFF images and masks under `apo_imgs_v1`/`apo_masks_v1` (~1,049 pairs) and `fasc_imgs_v1`/`fasc_masks_v1` (~2,762 pairs). Test set: 251 `.tif` files in `test_images_v2/test_set_v2/`. Full zip ~2.6 GB. (Confirmed: 2026-06-04)
 
 ### Process corrections
 
