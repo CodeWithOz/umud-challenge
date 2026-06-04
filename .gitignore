@@ -8,3 +8,18 @@ wheels/
 
 # Virtual environments
 .venv
+
+# build artifacts
+.DS_Store
+
+# data
+data/umud-challenge/
+umud-challenge.zip
+data/download.log
+data/umud-challenge-muscle-architecture-in-ultrasound-data.zip
+
+# cursor
+.cursor/hooks/state
+
+# temporary files
+tmp/
