@@ -1,6 +1,7 @@
 ## Development Environment
 
-- Use the existing `.venv` and `uv` for all Python tasks. Never use `pip` or system `python`.
+- Use the existing `.venv` and `uv` for all Python tasks. Never use `pip`, `uv pip install`, or system `python`.
+- Add dependencies with `uv add <package>` (updates `pyproject.toml` and lockfile). Never `uv pip install`.
 - The `kaggle` CLI is at `.venv/bin/kaggle` — not on the system PATH. At session start, check `which kaggle`; if missing, activate `.venv` once for interactive shells. **Background shells never inherit the venv** — always use `.venv/bin/kaggle` (full path) there.
 
 ## Workspace Facts
@@ -25,6 +26,9 @@
 
 **Authentication:**
 - Kaggle notebook environments are pre-authenticated as the notebook owner. Never add credential setup cells (`UserSecretsClient`, `KAGGLE_USERNAME`, `KAGGLE_KEY`).
+
+**Loading competition data in notebooks:**
+- Use `kagglehub.competition_download("<competition-slug>")` inside the notebook (returns a path under `/kaggle/input/competitions/...`). Do not upload local data as a Kaggle dataset for EDA.
 
 **Dataset zip uploads:**
 - Kaggle **automatically extracts zip files** when you upload them to a dataset via `kaggle datasets create` or `kaggle datasets version`. The mounted dataset directory contains extracted files, not zips.
@@ -51,3 +55,5 @@ _This section is updated whenever a new lesson is discovered. Any AI agent worki
 | Date | Lesson |
 |------|--------|
 | 2026-06 | Kaggle auto-extracts dataset zips; `glob('*.zip')` finds nothing. Use `rglob` and a filename→path lookup instead. |
+| 2026-06 | Add Python deps with `uv add`, never `uv pip install` or bare `pip`. |
+| 2026-06 | Every Kaggle kernel push must have a corresponding git commit on `main` (checkpoint of notebook + metadata + log). |

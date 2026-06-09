@@ -36,6 +36,7 @@ This project uses `uv` with the repo virtual environment:
 ```bash
 source .venv/bin/activate
 uv sync
+uv add <package>   # add a dependency — never use uv pip install or pip
 ```
 
 Run scripts with `uv run`, for example:
