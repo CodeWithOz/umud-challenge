@@ -2,17 +2,15 @@
 
 ## Current focus
 
-_Last updated: 2026-06-09 (end of Phase 0/1 session). Refresh at session start; verify against git and Kaggle before acting._
+_Last updated: 2026-06-10 (Phase 2 geometry v2). Refresh at session start; verify against git and Kaggle before acting._
 
 **Best results:** _(none yet — no scored runs)_
 
-**Active notebooks:** `notebooks/data-audit/data-audit.ipynb` — Phase 0+1 EDA **complete** (Kaggle kernel v3). Next: Phase 2 geometry notebook (not started).
+**Active notebooks:** `notebooks/geometry/geometry-phase-2.ipynb` — Phase 2 **v2** (contour edges, expanded docs, local-run support). `notebooks/data-audit/data-audit.ipynb` — Phase 0+1 complete (v3).
 
-**Where we are:** Phase 0/1 done. Data quality understood; alignment strategy chosen; fasc exclude list defined. Ready to derive PA/FL/MT from aligned masks and build clean training manifests.
+**Where we are:** Phase 2 v2 replaces v1 horizontal row peaks with DLTrack-style contour edges + fitted lines. FL bimodality explained: **800×1200 vs 1080×1640 image cohorts**, not multiple fascicles per image. Dual-track gap 1048→1040 = 8 apo images with excluded fasc masks. **Next:** user QC on saved `tmp/geometry-local-output/figures/apo_qc_*.png`; mm calibration; Phase 3.
 
-**Phase 2 entry point:** Read **Decisions** and **Phase 2 agenda** below. Start with geometry on a small aligned sample using **stretch** alignment, then pixel→mm calibration before trusting `fl_mm`/`mt_mm`.
-
-**Constraints / budget:** _(Kaggle GPU hours — update when relevant)_
+**Constraints / budget:** Phase 2 CPU (~2.5 min local, ~5.5 min Kaggle v1). No GPU.
 
 ---
 
@@ -24,7 +22,7 @@ High-level plan for the full pipeline. A new session should read this first for 
 |-------|------|-----|----------------|--------|
 | **0 — Inventory** | Know what files exist and whether they pair correctly | Bad pairing or corrupt files invalidate everything downstream | File counts, image/mask pairing, corrupt-file scan, apo vs fasc overlap, submission template check | **Done** |
 | **1 — Visual QC** | Judge mask quality and alignment before modeling | Labels are manual masks; sparse fascicles and shape mismatch are common | Overlay galleries, coverage histograms, alignment lab (stretch/center/scale), exclude empty/near-empty fasc masks | **Done** |
-| **2 — Geometry & calibration** | Turn aligned masks into PA/FL/MT; validate plausibility | Competition targets are numeric geometry, not masks; mm values need pixel scale | Stretch-align masks; implement geometry rules; hunt pixel→mm; apo region vs line tagging; export clean manifests; histograms vs physiological ranges | **Next** |
+| **2 — Geometry & calibration** | Turn aligned masks into PA/FL/MT; validate plausibility | Competition targets are numeric geometry, not masks; mm values need pixel scale | Stretch-align masks; implement geometry rules; hunt pixel→mm; apo region vs line tagging; export clean manifests; histograms vs physiological ranges | **In progress** (v2) |
 | **3 — Baseline model** | First learned pipeline (segment-then-measure) | Establish a score on the leaderboard; test whether masks support learning | fastai (or PyTorch) segmentation on clean subsets; stretch-aligned training pairs; derive PA/FL/MT at inference; local val split | Not started |
 | **4 — Iterate & submit** | Improve score; Kaggle submission flow | Competition metric is UMUD Score (normalized MAE; lower is better) | Augmentation, architecture tweaks, apo+fasc model design, test inference, `sample_submission.csv`, kaggle-run workflow | Not started |
 | **5 — Reproducibility (if aiming for prizes)** | Top-3 require open-source, FAIR, reproducible code | Competition rules mandate public repo with license, docs, `requirements.txt` | OSI license, runnable notebook/script, documented inference | Not started |
@@ -52,9 +50,9 @@ Use this as the checklist for the next session.
 
 | Decision | Options / notes | Blocking? |
 |----------|-----------------|-----------|
-| **Pixel → mm calibration** | Ritsche (2024) / DLTrack docs; TIFF metadata; or fixed scale per device. Required before `fl_mm`/`mt_mm` are meaningful. | **Yes** for numeric targets |
-| **Apo geometry by mask style** | Region masks (~90%+ coverage) vs line masks (~2–6%). May need different MT extraction (region boundary vs skeleton). Threshold ~50% coverage for classification. | Yes for apo-based MT |
-| **Fasc stretch validation** | Stretch chosen on apo-heavy review; confirm on several fasc mismatch examples before training. | Low risk but worth a quick check |
+| **Pixel → mm calibration** | Ritsche (2024) / DLTrack docs; TIFF metadata; or fixed scale per device. **Decision: Option C** — derive px geometry now, convert before submit. TIFF sample (40 images) had no spacing tags. | **Yes** for numeric targets |
+| **Apo geometry by mask style** | **Line:** raw mask contours. **Region:** invert then contours (user flip hypothesis). Edges via OpenCV + linear fit (DLTrack-style), not horizontal row peaks. Superficial/deep = top two separated contours. | Yes for apo-based MT |
+| **Fasc stretch validation** | Confirmed on fasc mismatch gallery (Phase 2 v2). Stretch retained. | Done |
 | **Baseline pipeline shape** | Segment-then-measure (DLTrack-style) vs classical CV vs direct regression. Competition allows all; stretch + geometry is the natural first baseline. | No — can prototype geometry first |
 | **Train/val split strategy** | Random by image; possibly stratify by device/muscle if metadata available. | Before training |
 | **Whether to use apo masks for MT only, fasc for PA/FL** | Matches how labels were created; needs geometry design. | Phase 2 design |
@@ -85,6 +83,23 @@ Use this as the checklist for the next session.
 | Notebook builder | `scripts/build_data_audit_nb.py` |
 | Kaggle kernel | https://www.kaggle.com/code/ucheozoemena/umud-data-audit-phase-0-1 |
 | Exclude list (from v3 run) | Kaggle output: `exclude_fasc_masks.csv` |
+| Geometry notebook | `notebooks/geometry/geometry-phase-2.ipynb` |
+| Geometry builder | `scripts/build_geometry_nb.py` |
+| Kaggle kernel | https://www.kaggle.com/code/ucheozoemena/umud-geometry-phase-2 |
+| Phase 2 outputs (v1) | `tmp/kaggle-output-geometry/` — manifests + `geometry_sample.csv` |
+
+### Phase 2 v2 results (2026-06-10)
+
+| Metric | Value |
+|--------|-------|
+| Clean fasc pairs | 2,749 (12 excluded) |
+| Apo pairs | 1,048 — **574 line**, **474 region** |
+| Dual-track (apo ∩ clean fasc) | 1,040 (8 apo-only: fasc on exclude list) |
+| Geometry sample | 200 images; MT NaN 0% with contour method (was 1% v1) |
+| PA (prototype) | mean 6.9°, vs deep apo slope |
+| FL px bimodal | low bin ≈ 800×1200 images; high bin ≈ 1080×1640 |
+| MT px | mean 286; 3-point perpendicular mean (competition manual protocol) |
+| Local QC PNGs | `tmp/geometry-local-output/figures/` (gitignored) |
 
 ---
 
@@ -95,6 +110,8 @@ Use this as the checklist for the next session.
 | 2026-06-08 | data-audit v1 | — | competition (inventory + overlays) | Initial EDA; gray cmap hid fascicle color | — | superseded |
 | 2026-06-08 | data-audit v2 | — | competition | Alignment lab; apo bimodal; fasc empty scan | — | superseded |
 | 2026-06-09 | data-audit v3 | — | competition | Fixed `place_mask_center`; stretch default; exclude list | — | **complete** |
+| 2026-06-09 | geometry-phase-2 v1 | — | competition | Manifests; px geometry; row-peak apo QC (flawed) | — | superseded |
+| 2026-06-10 | geometry-phase-2 v2 | — | competition + local | Contour edges; MT 3-point mean; FL bin = image resolution; docs | — | **complete** |
 
 ---
 
@@ -105,6 +122,11 @@ Use this as the checklist for the next session.
 | 2026-06-09 | Default alignment: **stretch** (not center or scale) | — |
 | 2026-06-09 | Fasc near-empty threshold: **0.05%** (not 0.1%) | — |
 | 2026-06-09 | `place_mask_center`: crop from mask center when mask larger than image | Replaces buggy top-left crop |
+| 2026-06-09 | Calibration: **Option C** (pixels first, mm before submit) | — |
+| 2026-06-09 | Apo region masks: **invert** for line extraction (prototype; pending visual QC) | — |
+| 2026-06-10 | Apo MT/PA edges: **contour + linear fit** (DLTrack-style), not horizontal row peaks | Replaces v1 row-peak prototype |
+| 2026-06-10 | Dual-track 1040 not 1048: 8 apo filenames on fasc exclude list | Expected, not a data bug |
+| 2026-06-10 | FL bimodality in px: driven by **800×1200 vs 1080×1640** image sizes | Not multi-fascicle per image |
 
 ---
 
