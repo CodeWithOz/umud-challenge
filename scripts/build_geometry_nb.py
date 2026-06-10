@@ -1,4 +1,4 @@
-"""Generate notebooks/geometry/geometry-phase-2.ipynb."""
+"""Generate geometry notebooks: Kaggle (geometry-phase-2.ipynb) and local (geometry-phase-2-local.ipynb)."""
 import json
 from pathlib import Path
 
@@ -22,158 +22,106 @@ def code(source: str) -> dict:
     }
 
 
-cells: list[dict] = []
-
-cells.append(
-    md(
+def intro_kaggle() -> dict:
+    return md(
         """# UMUD Challenge — Geometry & Calibration (Phase 2)
 
-This notebook turns **aligned masks** into muscle-architecture measurements and exports **clean training manifests**.
+**Kaggle notebook** — runs on Kaggle CPU with competition data via `kagglehub`.
+
+This notebook turns aligned masks into muscle-architecture measurements and exports clean training manifests.
 
 ### How to read this notebook
 
-Each section has a markdown intro explaining *why* the next code cell exists. Functions include docstrings; tricky lines have inline comments. If you only skim one section, read **Competition measurement protocol** and **Apo overlay QC**.
+Each section has a markdown intro explaining *why* the next code cell exists. Functions include docstrings; tricky lines have inline comments.
 
-### What Phase 2 produces
+### What Phase 2 produces (written to `/kaggle/working/`)
 
 | Output | Purpose |
 |--------|---------|
-| `train_fasc_clean.csv` | Fascicle image/mask pairs safe for training (empty/near-empty removed) |
-| `train_apo_all.csv` | All aponeurosis pairs + region/line style tag |
-| `geometry_sample.csv` | Prototype PA / FL / MT in **pixels** on a dual-track sample |
-| `figures/*.png` | Saved QC panels for offline review |
+| `train_fasc_clean.csv` | Fascicle pairs safe for training |
+| `train_apo_all.csv` | Aponeurosis pairs + region/line style tag |
+| `geometry_sample.csv` | Prototype PA / FL / MT in **pixels** |
+| `figures/*.png` | QC panels (download from Output tab) |
 
-**Run environment:** Kaggle CPU *or* local repo with `data/umud-challenge/` extracted. No GPU.
+> For local runs with `data/umud-challenge/`, use **`geometry-phase-2-local.ipynb`** instead — same analysis, local paths.
 
 > Edit *Configuration*, then re-run from there downward."""
     )
-)
 
-cells.append(
-    md(
-        """## Competition measurement protocol (from Data tab + DLTrack)
 
-These are the rules we are trying to approximate — **not** what v1 already solved perfectly.
+def intro_local() -> dict:
+    return md(
+        """# UMUD Challenge — Geometry & Calibration (Phase 2, Local)
 
-| Target | Definition (competition) | Notes for this notebook |
-|--------|--------------------------|-------------------------|
-| **PA** (`pa_deg`) | Angle between the **fascicle** and the **deep aponeurosis** | Degrees; no mm calibration needed |
-| **FL** (`fl_px` here) | Length **along the fascicle** between superficial and deep aponeuroses; extrapolate if clipped | We first report fascicle span in px; full apo intersection comes in a later iteration |
-| **MT** (`mt_px` here) | **Perpendicular** distance between superficial and deep aponeuroses at **three locations** across muscle width (manual protocol); raters averaged | DLTrack auto code often uses one central estimate; we sample three x positions |
+**Local notebook** — runs in this repo with extracted competition data under `data/umud-challenge/`.
 
-**Aponeurosis geometry:** Real aponeuroses can **curve** or tilt. DLTrack (`PaulRitsche/DL_Track_US`) fits **local linear edges** from mask contours — not fixed horizontal lines. This notebook follows that approach.
+Same analysis as the Kaggle notebook (`geometry-phase-2.ipynb`) but with local paths and outputs under `tmp/geometry-local-output/`. **Not pushed to Kaggle.**
 
-**Which aponeuroses when there are 3+ contours?** DLTrack sorts contours top→bottom and picks the **uppermost** as superficial and the **next sufficiently separated** as deep (sometimes skipping a middle contour if too close). The competition always means **superficial vs deep**, not "any two lines".
+### Prerequisites
 
-**Region vs line masks:** Official docs do not name these styles. We observed bimodal apo coverage (~95% region vs ~3% line). For **line** masks we use the raw mask. For **region** masks we **invert** (your hypothesis) so annotated muscle becomes background and aponeurosis gaps become foreground — then run the same contour logic on the inverted mask."""
+```bash
+# From repo root — competition zip already extracted to data/umud-challenge/
+uv sync
+uv run python scripts/build_geometry_nb.py   # regenerate both notebooks
+uv run jupyter nbconvert --execute notebooks/geometry/geometry-phase-2-local.ipynb
+```
+
+QC PNGs: `tmp/geometry-local-output/figures/`
+
+> Edit *Configuration*, then re-run from there downward."""
     )
-)
 
-cells.append(md("""## Configuration"""))
 
-cells.append(
-    code(
-        """# --- Parameters you can change ---
-RANDOM_SEED = 42
+def paths_kaggle() -> dict:
+    return md(
+        """## Paths and file discovery (Kaggle)
 
-# How many dual-track images to measure (see manifest section for what "dual-track" means)
-N_GEOMETRY_SAMPLE = 200
+Competition data loads via **`kagglehub.competition_download`** (same as Phase 0/1 audit).
 
-# Apo visual QC gallery size per style (region / line)
-N_APO_GALLERY_PER_STYLE = 4
-
-# Fasc stretch spot-check count (shape mismatches only)
-N_FASC_STRETCH_CHECK = 6
-
-# Coverage >= 50% => "region" apo mask; below => "line" (exploratory tag, not official)
-APO_REGION_THRESHOLD = 0.50
-
-# Same fasc exclude thresholds as Phase 0/1 audit notebook
-FASC_NEAR_EMPTY_THRESHOLD = 0.0005  # 0.05%
-
-# Image/mask registration when shapes differ (Phase 0/1 decision)
-DEFAULT_ALIGN_MODE = "stretch"
-
-# Overlay tint strength for QC figures
-MASK_OVERLAY_ALPHA = 0.55
-
-# Reference physiological ranges from competition Data tab (degrees / mm)
-# Shown on PA histogram only — FL/MT still in pixels until calibration
-REF_PA_DEG = (5, 45)
-REF_FL_MM = (30, 200)
-REF_MT_MM = (10, 50)
-
-# FL bimodal split for exploratory analysis (px); tuned from v1 histogram valley ~900
-FL_BIN_LOW_MAX = 900
-FL_BIN_HIGH_MIN = 900
-"""
+Outputs go to **`/kaggle/working/`** (CSVs + `figures/`). Download from the kernel Output tab after the run completes."""
     )
-)
 
-cells.append(
-    md(
-        """## Paths and file discovery
 
-**Local run:** if `data/umud-challenge/` exists at the repo root, we use it (no download).
+def paths_local() -> dict:
+    return md(
+        """## Paths and file discovery (Local)
 
-**Kaggle run:** uses `kagglehub.competition_download` (same as Phase 0/1 audit).
+Data is read from **`data/umud-challenge/`** at the repo root (gitignored). No Kaggle download or credentials needed.
 
-We build `{filename: path}` lookups with `rglob` so nested zip extraction folders still work."""
+Outputs go to **`tmp/geometry-local-output/`** (also gitignored)."""
     )
-)
 
-cells.append(
-    code(
+
+def code_paths_kaggle() -> dict:
+    return code(
         """from pathlib import Path
 import random
 
 import cv2
-import matplotlib
-
-matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from PIL import Image
 
+import kagglehub
+
 COMPETITION_SLUG = "umud-challenge-muscle-architecture-in-ultrasound-data"
+DATA_ROOT = Path(kagglehub.competition_download(COMPETITION_SLUG))
+print("Competition dir:", DATA_ROOT)
 
-
-def find_data_root() -> Path:
-    \"\"\"Locate extracted competition data whether cwd is repo root or notebooks/geometry.\"\"\"
-    for base in [Path.cwd(), *Path.cwd().parents]:
-        candidate = base / "data/umud-challenge"
-        if candidate.joinpath("apo_imgs_v1").exists():
-            return candidate.resolve()
-    raise FileNotFoundError(
-        "Local data not found. Extract competition zip to data/umud-challenge/ "
-        "(see README). On Kaggle, kagglehub is used instead."
-    )
-
-
-if Path("/kaggle/input").exists():
-    import kagglehub
-
-    DATA_ROOT = Path(kagglehub.competition_download(COMPETITION_SLUG))
-    print("Using kagglehub competition data:", DATA_ROOT)
-else:
-    DATA_ROOT = find_data_root()
-    print("Using local competition data:", DATA_ROOT)
-
-# Where CSVs and QC PNGs are written
-def find_repo_root() -> Path:
-    for base in [Path.cwd(), *Path.cwd().parents]:
-        if (base / "pyproject.toml").exists():
-            return base.resolve()
-    return Path.cwd().resolve()
-
-
-REPO_ROOT = find_repo_root()
-OUT = Path("/kaggle/working") if Path("/kaggle/working").exists() else REPO_ROOT / "tmp/geometry-local-output"
+OUT = Path("/kaggle/working")
 OUT.mkdir(parents=True, exist_ok=True)
 FIG_DIR = OUT / "figures"
 FIG_DIR.mkdir(exist_ok=True)
-print("Output dir:", OUT.resolve())
+print("Output dir:", OUT)
+
+
+def finish_fig(fig, path: Path | None = None):
+    \"\"\"Save figure to Kaggle working dir and display inline in the notebook.\"\"\"
+    if path is not None:
+        fig.savefig(path, dpi=120, bbox_inches="tight")
+    plt.show()
+
 
 DIRS = {
     "apo_img": DATA_ROOT / "apo_imgs_v1/apo_images_new_model_v1",
@@ -187,7 +135,6 @@ IMAGE_EXTS = {".tif", ".tiff", ".png", ".jpg", ".jpeg"}
 
 
 def build_lookup(directory: Path) -> dict[str, Path]:
-    \"\"\"Map basename -> full path; search recursively.\"\"\"
     return {
         p.name: p
         for p in directory.rglob("*")
@@ -199,20 +146,149 @@ lookups = {k: build_lookup(v) for k, v in DIRS.items()}
 display(pd.DataFrame([{"key": k, "n_files": len(v)} for k, v in lookups.items()]))
 """
     )
-)
 
-cells.append(
-    md(
-        """## Alignment utilities (ported from Phase 0/1)
 
-When image and mask shapes differ (~60–70% of pairs), we **stretch** the mask to the image size before any pixel-wise geometry. See Phase 0/1 alignment lab for rationale."""
+def code_paths_local() -> dict:
+    return code(
+        """from pathlib import Path
+import random
+
+import cv2
+import matplotlib
+
+matplotlib.use("Agg")  # headless-friendly for nbconvert / CI
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from PIL import Image
+
+
+def find_repo_root() -> Path:
+    for base in [Path.cwd(), *Path.cwd().parents]:
+        if (base / "pyproject.toml").exists():
+            return base.resolve()
+    return Path.cwd().resolve()
+
+
+REPO_ROOT = find_repo_root()
+DATA_ROOT = REPO_ROOT / "data/umud-challenge"
+if not DATA_ROOT.joinpath("apo_imgs_v1").exists():
+    raise FileNotFoundError(
+        f"Local data not found at {DATA_ROOT}. "
+        "Download and extract the competition zip — see README.md."
     )
-)
+print("Competition dir:", DATA_ROOT)
 
-cells.append(
-    code(
-        """def load_gray(path: Path) -> np.ndarray:
-    \"\"\"Load ultrasound image as 2D uint8 grayscale.\"\"\"
+OUT = REPO_ROOT / "tmp/geometry-local-output"
+OUT.mkdir(parents=True, exist_ok=True)
+FIG_DIR = OUT / "figures"
+FIG_DIR.mkdir(exist_ok=True)
+print("Output dir:", OUT)
+
+
+def finish_fig(fig, path: Path | None = None):
+    \"\"\"Save figure to tmp/ and close (no inline display in headless runs).\"\"\"
+    if path is not None:
+        fig.savefig(path, dpi=120, bbox_inches="tight")
+    plt.close(fig)
+
+
+DIRS = {
+    "apo_img": DATA_ROOT / "apo_imgs_v1/apo_images_new_model_v1",
+    "apo_mask": DATA_ROOT / "apo_masks_v1/apo_masks_new_model_v1",
+    "fasc_img": DATA_ROOT / "fasc_imgs_v1/fasc_images_new_model_v1",
+    "fasc_mask": DATA_ROOT / "fasc_masks_v1/fasc_masks_new_model_v1",
+    "test": DATA_ROOT / "test_images_v2/test_set_v2",
+}
+
+IMAGE_EXTS = {".tif", ".tiff", ".png", ".jpg", ".jpeg"}
+
+
+def build_lookup(directory: Path) -> dict[str, Path]:
+    return {
+        p.name: p
+        for p in directory.rglob("*")
+        if p.suffix.lower() in IMAGE_EXTS and p.name != "Thumbs.db"
+    }
+
+
+lookups = {k: build_lookup(v) for k, v in DIRS.items()}
+display(pd.DataFrame([{"key": k, "n_files": len(v)} for k, v in lookups.items()]))
+"""
+    )
+
+
+def export_kaggle() -> dict:
+    return md(
+        """## Export artifacts
+
+CSV columns exclude internal visualization caches. PNGs are under `/kaggle/working/figures/` — download from the kernel **Output** tab."""
+    )
+
+
+def export_local() -> dict:
+    return md(
+        """## Export artifacts
+
+CSV columns exclude internal visualization caches. PNGs are under `tmp/geometry-local-output/figures/`."""
+    )
+
+
+def shared_cells() -> list[dict]:
+    """Cells identical on Kaggle and local (after environment-specific paths cell)."""
+    cells: list[dict] = []
+
+    cells.append(
+        md(
+            """## Competition measurement protocol (from Data tab + DLTrack)
+
+| Target | Definition (competition) | Notes for this notebook |
+|--------|--------------------------|-------------------------|
+| **PA** (`pa_deg`) | Angle between fascicle and **deep aponeurosis** | Degrees; no mm calibration needed |
+| **FL** (`fl_px` here) | Length along fascicle between aponeuroses | Fascicle PCA span in px for now |
+| **MT** (`mt_px` here) | Perpendicular distance superficial↔deep at **three** x positions (manual protocol) | Mean of three samples |
+
+**Aponeurosis geometry:** DLTrack fits **local linear edges** from mask contours — not fixed horizontal lines.
+
+**3+ aponeuroses in mask:** sort contours top→bottom; superficial = top; deep = next separated (DLTrack rule).
+
+**Region vs line masks:** Line → raw mask. Region → **invert** then same contour pipeline."""
+        )
+    )
+
+    cells.append(md("""## Configuration"""))
+
+    cells.append(
+        code(
+            """# --- Parameters you can change ---
+RANDOM_SEED = 42
+N_GEOMETRY_SAMPLE = 200
+N_APO_GALLERY_PER_STYLE = 4
+N_FASC_STRETCH_CHECK = 6
+APO_REGION_THRESHOLD = 0.50
+FASC_NEAR_EMPTY_THRESHOLD = 0.0005
+DEFAULT_ALIGN_MODE = "stretch"
+MASK_OVERLAY_ALPHA = 0.55
+REF_PA_DEG = (5, 45)
+REF_FL_MM = (30, 200)
+REF_MT_MM = (10, 50)
+FL_BIN_LOW_MAX = 900
+FL_BIN_HIGH_MIN = 900
+"""
+        )
+    )
+
+    cells.append(
+        md(
+            """## Alignment utilities (ported from Phase 0/1)
+
+When image and mask shapes differ (~60–70% of pairs), we **stretch** the mask to image size before geometry."""
+        )
+    )
+
+    cells.append(
+        code(
+            """def load_gray(path: Path) -> np.ndarray:
     with Image.open(path) as im:
         arr = np.array(im)
     if arr.ndim == 3:
@@ -221,7 +297,6 @@ cells.append(
 
 
 def load_mask(path: Path) -> np.ndarray:
-    \"\"\"Load annotation mask as binary {0,1} uint8.\"\"\"
     with Image.open(path) as im:
         arr = np.array(im)
     if arr.ndim == 3:
@@ -286,28 +361,24 @@ def invert_mask(mask: np.ndarray) -> np.ndarray:
 def tag_apo_style(coverage: float) -> str:
     return "region" if coverage >= APO_REGION_THRESHOLD else "line"
 """
+        )
     )
-)
 
-cells.append(
-    md(
-        """## Clean training manifests
+    cells.append(
+        md(
+            """## Clean training manifests
 
-We rescan all fascicle pairs and exclude **empty** (0% coverage) and **near-empty** (<0.05% coverage) masks — same rule as Phase 0/1.
+Exclude empty / near-empty fascicle masks (Phase 0/1 thresholds).
 
 ### Why dual-track (1040) < apo pairs (1048)?
 
-**Not a bug.** Dual-track = filenames present in **both** `train_apo_all` **and** `train_fasc_clean`.
-
-Eight apo images have fascicle masks on the exclude list (empty or near-empty fasc annotation). They still have valid apo masks for MT training, but we cannot derive fascicle-based PA/FL on them until we have another fasc label or predicted fasc mask.
-
-Those 8 files are listed explicitly in the next cell."""
+Dual-track = filenames in **both** apo set **and** clean fasc set. **Eight** apo images have fasc masks on the exclude list — listed in the next cell. Not a data bug."""
+        )
     )
-)
 
-cells.append(
-    code(
-        """def mask_coverage_from_path(path: Path) -> float:
+    cells.append(
+        code(
+            """def mask_coverage_from_path(path: Path) -> float:
     return mask_coverage(load_mask(path))
 
 
@@ -340,20 +411,14 @@ print(f"Apo-only (fasc excluded): {len(apo_missing_clean_fasc)}")
 if apo_missing_clean_fasc:
     display(exclude_fasc[exclude_fasc.filename.isin(apo_missing_clean_fasc)])
 """
+        )
     )
-)
 
-cells.append(
-    md(
-        """## Apo mask style census
+    cells.append(md("""## Apo mask style census"""))
 
-Apo coverage is **bimodal** in our data (~95% "region", ~3% "line"). The 50% threshold separates them for routing only."""
-    )
-)
-
-cells.append(
-    code(
-        """apo_style_rows = []
+    cells.append(
+        code(
+            """apo_style_rows = []
 for name in train_apo_all["filename"]:
     cov = mask_coverage_from_path(lookups["apo_mask"][name])
     apo_style_rows.append(
@@ -363,27 +428,22 @@ apo_styles = pd.DataFrame(apo_style_rows)
 train_apo_all = train_apo_all.merge(apo_styles, on="filename", how="left")
 display(apo_styles["mask_style"].value_counts().to_frame("count"))
 """
+        )
     )
-)
 
-cells.append(
-    md(
-        """## Calibration hunt (TIFF metadata)
+    cells.append(
+        md(
+            """## Calibration hunt (TIFF metadata)
 
-**Option C:** derive geometry in **pixels** now; convert to mm before leaderboard submission. This cell scans TIFF tags for spacing/resolution hints."""
+Option C: pixels now, mm before submit. Scans TIFF tags for spacing hints."""
+        )
     )
-)
 
-cells.append(
-    code(
-        """CALIBRATION_KEYS = (
-    "XResolution",
-    "YResolution",
-    "ResolutionUnit",
-    "PixelSpacing",
-    "Spacing",
-    "PhysicalDeltaX",
-    "PhysicalDeltaY",
+    cells.append(
+        code(
+            """CALIBRATION_KEYS = (
+    "XResolution", "YResolution", "ResolutionUnit",
+    "PixelSpacing", "Spacing", "PhysicalDeltaX", "PhysicalDeltaY",
 )
 
 
@@ -405,57 +465,42 @@ interesting = calib_df[[c for c in CALIBRATION_KEYS if c in calib_df.columns]].n
 print("Calibration-related tags found:", int(interesting.sum()), "of", len(calib_df))
 display(calib_df.head(5))
 """
+        )
     )
-)
 
-cells.append(
-    md(
-        """## Geometry core (contour-based, DLTrack-inspired)
+    cells.append(
+        md(
+            """## Geometry core (contour-based, DLTrack-inspired)
 
-**Previous v1 mistake:** horizontal row peaks (`axhline`) — bad for curved/tilted aponeuroses and confusing in QC plots.
-
-**This version:**
-
-1. Build an **effective apo mask** (raw line mask, or inverted region mask).
-2. Find **external contours** with OpenCV.
-3. Sort contours top → bottom; pick **superficial** (top) and **deep** (next separated contour).
-4. Extract **edge polylines**: bottom edge of superficial contour, top edge of deep contour.
-5. Fit **degree-1 polynomials** `y = a*x + b` to each edge (local linear approximation).
-6. **MT:** perpendicular distance between fitted lines at **three x** positions (left / centre / right third of overlap) — mean of the three, matching manual protocol wording.
-7. **Fascicle:** PCA axis on fascicle mask pixels → `fl_px` span and angle; **PA** = acute angle vs deep apo line slope.
-
-When fewer than two usable contours exist, MT is **NaN** (typically 1–2% of sample) — those images need different mask handling, not silent zeros."""
+1. Effective apo mask (raw line or inverted region)
+2. OpenCV external contours, sorted top→bottom
+3. Superficial = top contour bottom edge; deep = next contour top edge
+4. Linear fit per edge; MT = mean perpendicular distance at 3 x positions
+5. Fascicle PCA → `fl_px`, PA vs deep apo slope"""
+        )
     )
-)
 
-cells.append(
-    code(
-        """def effective_apo_mask(mask: np.ndarray, style: str) -> tuple[np.ndarray, str]:
-    \"\"\"Line masks: use raw. Region masks: invert so apo gaps become foreground.\"\"\"
+    cells.append(
+        code(
+            """def effective_apo_mask(mask: np.ndarray, style: str) -> tuple[np.ndarray, str]:
     if style == "region":
         return invert_mask(mask), "inverted_region"
     return mask, "raw_line"
 
 
-def _contour_area(c) -> float:
-    return float(cv2.contourArea(c))
-
-
 def find_apo_contours(mask: np.ndarray, min_area_frac: float = 0.0003) -> list[np.ndarray]:
-    \"\"\"Return significant external contours sorted top-to-bottom.\"\"\"
     contours, _ = cv2.findContours(mask.astype(np.uint8), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
     min_area = mask.size * min_area_frac
-    big = [c for c in contours if _contour_area(c) >= min_area]
+    big = [c for c in contours if cv2.contourArea(c) >= min_area]
     big.sort(key=lambda c: cv2.boundingRect(c)[1])
     return big
 
 
 def pick_superficial_deep(contours: list[np.ndarray], min_sep_px: int = 15):
-    \"\"\"DLTrack-style: top contour = superficial; next separated = deep.\"\"\"
     if len(contours) < 2:
         return None, None, len(contours)
     sup = contours[0]
-    _, y0, _, h0 = cv2.boundingRect(sup)
+    _, y0, _, _ = cv2.boundingRect(sup)
     deep = None
     for c in contours[1:]:
         _, y1, _, _ = cv2.boundingRect(c)
@@ -468,7 +513,6 @@ def pick_superficial_deep(contours: list[np.ndarray], min_sep_px: int = 15):
 
 
 def edge_polyline(contour: np.ndarray, which: str = "bottom", n_bins: int = 60):
-    \"\"\"Reduce contour to a polyline: per x-bin, take min or max y.\"\"\"
     pts = contour.reshape(-1, 2)
     if len(pts) < 3:
         return np.array([]), np.array([])
@@ -491,27 +535,18 @@ def edge_polyline(contour: np.ndarray, which: str = "bottom", n_bins: int = 60):
 def fit_line(xs: np.ndarray, ys: np.ndarray):
     if len(xs) < 2:
         return None
-    coef = np.polyfit(xs, ys, 1)
-    return np.poly1d(coef)
+    return np.poly1d(np.polyfit(xs, ys, 1))
 
 
 def line_angle_deg(line) -> float:
-    if line is None:
-        return np.nan
-    return float(np.degrees(np.arctan(line[1])))
-
-
-def perpendicular_distance(line_a, line_b, x: float) -> float:
-    \"\"\"Distance between two lines y=f(x) at a given x (competition MT is perpendicular to apo).\"\"\"
-    ya, yb = float(line_a(x)), float(line_b(x))
-    return abs(yb - ya)
+    return float(np.degrees(np.arctan(line[1]))) if line is not None else np.nan
 
 
 def mt_from_apo_edges(sup_line, deep_line, x_left: float, x_right: float) -> float:
     if sup_line is None or deep_line is None or x_right <= x_left:
         return np.nan
     thirds = [x_left + (x_right - x_left) * t for t in (1 / 6, 3 / 6, 5 / 6)]
-    dists = [perpendicular_distance(sup_line, deep_line, x) for x in thirds]
+    dists = [abs(float(deep_line(x) - sup_line(x))) for x in thirds]
     return float(np.mean(dists))
 
 
@@ -520,8 +555,7 @@ def fascicle_pca(mask: np.ndarray) -> dict | None:
     if len(xs) < 3:
         return None
     coords = np.column_stack([xs.astype(float), ys.astype(float)])
-    mu = coords.mean(axis=0)
-    centered = coords - mu
+    centered = coords - coords.mean(axis=0)
     _, _, vh = np.linalg.svd(centered, full_matrices=False)
     direction = vh[0]
     projections = centered @ direction
@@ -558,11 +592,8 @@ def apo_geometry_from_mask(apo_mask: np.ndarray, style: str) -> dict:
     deep_x, deep_y = edge_polyline(deep_c, which="top")
     sup_line = fit_line(sup_x, sup_y)
     deep_line = fit_line(deep_x, deep_y)
-    out["sup_line"] = sup_line
-    out["deep_line"] = deep_line
-    out["sup_xs"], out["sup_ys"] = sup_x, sup_y
-    out["deep_xs"], out["deep_ys"] = deep_x, deep_y
-    if sup_line is not None and deep_line is not None and len(sup_x) and len(deep_x):
+    out.update(sup_line=sup_line, deep_line=deep_line, sup_xs=sup_x, sup_ys=sup_y, deep_xs=deep_x, deep_ys=deep_y)
+    if sup_line and deep_line and len(sup_x) and len(deep_x):
         x_left = max(sup_x.min(), deep_x.min())
         x_right = min(sup_x.max(), deep_x.max())
         out["mt_px"] = mt_from_apo_edges(sup_line, deep_line, x_left, x_right)
@@ -589,40 +620,35 @@ def derive_geometry(fasc_mask, apo_mask, apo_style, target_shape):
     if fpca is not None:
         out["fasc_angle_deg"] = fpca["angle_deg"]
         out["fl_px"] = fpca["length_px"]
-        ref_angle = apo["deep_angle_deg"] if not np.isnan(apo["deep_angle_deg"]) else 0.0
-        out["pa_deg"] = acute_angle_deg(fpca["angle_deg"], ref_angle)
-    out["_apo_vis"] = apo  # kept for QC plotting; stripped before CSV export
+        ref = apo["deep_angle_deg"] if not np.isnan(apo["deep_angle_deg"]) else 0.0
+        out["pa_deg"] = acute_angle_deg(fpca["angle_deg"], ref)
+    out["_apo_vis"] = apo
     return out
 """
+        )
     )
-)
 
-cells.append(
-    md(
-        """## Derive geometry on dual-track sample
+    cells.append(
+        md(
+            """## Derive geometry on dual-track sample
 
-We measure PA/FL from fascicle masks and MT from apo masks on the **same filename** when both tracks are available (`dual_track` list above).
-
-### About the "NaN rate" line
-
-`NaN` = "could not compute" (missing contour, too few fascicle pixels), **not** zero thickness. A 1% MT NaN rate (~2/200) is acceptable for a prototype; we should inspect those filenames rather than drop them from training data automatically."""
+`NaN` = could not compute (missing contours etc.), **not** zero. Inspect failures; do not auto-drop from training."""
+        )
     )
-)
 
-cells.append(
-    code(
-        """rng = random.Random(RANDOM_SEED)
+    cells.append(
+        code(
+            """rng = random.Random(RANDOM_SEED)
 geo_names = dual_track if len(dual_track) <= N_GEOMETRY_SAMPLE else rng.sample(dual_track, N_GEOMETRY_SAMPLE)
 
 geo_rows = []
-apo_vis_cache = {}
 for name in geo_names:
     img = load_gray(lookups["fasc_img"][name])
     style = train_apo_all.loc[train_apo_all.filename == name, "mask_style"].iloc[0]
     fasc_mask = load_mask(lookups["fasc_mask"][name])
     apo_mask = load_mask(lookups["apo_mask"][name])
     metrics = derive_geometry(fasc_mask, apo_mask, style, img.shape)
-    apo_vis_cache[name] = metrics.pop("_apo_vis")
+    metrics.pop("_apo_vis")
     geo_rows.append(
         {
             "filename": name,
@@ -636,36 +662,31 @@ for name in geo_names:
 
 geometry_df = pd.DataFrame(geo_rows)
 print(f"Derived geometry for {len(geometry_df)} dual-track images")
-display(geometry_df.drop(columns=[], errors="ignore").head(8))
-
-nan_rates = geometry_df[["pa_deg", "fl_px", "mt_px"]].isna().mean().round(4)
-print("NaN rates (fraction of sample that failed):", nan_rates.to_dict())
+display(geometry_df.head(8))
+print("NaN rates:", geometry_df[["pa_deg", "fl_px", "mt_px"]].isna().mean().round(4).to_dict())
 if geometry_df["mt_px"].isna().any():
-    print("MT failures:")
-    display(geometry_df.loc[geometry_df.mt_px.isna(), ["filename", "mask_style", "n_apo_contours", "apo_method"]])
+    display(geometry_df.loc[geometry_df.mt_px.isna(), ["filename", "mask_style", "n_apo_contours"]])
 """
+        )
     )
-)
 
-cells.append(
-    md(
-        """### Distribution histograms
+    cells.append(
+        md(
+            """### Distribution histograms
 
-- **Y-axis:** count of **images** in each bin (not percent). Matplotlib `hist` default.
-- **PA reference lines:** dashed green = competition min (5°), dashed red = max (45°).
-- **FL / MT:** still in pixels — no mm reference lines yet."""
+**Y-axis:** count of **images** per bin (not percent). **PA:** green dashed = ref min 5°, red dashed = ref max 45°."""
+        )
     )
-)
 
-cells.append(
-    code(
-        """fig, axes = plt.subplots(1, 3, figsize=(14, 4))
-configs = [
-    ("pa_deg", "Pennation angle (deg)", True),
-    ("fl_px", "Fascicle length (px)", False),
-    ("mt_px", "Muscle thickness (px)", False),
-]
-for ax, (col, title, show_ref) in zip(axes, configs):
+    cells.append(
+        code(
+            """fig, axes = plt.subplots(1, 3, figsize=(14, 4))
+for ax, col, title, show_ref in zip(
+    axes,
+    ["pa_deg", "fl_px", "mt_px"],
+    ["Pennation angle (deg)", "Fascicle length (px)", "Muscle thickness (px)"],
+    [True, False, False],
+):
     vals = geometry_df[col].dropna()
     ax.hist(vals, bins=30, color="steelblue", alpha=0.85, edgecolor="white")
     ax.set_title(title)
@@ -676,87 +697,55 @@ for ax, (col, title, show_ref) in zip(axes, configs):
         ax.axvline(REF_PA_DEG[1], color="red", ls="--", lw=1.5, label=f"ref max {REF_PA_DEG[1]}°")
         ax.legend(fontsize=8)
 plt.tight_layout()
-plt.savefig(FIG_DIR / "histograms_pa_fl_mt.png", dpi=120, bbox_inches="tight")
-plt.close(fig)
+finish_fig(fig, FIG_DIR / "histograms_pa_fl_mt.png")
 """
+        )
     )
-)
 
-cells.append(
-    md(
-        """### FL bimodality — per image, not per fascicle inside one image
+    cells.append(
+        md(
+            """### FL bimodality — across images, not inside one image
 
-Each row in `geometry_df` is **one image** with **one** `fl_px` (PCA span of that image's fascicle mask). The histogram therefore shows **two populations of images**, not "two fascicle lengths inside the same image".
-
-Below we assign each image to a **low** or **high** FL bin and check whether any image appears in both (it cannot — mutually exclusive bins). Then we correlate bin membership with image size and shape mismatch to explain the bimodality."""
+Each image has **one** `fl_px`. Two histogram peaks = two **image cohorts** (usually resolution), not two fascicles per image."""
+        )
     )
-)
 
-cells.append(
-    code(
-        """geometry_df["fl_bin"] = np.where(
-    geometry_df["fl_px"] < FL_BIN_LOW_MAX,
-    "low (<900 px)",
-    "high (>=900 px)",
+    cells.append(
+        code(
+            """geometry_df["fl_bin"] = np.where(
+    geometry_df["fl_px"] < FL_BIN_LOW_MAX, "low (<900 px)", "high (>=900 px)"
 )
-print("Images per FL bin:")
 display(geometry_df["fl_bin"].value_counts().to_frame("count"))
-
-# Each image is in exactly one bin by construction
-assert geometry_df["fl_bin"].notna().all()
-
-print("FL bin vs apo mask style:")
 display(pd.crosstab(geometry_df["fl_bin"], geometry_df["mask_style"]))
-
-print("FL bin vs fasc/image same shape:")
-display(pd.crosstab(geometry_df["fl_bin"], geometry_df["same_shape_fasc"]))
-
-print("Mean image dimensions by FL bin:")
-display(
-    geometry_df.groupby("fl_bin")[["img_h", "img_w"]].agg(["mean", "min", "max"]).round(1)
-)
-
-print("Unique (img_h, img_w) sizes by FL bin:")
-for b in geometry_df["fl_bin"].unique():
-    sub = geometry_df[geometry_df.fl_bin == b]
-    sizes = sub.groupby(["img_h", "img_w"]).size().reset_index(name="n")
-    print(f"\\n{b}:")
-    display(sizes.sort_values("n", ascending=False).head(8))
+display(geometry_df.groupby("fl_bin")[["img_h", "img_w"]].agg(["mean", "min", "max"]).round(1))
 """
+        )
     )
-)
 
-cells.append(
-    md(
-        """## Apo overlay QC (contour edges)
+    cells.append(
+        md(
+            """## Apo overlay QC (contour edges)
 
-**How to read each 5-panel row:**
+| Panel | Content |
+|-------|---------|
+| 1–4 | Image, raw, inverted, effective mask |
+| 5 | Fitted edges: **cyan** = superficial, **magenta** = deep |
 
-| Panel | What you see |
-|-------|----------------|
-| 1 | Ultrasound image |
-| 2 | Raw apo mask overlay (orange) |
-| 3 | Inverted mask (region case) — test of your flip hypothesis |
-| 4 | **Effective** mask used for contour detection |
-| 5 | Effective mask + **fitted edges**: cyan = superficial (bottom edge), magenta = deep (top edge). Small dots = edge samples. |
-
-**Three aponeuroses in mask:** we sort contours top→bottom; superficial = top contour; deep = next separated contour (DLTrack rule). Extra contours are ignored for MT but may appear as extra blobs in panel 4.
-
-Figures are saved under `figures/apo_qc_*.png`."""
+Saved as `figures/apo_qc_<filename>.png`."""
+        )
     )
-)
 
-cells.append(
-    code(
-        """def draw_apo_edges(ax, apo_vis: dict):
+    cells.append(
+        code(
+            """def draw_apo_edges(ax, apo_vis: dict):
     if apo_vis.get("sup_xs") is not None and len(apo_vis["sup_xs"]):
-        ax.scatter(apo_vis["sup_xs"], apo_vis["sup_ys"], s=4, c="cyan", label="sup edge pts")
+        ax.scatter(apo_vis["sup_xs"], apo_vis["sup_ys"], s=4, c="cyan", label="sup edge")
         xs = np.linspace(apo_vis["sup_xs"].min(), apo_vis["sup_xs"].max(), 50)
-        ax.plot(xs, apo_vis["sup_line"](xs), c="cyan", lw=2, label="sup fit")
+        ax.plot(xs, apo_vis["sup_line"](xs), c="cyan", lw=2)
     if apo_vis.get("deep_xs") is not None and len(apo_vis["deep_xs"]):
-        ax.scatter(apo_vis["deep_xs"], apo_vis["deep_ys"], s=4, c="magenta", label="deep edge pts")
+        ax.scatter(apo_vis["deep_xs"], apo_vis["deep_ys"], s=4, c="magenta", label="deep edge")
         xs = np.linspace(apo_vis["deep_xs"].min(), apo_vis["deep_xs"].max(), 50)
-        ax.plot(xs, apo_vis["deep_line"](xs), c="magenta", lw=2, label="deep fit")
+        ax.plot(xs, apo_vis["deep_line"](xs), c="magenta", lw=2)
     ax.legend(fontsize=6, loc="upper right")
 
 
@@ -769,107 +758,85 @@ def mask_overlay_rgb(img, mask, color=(255, 140, 0)):
     return rgb.astype(np.uint8)
 
 
-def apo_qc_panel(name: str, save: bool = True):
+def apo_qc_panel(name: str):
     img = load_gray(lookups["apo_img"][name])
     raw = align_mask(load_mask(lookups["apo_mask"][name]), *img.shape)
     style = tag_apo_style(raw.mean())
     inv = invert_mask(raw)
     eff, method = effective_apo_mask(raw, style)
     apo_vis = apo_geometry_from_mask(raw, style)
-
+    mt_lbl = f"{apo_vis['mt_px']:.0f}px" if not np.isnan(apo_vis["mt_px"]) else "NaN"
     fig, axes = plt.subplots(1, 5, figsize=(20, 4))
-    panels = [
-        ("image", None),
-        (f"raw ({style})", raw),
-        ("inverted", inv),
-        (f"effective ({method})", eff),
-        (f"edges n={apo_vis['n_contours']} mt={apo_vis['mt_px']:.0f}px" if not np.isnan(apo_vis["mt_px"]) else f"edges n={apo_vis['n_contours']}", eff),
-    ]
-    for ax, (title, m) in zip(axes, panels):
+    for ax, title, m, edges in zip(
+        axes,
+        ["image", f"raw ({style})", "inverted", f"effective ({method})", f"edges mt={mt_lbl}"],
+        [None, raw, inv, eff, eff],
+        [False, False, False, False, True],
+    ):
         if m is None:
             ax.imshow(img, cmap="gray")
         else:
             ax.imshow(mask_overlay_rgb(img, m))
-            if title.startswith("edges"):
+            if edges:
                 draw_apo_edges(ax, apo_vis)
         ax.set_title(title, fontsize=8)
         ax.axis("off")
     plt.suptitle(f"{name} coverage={raw.mean():.3f}", y=1.02, fontsize=10)
     plt.tight_layout()
-    if save:
-        fig.savefig(FIG_DIR / f"apo_qc_{name.replace('.tif','')}.png", dpi=120, bbox_inches="tight")
-    plt.close(fig)
+    finish_fig(fig, FIG_DIR / f"apo_qc_{name.replace('.tif', '')}.png")
 
 
 rng = random.Random(RANDOM_SEED + 1)
 for style in ("region", "line"):
     pool = apo_styles[apo_styles.mask_style == style]["filename"].tolist()
-    picks = rng.sample(pool, min(N_APO_GALLERY_PER_STYLE, len(pool)))
-    print(f"--- Apo {style} examples ({len(picks)}) ---")
-    for name in picks:
+    for name in rng.sample(pool, min(N_APO_GALLERY_PER_STYLE, len(pool))):
+        print(f"Apo {style}:", name)
         apo_qc_panel(name)
 """
+        )
     )
-)
 
-cells.append(
-    md(
-        """## Fasc stretch validation
+    cells.append(md("""## Fasc stretch validation"""))
 
-Confirms Phase 0/1 finding: for shape mismatches, **stretch** keeps fascicle annotations aligned with anatomy."""
-    )
-)
-
-cells.append(
-    code(
-        """def fasc_stretch_panel(name: str):
+    cells.append(
+        code(
+            """def fasc_stretch_panel(name: str):
     img = load_gray(lookups["fasc_img"][name])
     mask = load_mask(lookups["fasc_mask"][name])
     if mask.shape == img.shape:
         return
     aligned = align_mask(mask, *img.shape)
-    vis = mask_overlay_rgb(img, aligned, color=(0, 200, 80))
     fig, axes = plt.subplots(1, 3, figsize=(12, 4))
     axes[0].imshow(img, cmap="gray")
     axes[0].set_title(f"image {img.shape}")
     axes[1].imshow(mask, cmap="gray")
-    axes[1].set_title(f"raw mask {mask.shape}")
-    axes[2].imshow(vis)
+    axes[1].set_title(f"raw {mask.shape}")
+    axes[2].imshow(mask_overlay_rgb(img, aligned, color=(0, 200, 80)))
     axes[2].set_title("stretch overlay")
     for ax in axes:
         ax.axis("off")
     plt.suptitle(name, y=1.02)
     plt.tight_layout()
-    fig.savefig(FIG_DIR / f"fasc_stretch_{name.replace('.tif','')}.png", dpi=120, bbox_inches="tight")
-    plt.close(fig)
+    finish_fig(fig, FIG_DIR / f"fasc_stretch_{name.replace('.tif', '')}.png")
 
 
-mismatch_names = []
-for name in clean_fasc_names:
-    img = load_gray(lookups["fasc_img"][name])
-    mask = load_mask(lookups["fasc_mask"][name])
-    if mask.shape != img.shape:
-        mismatch_names.append(name)
-
-rng = random.Random(RANDOM_SEED + 2)
-stretch_picks = rng.sample(mismatch_names, min(N_FASC_STRETCH_CHECK, len(mismatch_names)))
-print(f"Fasc shape mismatches: {len(mismatch_names)} | showing {len(stretch_picks)}")
-for name in stretch_picks:
+mismatch = [
+    n for n in clean_fasc_names
+    if load_mask(lookups["fasc_mask"][n]).shape != load_gray(lookups["fasc_img"][n]).shape
+]
+picks = random.Random(RANDOM_SEED + 2).sample(mismatch, min(N_FASC_STRETCH_CHECK, len(mismatch)))
+print(f"Showing {len(picks)} of {len(mismatch)} fasc mismatches")
+for name in picks:
     fasc_stretch_panel(name)
 """
+        )
     )
-)
 
-cells.append(
-    md(
-        """## Export artifacts
+    return cells
 
-CSV columns exclude internal visualization caches. PNGs already saved under `figures/`."""
-    )
-)
 
-cells.append(
-    code(
+def export_code_cell() -> dict:
+    return code(
         """export_cols = [c for c in geometry_df.columns if not c.startswith("_")]
 geometry_df[export_cols].to_csv(OUT / "geometry_sample.csv", index=False)
 train_fasc_clean.to_csv(OUT / "train_fasc_clean.csv", index=False)
@@ -878,41 +845,53 @@ if len(exclude_fasc):
     exclude_fasc.to_csv(OUT / "exclude_fasc_masks.csv", index=False)
 apo_styles.to_csv(OUT / "apo_mask_styles.csv", index=False)
 calib_df.to_csv(OUT / "tiff_calibration_sample.csv", index=False)
-
 print("Wrote to", OUT.resolve())
 for p in sorted(OUT.glob("**/*")):
     if p.is_file():
-        print(f"  {p.relative_to(OUT)} ({p.stat().st_size} bytes)")
+        print(" ", p.relative_to(OUT))
 """
     )
-)
 
-cells.append(
-    md(
-        """## Phase 2 checklist
 
-- [x] Clean manifests + explain dual-track gap
-- [x] Contour-based apo edges (not horizontal row peaks)
-- [x] Pixels-first geometry + histogram labels
-- [x] FL bimodality explained (across images, correlated with resolution)
-- [ ] User visual QC on saved apo QC PNGs
-- [ ] Pixel→mm calibration before leaderboard submit
-- [ ] Phase 3 segmentation baseline"""
-    )
-)
+def build_notebook(intro_cell, paths_md, paths_code, export_md) -> list[dict]:
+    shared = shared_cells()
+    return [
+        intro_cell,
+        shared[0],
+        shared[1],
+        shared[2],
+        paths_md,
+        paths_code,
+        *shared[3:],
+        export_md,
+        export_code_cell(),
+    ]
 
-nb = {
-    "nbformat": 4,
-    "nbformat_minor": 5,
-    "metadata": {
-        "kernelspec": {"display_name": "Python 3", "language": "python", "name": "python3"},
-        "language_info": {"name": "python", "version": "3.10.0"},
-    },
-    "cells": cells,
-}
 
-out_dir = Path(__file__).resolve().parents[1] / "notebooks/geometry"
-out_dir.mkdir(parents=True, exist_ok=True)
-out_path = out_dir / "geometry-phase-2.ipynb"
-out_path.write_text(json.dumps(nb, indent=1))
-print(f"Wrote {out_path} ({len(cells)} cells)")
+def write_nb(cells: list[dict], path: Path) -> None:
+    nb = {
+        "nbformat": 4,
+        "nbformat_minor": 5,
+        "metadata": {
+            "kernelspec": {"display_name": "Python 3", "language": "python", "name": "python3"},
+            "language_info": {"name": "python", "version": "3.10.0"},
+        },
+        "cells": cells,
+    }
+    path.write_text(json.dumps(nb, indent=1))
+    print(f"Wrote {path} ({len(cells)} cells)")
+
+
+def main() -> None:
+    out_dir = Path(__file__).resolve().parents[1] / "notebooks/geometry"
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    kaggle_cells = build_notebook(intro_kaggle(), paths_kaggle(), code_paths_kaggle(), export_kaggle())
+    local_cells = build_notebook(intro_local(), paths_local(), code_paths_local(), export_local())
+
+    write_nb(kaggle_cells, out_dir / "geometry-phase-2.ipynb")
+    write_nb(local_cells, out_dir / "geometry-phase-2-local.ipynb")
+
+
+if __name__ == "__main__":
+    main()
