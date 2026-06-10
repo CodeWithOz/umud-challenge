@@ -83,8 +83,9 @@ Use this as the checklist for the next session.
 | Notebook builder | `scripts/build_data_audit_nb.py` |
 | Kaggle kernel | https://www.kaggle.com/code/ucheozoemena/umud-data-audit-phase-0-1 |
 | Exclude list (from v3 run) | Kaggle output: `exclude_fasc_masks.csv` |
-| Geometry notebook | `notebooks/geometry/geometry-phase-2.ipynb` |
-| Geometry builder | `scripts/build_geometry_nb.py` |
+| Geometry notebook (Kaggle) | `notebooks/geometry/geometry-phase-2.ipynb` |
+| Geometry notebook (local) | `notebooks/geometry/geometry-phase-2-local.ipynb` — uses `data/umud-challenge/`, outputs to `tmp/geometry-local-output/` |
+| Geometry builder | `scripts/build_geometry_nb.py` — generates **both** notebooks |
 | Kaggle kernel | https://www.kaggle.com/code/ucheozoemena/umud-geometry-phase-2 |
 | Phase 2 outputs (v1) | `tmp/kaggle-output-geometry/` — manifests + `geometry_sample.csv` |
 
@@ -126,7 +127,7 @@ Use this as the checklist for the next session.
 | 2026-06-09 | Apo region masks: **invert** for line extraction (prototype; pending visual QC) | — |
 | 2026-06-10 | Apo MT/PA edges: **contour + linear fit** (DLTrack-style), not horizontal row peaks | Replaces v1 row-peak prototype |
 | 2026-06-10 | Dual-track 1040 not 1048: 8 apo filenames on fasc exclude list | Expected, not a data bug |
-| 2026-06-10 | FL bimodality in px: driven by **800×1200 vs 1080×1640** image sizes | Not multi-fascicle per image |
+| 2026-06-10 | Split geometry into Kaggle + local notebooks; shared builder | — |
 
 ---
 
