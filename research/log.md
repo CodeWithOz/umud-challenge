@@ -6,7 +6,7 @@ _Last updated: 2026-06-12 (Phase 3 baseline v1 pushed to Kaggle GPU). Refresh at
 
 **Best results:** _(none yet — no scored runs)_
 
-**Active notebooks:** Phase 3: `notebooks/baseline/baseline-phase-3.ipynb` — **Kaggle v2 RUNNING** on GPU ([kernel](https://www.kaggle.com/code/ucheozoemena/umud-baseline-phase-3-fastai-u-net)). v1 failed: fastai `DataBlock` rejected `open_x`/`open_y` kwargs (fixed in v2). Phase 0+1: `data-audit.ipynb` (v3). Phase 2: `geometry-phase-2.ipynb` (v3) + local.
+**Active notebooks:** Phase 3: `notebooks/baseline/baseline-phase-3.ipynb` — **Kaggle v3** pushing on **T4** ([kernel](https://www.kaggle.com/code/ucheozoemena/umud-baseline-phase-3-fastai-u-net)). v1–v2 failed (`open_x`/`open_y`; v2 also ran on P100). Phase 0+1: `data-audit.ipynb` (v3). Phase 2: `geometry-phase-2.ipynb` (v3) + local.
 
 **Where we are:** Phase 3 **started**. fastai U-Net baseline trains fasc + apo models (stretch-aligned, 80/20 val split, resnet34, 384px, 10 epochs each). Exports `fasc_baseline.pkl` / `apo_baseline.pkl` to kernel output. Next after run: val Dice/preview, submission notebook (segment-then-measure).
 
@@ -15,7 +15,7 @@ _Last updated: 2026-06-12 (Phase 3 baseline v1 pushed to Kaggle GPU). Refresh at
 - **PA geometry** — prototype skews low vs competition ref range (74/200 &lt;5°); refine measure step later.
 - **Val split stratification by image size** — optional improvement to try after baseline (see Phase 3 agenda).
 
-**Constraints / budget:** Phase 3 needs Kaggle GPU. Every Kaggle kernel push requires a matching git commit on `main` (AGENTS.md).
+**Constraints / budget:** Phase 3 needs Kaggle **T4** GPU (`NvidiaTeslaT4` in metadata + `--accelerator` on push). P100 breaks fastai/PyTorch. Every Kaggle push → git commit + `git push` (AGENTS.md).
 
 ---
 
@@ -47,7 +47,7 @@ First **learned** baseline: train mask segmentation with **fastai** on Kaggle **
 | Decision | Choice | Date |
 |----------|--------|------|
 | Framework | **fastai** (user learning it; U-Net segmentation) | 2026-06-08 |
-| Hardware | **Kaggle GPU** for training | 2026-06-12 |
+| Hardware | **Kaggle T4 GPU** (`NvidiaTeslaT4`) — not P100; incompatible with current fastai/PyTorch | 2026-06-12 |
 | Pipeline shape | **Segment-then-measure** (DLTrack-style), not direct regression | 2026-06-10 |
 | Training layout | **Two models:** fascicle on `train_fasc_clean.csv` (2,749); apo on `train_apo_all.csv` (1,048) | 2026-06-10 |
 | Inference layout | Run **both** models per test image; fasc → PA/FL, apo → MT | 2026-06-10 |
@@ -187,7 +187,8 @@ Historical checklist — all items done or explicitly deferred.
 | 2026-06-10 | geometry-phase-2 v2 | — | competition + local | Contour edges; MT 3-point mean; FL bin = image resolution; docs | — | superseded |
 | 2026-06-10 | geometry-phase-2 v3 | — | competition + local | Kaggle/local split; user QC approved; manifests + geometry CSVs | — | **complete** |
 | 2026-06-12 | baseline-phase-3 v1 | resnet34 | fasc 2,749 + apo 1,048 | fastai U-Net; DataBlock `open_x`/`open_y` TypeError | — | **error** |
-| 2026-06-12 | baseline-phase-3 v2 | resnet34 | fasc 2,749 + apo 1,048 | fix: tensors from get_x/get_y; same hyperparams | — | **running** |
+| 2026-06-12 | baseline-phase-3 v2 | resnet34 | fasc 2,749 + apo 1,048 | notebook not regenerated; still `open_x`/`open_y`; P100 | — | **error** |
+| 2026-06-12 | baseline-phase-3 v3 | resnet34 | fasc 2,749 + apo 1,048 | DataBlock fix + **T4** (`NvidiaTeslaT4`) | — | **running** |
 
 ---
 
@@ -237,6 +238,7 @@ Historical checklist — all items done or explicitly deferred.
 - Phase 2 geometry: **Kaggle notebook** (`kagglehub`) vs **local notebook** (`data/umud-challenge/`); generate both via `scripts/build_geometry_nb.py`. (2026-06-10)
 - Histogram **ref** lines = competition **reference** plausible ranges for manual expert measurements, not model targets. (2026-06-12)
 - FL px bimodality tracks **image dimensions** (800×1200 vs 1080×1640), not multiple fascicles per image. (2026-06-10)
+- Kaggle `enable_gpu: true` defaults to **P100**, which is incompatible with current **fastai/PyTorch**. Use **T4**: `"machine_shape": "NvidiaTeslaT4"` + `kaggle kernels push --accelerator NvidiaTeslaT4`. (2026-06-12)
 
 ### Technical notes (Phase 0/1)
 

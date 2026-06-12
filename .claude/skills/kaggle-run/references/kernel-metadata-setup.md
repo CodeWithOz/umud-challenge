@@ -56,6 +56,9 @@ the slug and id are correct.
 - `id`: `<owner>/<kernel-slug>` where the slug matches the notebook's URL on Kaggle
 - `enable_gpu`: `true` for the training notebook; the submission environment is
   controlled by Kaggle independently
+- `machine_shape`: GPU type when `enable_gpu` is true. For fastai/PyTorch training
+  use **`NvidiaTeslaT4`** (not P100 — `enable_gpu: true` alone defaults to P100).
+  Also pass `--accelerator NvidiaTeslaT4` on `kaggle kernels push`.
 - `competition_sources`: include the competition's Kaggle slug (e.g. `"my-competition-2026"`)
   so competition data is available during the run. Ask the user for the slug if unsure,
   or read it from the URL at `https://www.kaggle.com/competitions/<slug>`

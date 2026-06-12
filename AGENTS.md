@@ -45,6 +45,10 @@
 **Polling:**
 - Use the `Monitor` tool with a single persistent background shell for Kaggle kernel status polling (one user permission for the whole loop, not one per CLI call). Activate the venv at the top of the monitor script. Use `kstatus` (not `status`) as the variable name — `status` is read-only in zsh.
 
+**GPU accelerators:**
+- Training notebooks that use **fastai** or recent **PyTorch** must use **T4** (`NvidiaTeslaT4`), not P100. `enable_gpu: true` alone defaults to P100, which is incompatible with current fastai/PyTorch on Kaggle.
+- Set `"machine_shape": "NvidiaTeslaT4"` in `kernel-metadata.json` **and** pass `--accelerator NvidiaTeslaT4` on `kaggle kernels push`.
+
 **Submission notebooks:**
 - `kernel-metadata.json` `model_sources` may be enough on a first push (no stale sidebar entry). Only ask the user to update the Kaggle UI sidebar if submission fails with a model path `FileNotFoundError`.
 - If a notebook fails because a model version, dataset, or other input is missing or wrong in the sidebar, ask the user to fix it in the Kaggle UI first — do not restructure notebook code to work around a missing input.
@@ -58,3 +62,4 @@ _This section is updated whenever a new lesson is discovered. Any AI agent worki
 | 2026-06 | Kaggle auto-extracts dataset zips; `glob('*.zip')` finds nothing. Use `rglob` and a filename→path lookup instead. |
 | 2026-06 | Add Python deps with `uv add`, never `uv pip install` or bare `pip`. |
 | 2026-06 | Every Kaggle kernel push must have a corresponding git commit **and `git push`** on `main` (notebook + metadata + log). Never leave Kaggle-ahead-of-git. |
+| 2026-06 | fastai / modern PyTorch on Kaggle: use **T4** (`NvidiaTeslaT4`), not P100 (`enable_gpu: true` alone defaults to P100). |
