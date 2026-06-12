@@ -48,6 +48,7 @@
 **GPU accelerators:**
 - Training notebooks that use **fastai** or recent **PyTorch** must use **T4** (`NvidiaTeslaT4`), not P100. `enable_gpu: true` alone defaults to P100, which is incompatible with current fastai/PyTorch on Kaggle.
 - Set `"machine_shape": "NvidiaTeslaT4"` in `kernel-metadata.json` **and** pass `--accelerator NvidiaTeslaT4` on `kaggle kernels push`.
+- GPU training with **pretrained encoders** needs `"enable_internet": true` (ImageNet weights download). EDA/geometry kernels can stay offline with `kagglehub`.
 
 **Submission notebooks:**
 - `kernel-metadata.json` `model_sources` may be enough on a first push (no stale sidebar entry). Only ask the user to update the Kaggle UI sidebar if submission fails with a model path `FileNotFoundError`.
