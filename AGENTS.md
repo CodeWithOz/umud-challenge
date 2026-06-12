@@ -40,6 +40,7 @@
 
 **Git discipline:**
 - Always `git pull` before committing. Kaggle auto-saves can create upstream commits that cause conflicts.
+- **Every Kaggle kernel push** (new notebook or new version) requires a matching **git commit on `main` and `git push` to `origin`** before or immediately after the push — notebook, `kernel-metadata.json`, builder script, and `research/log.md` updates included. Do not leave commits local-only. Do not ask whether to commit or push; just do it.
 
 **Polling:**
 - Use the `Monitor` tool with a single persistent background shell for Kaggle kernel status polling (one user permission for the whole loop, not one per CLI call). Activate the venv at the top of the monitor script. Use `kstatus` (not `status`) as the variable name — `status` is read-only in zsh.
@@ -56,4 +57,4 @@ _This section is updated whenever a new lesson is discovered. Any AI agent worki
 |------|--------|
 | 2026-06 | Kaggle auto-extracts dataset zips; `glob('*.zip')` finds nothing. Use `rglob` and a filename→path lookup instead. |
 | 2026-06 | Add Python deps with `uv add`, never `uv pip install` or bare `pip`. |
-| 2026-06 | Every Kaggle kernel push must have a corresponding git commit on `main` (checkpoint of notebook + metadata + log). |
+| 2026-06 | Every Kaggle kernel push must have a corresponding git commit **and `git push`** on `main` (notebook + metadata + log). Never leave Kaggle-ahead-of-git. |
