@@ -80,9 +80,9 @@ from PIL import Image
 
 import kagglehub
 from fastai.vision.all import (
+    AddMaskCodes,
     Dice,
-    ImageBlock,
-    MaskBlock,
+    IntToFloatTensor,
     PILImage,
     PILMask,
     RandomSplitter,
@@ -232,7 +232,7 @@ Binary masks: background = 0, structure = 1. Images are grayscale ultrasound fra
 
 cells.append(
     code(
-        """SEG_CODES = np.array(["background", "structure"])
+        """SEG_CODES = ["background", "structure"]
 
 
 def encoder():
@@ -256,8 +256,12 @@ def make_dblock(fnames: list[str], img_key: str, mask_key: str) -> DataBlock:
 
     return DataBlock(
         blocks=(
-            TransformBlock(open_img, ImageBlock),
-            TransformBlock(open_mask, MaskBlock(codes=SEG_CODES)),
+            TransformBlock(type_tfms=open_img, batch_tfms=IntToFloatTensor),
+            TransformBlock(
+                type_tfms=open_mask,
+                item_tfms=AddMaskCodes(codes=SEG_CODES),
+                batch_tfms=IntToFloatTensor,
+            ),
         ),
         get_items=get_items,
         splitter=RandomSplitter(valid_pct=VALID_PCT, seed=RANDOM_SEED),
