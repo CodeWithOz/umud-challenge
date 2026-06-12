@@ -270,7 +270,7 @@ def make_dblock(fnames: list[str], img_key: str, mask_key: str) -> DataBlock:
 
 def make_dls(fnames: list[str], img_key: str, mask_key: str):
     dblock = make_dblock(fnames, img_key, mask_key)
-    return dblock.dataloaders(path=DATA_ROOT, bs=BATCH_SIZE, num_workers=2)
+    return dblock.dataloaders(fnames, bs=BATCH_SIZE, num_workers=2)
 """
     )
 )
