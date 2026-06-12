@@ -2,13 +2,13 @@
 
 ## Current focus
 
-_Last updated: 2026-06-12 (Phase 3 baseline v1 pushed to Kaggle GPU). Refresh at session start; verify against git and Kaggle before acting._
+_Last updated: 2026-06-12 (~6h into v8; awaiting completion or Kaggle timeout). Refresh at session start; verify against git and Kaggle before acting._
 
 **Best results:** _(none yet — no scored runs)_
 
-**Active notebooks:** Phase 3: `notebooks/baseline/baseline-phase-3.ipynb` — **Kaggle v8 RUNNING** on T4 ([kernel](https://www.kaggle.com/code/ucheozoemena/umud-baseline-phase-3-fastai-u-net)). v7 failed: could not infer loss function. Phase 0+1: `data-audit.ipynb` (v3). Phase 2: `geometry-phase-2.ipynb` (v3) + local.
+**Active notebooks:** Phase 3: `notebooks/baseline/baseline-phase-3.ipynb` — **Kaggle v8 still RUNNING** on T4 (~6h+; full data, 10 epochs × 2 models) ([kernel](https://www.kaggle.com/code/ucheozoemena/umud-baseline-phase-3-fastai-u-net)). Waiting for finish or timeout — **not cancelling**. Phase 0+1: `data-audit.ipynb` (v3). Phase 2: `geometry-phase-2.ipynb` (v3) + local.
 
-**Where we are:** Phase 3 **started**. fastai U-Net baseline trains fasc + apo models (stretch-aligned, 80/20 val split, resnet34, 384px, 10 epochs each). Exports `fasc_baseline.pkl` / `apo_baseline.pkl` to kernel output. Next after run: val Dice/preview, submission notebook (segment-then-measure).
+**Where we are:** Phase 3 v8 is a **full-scale first train** (2,749 fasc + 1,048 apo, resnet34, 384px, 10 epochs each). No timing baseline was run first — lesson recorded below. After v8: review output; **future runs** must start with a timing baseline (tiny data + 1–2 epochs) before scaling up.
 
 **Carry-forward (not blocking Phase 3):**
 - **mm calibration** — Option C: deferred until **before leaderboard submit**; build baseline in pixels first.
@@ -65,7 +65,8 @@ First **learned** baseline: train mask segmentation with **fastai** on Kaggle **
 
 ### Phase 3 work items (suggested order)
 
-1. Create `notebooks/baseline/` (or similar) with `kernel-metadata.json` (`enable_gpu: true`).
+0. **Timing baseline first** (before any long GPU run): smallest useful subset + 1 epoch → 1–2 scaling runs (more data and/or epochs) → project wall-clock for full train. See Lessons / Process corrections.
+1. Create `notebooks/baseline/` (or similar) with `kernel-metadata.json` (`enable_gpu: true`, T4, internet if pretrained).
 2. Load manifests from Phase 2 (`train_fasc_clean.csv`, `train_apo_all.csv`) or regenerate in notebook.
 3. fastai `SegmentationItemList` / dataloaders with stretch-aligned image–mask pairs.
 4. Train fascicle model → export weights; train apo model → export weights.
@@ -193,7 +194,7 @@ Historical checklist — all items done or explicitly deferred.
 | 2026-06-12 | baseline-phase-3 v5 | resnet34 | fasc 2,749 + apo 1,048 | `TransformBlock(fn, ImageBlock)` invalid on Kaggle fastai | — | **error** |
 | 2026-06-12 | baseline-phase-3 v6 | resnet34 | fasc 2,749 + apo 1,048 | dataloader OK; ResNet34 weight download blocked (no internet) | — | **error** |
 | 2026-06-12 | baseline-phase-3 v7 | resnet34 | fasc 2,749 + apo 1,048 | weights OK; loss not inferred from mask batch | — | **error** |
-| 2026-06-12 | baseline-phase-3 v8 | resnet34 | fasc 2,749 + apo 1,048 | explicit `CrossEntropyLossFlat`; internet+T4 | — | **running** |
+| 2026-06-12 | baseline-phase-3 v8 | resnet34 | fasc 2,749 + apo 1,048 | full train, 10 epochs × 2; no timing baseline first; 6h+ RUNNING | — | **running** |
 
 ---
 
@@ -209,6 +210,7 @@ Historical checklist — all items done or explicitly deferred.
 | 2026-06-10 | Apo MT/PA edges: **contour + linear fit** (DLTrack-style), not horizontal row peaks | Replaces v1 row-peak prototype |
 | 2026-06-12 | Phase 3: **fastai + Kaggle GPU**; mm calibration deferred to pre-submit | — |
 | 2026-06-12 | Val split v1: random 80/20; **stratify by image size** noted for later | — |
+| 2026-06-12 | **Training timing baseline** before long GPU runs: tiny data + min epochs first, then scale to project wall-clock | — |
 | 2026-06-10 | Dual-track 1040 not 1048: 8 apo filenames on fasc exclude list | Expected, not a data bug |
 | 2026-06-10 | FL bimodality in px: driven by **800×1200 vs 1080×1640** image sizes | Not multi-fascicle per image |
 | 2026-06-10 | Split geometry into Kaggle + local notebooks; shared builder | — |
@@ -244,6 +246,7 @@ Historical checklist — all items done or explicitly deferred.
 - Histogram **ref** lines = competition **reference** plausible ranges for manual expert measurements, not model targets. (2026-06-12)
 - FL px bimodality tracks **image dimensions** (800×1200 vs 1080×1640), not multiple fascicles per image. (2026-06-10)
 - Kaggle `enable_gpu: true` defaults to **P100**, which is incompatible with current **fastai/PyTorch**. Use **T4**: `"machine_shape": "NvidiaTeslaT4"` + `kaggle kernels push --accelerator NvidiaTeslaT4`. (2026-06-12)
+- **Training timing baseline (mandatory before long runs):** Do not launch full-data, multi-epoch GPU training without a wall-clock baseline for that architecture + dataset. (1) Run smallest useful subset with minimum epochs (e.g. 1 epoch, N≈50–100 pairs). (2) Do 1–2 scaling runs (more data and/or more epochs). (3) Extrapolate time for the target config before committing GPU hours. v8 (2,749 fasc + 1,048 apo, 10 epochs × 2 models) ran 6h+ without this step. (2026-06-12)
 
 ### Technical notes (Phase 0/1)
 
