@@ -81,6 +81,7 @@ from PIL import Image
 import kagglehub
 from fastai.vision.all import (
     AddMaskCodes,
+    CrossEntropyLossFlat,
     Dice,
     IntToFloatTensor,
     PILImage,
@@ -288,6 +289,7 @@ if TRAIN_TRACK in ("fasc", "both"):
     fasc_learn = unet_learner(
         fasc_dls,
         encoder(),
+        loss_func=CrossEntropyLossFlat(axis=1),
         metrics=[Dice(), foreground_acc],
         self_attention=True,
     )
@@ -312,6 +314,7 @@ if TRAIN_TRACK in ("apo", "both"):
     apo_learn = unet_learner(
         apo_dls,
         encoder(),
+        loss_func=CrossEntropyLossFlat(axis=1),
         metrics=[Dice(), foreground_acc],
         self_attention=True,
     )
