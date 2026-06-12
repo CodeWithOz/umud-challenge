@@ -2,13 +2,13 @@
 
 ## Current focus
 
-_Last updated: 2026-06-12 (end of Phase 2 session — ready for Phase 3). Refresh at session start; verify against git and Kaggle before acting._
+_Last updated: 2026-06-12 (Phase 3 baseline v1 pushed to Kaggle GPU). Refresh at session start; verify against git and Kaggle before acting._
 
 **Best results:** _(none yet — no scored runs)_
 
-**Active notebooks:** Phase 0+1: `notebooks/data-audit/data-audit.ipynb` (Kaggle v3). Phase 2: `notebooks/geometry/geometry-phase-2.ipynb` (Kaggle v3) + `geometry-phase-2-local.ipynb` (local only). **Next to create:** Phase 3 fastai training notebook(s).
+**Active notebooks:** Phase 3: `notebooks/baseline/baseline-phase-3.ipynb` — **Kaggle v1 RUNNING** on GPU ([kernel](https://www.kaggle.com/code/ucheozoemena/umud-baseline-phase-3-fastai-u-net)). Phase 0+1: `data-audit.ipynb` (v3). Phase 2: `geometry-phase-2.ipynb` (v3) + local.
 
-**Where we are:** Phases 0–2 **done**. User signed off geometry v3 QC (apo invert+contour edges, fasc stretch). Clean manifests exported. **Start Phase 3:** fastai U-Net segmentation on Kaggle **GPU** — separate fasc + apo models, stretch-aligned pairs, segment-then-measure at inference.
+**Where we are:** Phase 3 **started**. fastai U-Net baseline trains fasc + apo models (stretch-aligned, 80/20 val split, resnet34, 384px, 10 epochs each). Exports `fasc_baseline.pkl` / `apo_baseline.pkl` to kernel output. Next after run: val Dice/preview, submission notebook (segment-then-measure).
 
 **Carry-forward (not blocking Phase 3):**
 - **mm calibration** — Option C: deferred until **before leaderboard submit**; build baseline in pixels first.
@@ -186,6 +186,7 @@ Historical checklist — all items done or explicitly deferred.
 | 2026-06-09 | geometry-phase-2 v1 | — | competition | Manifests; px geometry; row-peak apo QC (flawed) | — | superseded |
 | 2026-06-10 | geometry-phase-2 v2 | — | competition + local | Contour edges; MT 3-point mean; FL bin = image resolution; docs | — | superseded |
 | 2026-06-10 | geometry-phase-2 v3 | — | competition + local | Kaggle/local split; user QC approved; manifests + geometry CSVs | — | **complete** |
+| 2026-06-12 | baseline-phase-3 v1 | resnet34 | fasc 2,749 + apo 1,048 | fastai U-Net; stretch align; 384px; 10 epochs each; GPU | — | **running** |
 
 ---
 

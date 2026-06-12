@@ -249,18 +249,12 @@ def make_dblock(fnames: list[str], img_key: str, mask_key: str) -> DataBlock:
         return fnames
 
     def get_x(fname):
-        return lookups[img_key][fname]
+        return open_image_rgb(lookups[img_key][fname])
 
     def get_y(fname):
-        return lookups[mask_key][fname]
-
-    def open_x(path):
-        return open_image_rgb(path)
-
-    def open_y(mask_path, opened_img):
-        h, w = opened_img.shape[-2], opened_img.shape[-1]
-        mask = load_mask(mask_path)
-        aligned = align_mask(mask, h, w)
+        img = load_gray(lookups[img_key][fname])
+        mask = load_mask(lookups[mask_key][fname])
+        aligned = align_mask(mask, img.shape[0], img.shape[1])
         return TensorMask(aligned.astype(np.int64))
 
     return DataBlock(
@@ -268,8 +262,6 @@ def make_dblock(fnames: list[str], img_key: str, mask_key: str) -> DataBlock:
         get_items=get_items,
         get_x=get_x,
         get_y=get_y,
-        open_x=open_x,
-        open_y=open_y,
         splitter=RandomSplitter(valid_pct=VALID_PCT, seed=RANDOM_SEED),
         item_tfms=Resize(IMG_SIZE),
         batch_tfms=aug_transforms(size=IMG_SIZE, min_scale=0.75, flip_vert=False, do_flip=True),
