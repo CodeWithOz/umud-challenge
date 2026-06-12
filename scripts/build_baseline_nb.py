@@ -83,10 +83,11 @@ from fastai.vision.all import (
     Dice,
     ImageBlock,
     MaskBlock,
+    PILImage,
+    PILMask,
     RandomSplitter,
     Resize,
-    TensorImage,
-    TensorMask,
+    TransformBlock,
     aug_transforms,
     foreground_acc,
     resnet34,
@@ -238,30 +239,27 @@ def encoder():
     return resnet50 if ARCH == "resnet50" else resnet34
 
 
-def open_image_rgb(path: Path) -> TensorImage:
-    gray = load_gray(path)
-    rgb = np.stack([gray, gray, gray], axis=-1)
-    return TensorImage(rgb)
-
-
 def make_dblock(fnames: list[str], img_key: str, mask_key: str) -> DataBlock:
     def get_items(_):
         return fnames
 
-    def get_x(fname):
-        return open_image_rgb(lookups[img_key][fname])
+    def open_img(fname):
+        gray = load_gray(lookups[img_key][fname])
+        rgb = np.stack([gray, gray, gray], axis=-1).astype(np.uint8)
+        return PILImage.create(rgb)
 
-    def get_y(fname):
+    def open_mask(fname):
         img = load_gray(lookups[img_key][fname])
         mask = load_mask(lookups[mask_key][fname])
         aligned = align_mask(mask, img.shape[0], img.shape[1])
-        return TensorMask(aligned.astype(np.int64))
+        return PILMask.create(aligned.astype(np.uint8))
 
     return DataBlock(
-        blocks=(ImageBlock, MaskBlock(codes=SEG_CODES)),
+        blocks=(
+            TransformBlock(open_img, ImageBlock),
+            TransformBlock(open_mask, MaskBlock(codes=SEG_CODES)),
+        ),
         get_items=get_items,
-        get_x=get_x,
-        get_y=get_y,
         splitter=RandomSplitter(valid_pct=VALID_PCT, seed=RANDOM_SEED),
         item_tfms=Resize(IMG_SIZE),
         batch_tfms=aug_transforms(size=IMG_SIZE, min_scale=0.75, flip_vert=False, do_flip=True),

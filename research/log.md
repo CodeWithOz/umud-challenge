@@ -6,7 +6,7 @@ _Last updated: 2026-06-12 (Phase 3 baseline v1 pushed to Kaggle GPU). Refresh at
 
 **Best results:** _(none yet — no scored runs)_
 
-**Active notebooks:** Phase 3: `notebooks/baseline/baseline-phase-3.ipynb` — **Kaggle v4 RUNNING** on T4 ([kernel](https://www.kaggle.com/code/ucheozoemena/umud-baseline-phase-3-fastai-u-net)). v3 failed: `DataBlock.dataloaders()` missing `source`. Phase 0+1: `data-audit.ipynb` (v3). Phase 2: `geometry-phase-2.ipynb` (v3) + local.
+**Active notebooks:** Phase 3: `notebooks/baseline/baseline-phase-3.ipynb` — **Kaggle v5 RUNNING** on T4 ([kernel](https://www.kaggle.com/code/ucheozoemena/umud-baseline-phase-3-fastai-u-net)). v4 failed: PIL cannot handle `TensorImage` HWC layout. Phase 0+1: `data-audit.ipynb` (v3). Phase 2: `geometry-phase-2.ipynb` (v3) + local.
 
 **Where we are:** Phase 3 **started**. fastai U-Net baseline trains fasc + apo models (stretch-aligned, 80/20 val split, resnet34, 384px, 10 epochs each). Exports `fasc_baseline.pkl` / `apo_baseline.pkl` to kernel output. Next after run: val Dice/preview, submission notebook (segment-then-measure).
 
@@ -189,7 +189,8 @@ Historical checklist — all items done or explicitly deferred.
 | 2026-06-12 | baseline-phase-3 v1 | resnet34 | fasc 2,749 + apo 1,048 | fastai U-Net; DataBlock `open_x`/`open_y` TypeError | — | **error** |
 | 2026-06-12 | baseline-phase-3 v2 | resnet34 | fasc 2,749 + apo 1,048 | notebook not regenerated; still `open_x`/`open_y`; P100 | — | **error** |
 | 2026-06-12 | baseline-phase-3 v3 | resnet34 | fasc 2,749 + apo 1,048 | T4 OK; `dataloaders()` missing `source` arg | — | **error** |
-| 2026-06-12 | baseline-phase-3 v4 | resnet34 | fasc 2,749 + apo 1,048 | pass `fnames` as `dataloaders` source; T4 | — | **running** |
+| 2026-06-12 | baseline-phase-3 v4 | resnet34 | fasc 2,749 + apo 1,048 | `TensorImage` dtype error in Resize/PIL | — | **error** |
+| 2026-06-12 | baseline-phase-3 v5 | resnet34 | fasc 2,749 + apo 1,048 | `TransformBlock` + `PILImage`/`PILMask`; T4 | — | **running** |
 
 ---
 
