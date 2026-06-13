@@ -2,11 +2,11 @@
 
 ## Current focus
 
-_Last updated: 2026-06-13 (inline timing runs 1–2 complete; pivot to prep+train dataset ladder)._
+_Last updated: 2026-06-12 (AT4 complete; both baseline models exported)._
 
 **Best results:** _(none yet — no scored runs)_
 
-**Active notebooks:** **Both baseline models trained** — `fasc_baseline.pkl` (T4) + `apo_baseline.pkl` (AT4). Next: val Dice, submission notebook, mm calibration.
+**Active notebooks:** **Both baseline models trained** — `fasc_baseline.pkl` (T4) + `apo_baseline.pkl` (AT4). **Scaffolded:** `eval-val-dice-phase-3` + `submission-phase-3`. Next: run val Dice on Kaggle, mm calibration, first submit.
 
 ### Phase 3 vs Phase 4 boundary
 
@@ -162,8 +162,9 @@ Dataset: `ucheozoemena/umud-aligned-apo-timing-200`.
 |-----|-------|--------|-------------------------------------------|
 | **AP4 prep** | 1,048 | **93.0 s** total | **0.089** |
 | **T4 train** | 2,749 × 10 ep | **1474.3 s (~24.6 min)** | **0.054** |
+| **AT4 train** | 1,048 × 10 ep | **583.3 s (~9.7 min)** | **0.056** |
 
-Both in line with scaling ladder. Models: `fasc_baseline.pkl` exported. Datasets: `umud-aligned-apo-full`, `umud-aligned-fasc-full`.
+Both in line with scaling ladder. Models: `fasc_baseline.pkl`, `apo_baseline.pkl` exported.
 
 ### P3/T3 scaling check results (50% data, 50% epochs)
 
@@ -271,7 +272,7 @@ umud-aligned-fasc-timing-50/
 2. ~~**P2:** prep (200 fasc) → dataset → **T2** train benchmark.~~ **Done**
 3. ~~**Full fasc prep** (`umud-aligned-fasc-full`)~~ **Done**; ~~**T4 full fasc train** (2749×10ep)~~ **Done** (~24.6 min).
 4. **Apo track:** ~~AP1–AP3 timing ladder~~ **Done**; ~~**full apo prep + train**~~ **Done** (AT4: 583s, 0.056 s/pair/epoch).
-5. Val Dice; submission notebook; **mm calibration before first submit** (still Phase 3).
+5. ~~Submission notebook scaffold~~ **Done** (`notebooks/submission/`). **Val Dice** eval notebook scaffold (`notebooks/eval-val-dice/`). Run both on Kaggle; **mm calibration before first submit** (still Phase 3).
 
 ### Key inputs from Phase 2
 
