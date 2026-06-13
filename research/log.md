@@ -6,7 +6,7 @@ _Last updated: 2026-06-13 (inline timing runs 1–2 complete; pivot to prep+trai
 
 **Best results:** _(none yet — no scored runs)_
 
-**Active notebooks:** **AP3/AT3** (524 apo, 5 ep) → full apo prep → full fasc train (per plan).
+**Active notebooks:** **T4 full fasc train complete** (2749×10ep). Full apo prep done; full apo train + submission pipeline remain in Phase 3.
 
 ### Phase 3 vs Phase 4 boundary
 
@@ -144,6 +144,17 @@ Apo prep faster (no fasc empty-mask scan). Train rate matches fasc at N=50. Data
 **Full apo projection (from AT2 rate):** prep ~2 min + train 1,048 × 0.111 × 10 ≈ **19 min** on T4.
 
 Dataset: `ucheozoemena/umud-aligned-apo-timing-200`.
+
+### Apo track — AP3/AT3 (524 pairs, 5 ep — 50% apo)
+
+| Axis | Projected (AT2 rate) | Actual | In line? |
+|------|----------------------|--------|----------|
+| Prep total | ~49 s | **45.6 s** | Yes |
+| Prep sec/pair | 0.093 | **0.087** | Yes |
+| Train total (5 ep) | ~290 s | **151.5 s** | **Faster** (matches fasc T3) |
+| Train sec/pair/epoch | 0.111 | **0.058** | Yes — same as fasc T3 |
+
+**Full apo projection (from AT3):** prep ~1.5 min + train 1,048 × 0.058 × 10 ≈ **10 min**.
 
 ### P3/T3 scaling check results (50% data, 50% epochs)
 
