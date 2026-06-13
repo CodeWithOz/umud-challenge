@@ -47,7 +47,7 @@ cells.append(
     code(
         """# --- Parameters you can change ---
 RANDOM_SEED = 42
-PREP_RUN = 2  # 1 = 50 pairs, 2 = 200 pairs
+PREP_RUN = 1  # 1 = 50 pairs, 2 = 200 pairs
 
 IMG_SIZE = 256
 FASC_NEAR_EMPTY_THRESHOLD = 0.0005

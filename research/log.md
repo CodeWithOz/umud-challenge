@@ -6,7 +6,7 @@ _Last updated: 2026-06-13 (inline timing runs 1–2 complete; pivot to prep+trai
 
 **Best results:** _(none yet — no scored runs)_
 
-**Active notebooks:** T1 **complete** (v6). **P2 prep** (200 fasc) → **T2 train** next.
+**Active notebooks:** P1–P2 prep and **T1–T2 train timing baselines complete**. Next: full fasc prep dataset + multi-epoch train (or apo track).
 
 **Where we are:** Inline train proved infeasible (~54–103h full fasc@10ep). Adopt **prep notebook → Kaggle dataset → train notebook** ([birdclef_2026](https://github.com/CodeWithOz/birdclef_2026)). Dual timing ladder: benchmark **prep** and **train** separately at N=50 → 200 before scaling up.
 
@@ -66,6 +66,18 @@ First **learned** baseline: train mask segmentation with **fastai** on Kaggle **
 | **Stratify val split by image size** | FL bimodality is driven by **800×1200** vs **1080×1640** cohorts. After baseline works, try val split stratified on `(img_h, img_w)` so both resolutions appear in train and val. User wants this kept as a future experiment. |
 | Refine PA geometry | Prototype PA (fascicle PCA vs deep apo slope) underestimates vs competition ref 5–45°. Improve before trusting mask-derived PA for analysis. |
 | DLTrack comparison | Run DLTrack on a sample for cross-check if needed. |
+
+Full fasc prep extrapolation @ 0.088 s/pair: ~242 s (~4 min) for 2,749 pairs (CPU).
+
+### P2 prep results (v3 — success)
+
+| Metric | P1 (50) | P2 (200) |
+|--------|---------|----------|
+| Manifest scan | 35.5 s | 40.4 s |
+| Transform | 4.4 s (0.088 s/pair) | 22.9 s (0.114 s/pair) |
+| Total prep | 39.9 s | 63.4 s |
+
+P2 dataset **`umud-aligned-fasc-timing-200`** ready.
 
 ### T1 mounted train results (v6 — success)
 

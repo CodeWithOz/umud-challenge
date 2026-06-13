@@ -76,4 +76,4 @@ _This section is updated whenever a new lesson is discovered. Any AI agent worki
 | 2026-06 | fastai / modern PyTorch on Kaggle: use **T4** (`NvidiaTeslaT4`), not P100 (`enable_gpu: true` alone defaults to P100). |
 | 2026-06 | **Kaggle-native gen notebooks** publish datasets via `kaggle datasets version/create` from inside the prep kernel (BirdCLEF `gen-species-1/2`, commit `b003ac9`). Split prep when session limit hit. |
 | 2026-06 | `kaggle datasets` skips loose folders — zip batches to staging (BirdCLEF `batch_*.zip` + `dataset-metadata.json` alongside). Check stdout for errors; CLI may print success on failure. |
-| 2026-06 | Bake **256×256 resize at prep** (NEAREST masks) — faster I/O + GPU; new dataset version if higher res needed. |
+| 2026-06 | Changing `dataset_sources` on an existing kernel may not remount inputs — use `kagglehub.dataset_download` fallback or update Kaggle sidebar. |
