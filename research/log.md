@@ -27,8 +27,6 @@ _Last updated: 2026-06-13 (inline timing runs 1–2 complete; pivot to prep+trai
 | **Not blocked on** | Training — models train in pixels at 256px; calibration is a post-train multiply on measured lengths. |
 | **How?** | Hunt scale from OSF/DLTrack docs, tick marks, or image metadata (TIFF tags empty in sample; deferred from Phase 2). |
 
-**Active notebooks:** **AP3/AT3** (524 apo, 5 ep) → full apo prep → full fasc train (per plan).
-
 **Carry-forward (not blocking Phase 3):**
 - **mm calibration** — Option C: deferred until **before leaderboard submit**; build baseline in pixels first.
 - **PA geometry** — prototype skews low vs competition ref range (74/200 &lt;5°); refine measure step later.
