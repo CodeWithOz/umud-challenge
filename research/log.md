@@ -6,7 +6,7 @@ _Last updated: 2026-06-13 (inline timing runs 1–2 complete; pivot to prep+trai
 
 **Best results:** _(none yet — no scored runs)_
 
-**Active notebooks:** **P3/T3 scaling check** — 1,374 fasc pairs (50% of 2,749) + **5 epochs** (50% of 10). Validate prep/train projections before full run.
+**Active notebooks:** **P3/T3 complete** — 50% scaling check confirms prep linear and train faster than T2 extrapolation. Ready for full fasc when approved.
 
 **Where we are:** P1–P2 timing ladder complete (0.11 s/pair/epoch train @ N=200). P3/T3 tests mid-scale scaling before committing to full fasc prep + 10-epoch train.
 
@@ -96,6 +96,21 @@ P2 dataset **`umud-aligned-fasc-timing-200`** ready.
 | Train wall-clock (1 ep) | 7.9 s | **21.4 s** |
 
 T2 used `kagglehub.dataset_download` fallback (mount path missing after metadata swap on same kernel).
+
+### P3/T3 scaling check results (50% data, 50% epochs)
+
+**Config:** 1,374 fasc pairs (50% of 2,749 clean) · **5 epochs** (50% of 10) · 256px · resnet34 · T4
+
+| Axis | Projected (from P2/T2 rates) | Actual | In line? |
+|------|------------------------------|--------|----------|
+| Prep total | ~197 s | **187.4 s** | Yes |
+| Prep sec/pair | 0.114 | **0.115** | Yes |
+| Train total (5 ep) | ~735 s | **397.2 s** | **Faster** — better GPU util at scale |
+| Train sec/pair/epoch | 0.107 | **0.058** | **Faster** — improves with N (50→200→1374) |
+
+**Revised full-fasc projection (from T3 rate):** prep ~5 min + train 2,749 × 0.058 × 10 ≈ **26 min** (vs ~49 min from T2 rate). Baseline extrapolation was conservative; mid-scale run confirms feasibility.
+
+Dataset: `ucheozoemena/umud-aligned-fasc-timing-1374` · Train kernel v10 complete.
 
 ### P3/T3 projections (before run — from P1–P2 rates)
 
