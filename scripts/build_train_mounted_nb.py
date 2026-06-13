@@ -42,31 +42,41 @@ cells.append(
     code(
         """# --- Parameters you can change ---
 RANDOM_SEED = 42
-TRAIN_RUN = 1  # 1 = mount timing-50, 2 = mount timing-200
+TRAIN_RUN = 3  # 1=timing-50, 2=timing-200, 3=timing-1374 (50% fasc)
 
 VALID_PCT = 0.20
 BATCH_SIZE = 8
-EPOCHS = 1
 ARCH = "resnet34"
 IMG_SIZE = 256  # must match prep dataset
+FASC_FULL_CLEAN = 2749
+FULL_EPOCHS = 10
 
 TRAIN_PROFILES = {
     1: {
         "dataset_slug": "ucheozoemena/umud-aligned-fasc-timing-50",
         "mount_name": "umud-aligned-fasc-timing-50",
+        "epochs": 1,
         "label": "T1 fasc 50×1ep",
     },
     2: {
         "dataset_slug": "ucheozoemena/umud-aligned-fasc-timing-200",
         "mount_name": "umud-aligned-fasc-timing-200",
+        "epochs": 1,
         "label": "T2 fasc 200×1ep",
+    },
+    3: {
+        "dataset_slug": "ucheozoemena/umud-aligned-fasc-timing-1374",
+        "mount_name": "umud-aligned-fasc-timing-1374",
+        "epochs": FULL_EPOCHS // 2,
+        "label": "T3 fasc 1374×5ep (50% data, 50% epochs)",
     },
 }
 
 profile = TRAIN_PROFILES[TRAIN_RUN]
 DATASET_SLUG = profile["dataset_slug"]
 MOUNT_NAME = profile["mount_name"]
-print(f"TRAIN_RUN={TRAIN_RUN} | {profile['label']} | dataset={DATASET_SLUG}")
+EPOCHS = profile["epochs"]
+print(f"TRAIN_RUN={TRAIN_RUN} | {profile['label']} | dataset={DATASET_SLUG} | epochs={EPOCHS}")
 """
     )
 )

@@ -47,11 +47,12 @@ cells.append(
     code(
         """# --- Parameters you can change ---
 RANDOM_SEED = 42
-PREP_RUN = 1  # 1 = 50 pairs, 2 = 200 pairs
+PREP_RUN = 3  # 1=50, 2=200, 3=1374 (50% fasc)
 
 IMG_SIZE = 256
 FASC_NEAR_EMPTY_THRESHOLD = 0.0005
 DEFAULT_ALIGN_MODE = "stretch"
+FASC_FULL_CLEAN = 2749
 
 PREP_PROFILES = {
     1: {
@@ -65,6 +66,12 @@ PREP_PROFILES = {
         "dataset_id": "ucheozoemena/umud-aligned-fasc-timing-200",
         "dataset_title": "UMUD Aligned Fasc Timing 200",
         "version_msg": "P2 timing: 200 fasc pairs, 256px stretch-aligned",
+    },
+    3: {
+        "max_samples": FASC_FULL_CLEAN // 2,
+        "dataset_id": "ucheozoemena/umud-aligned-fasc-timing-1374",
+        "dataset_title": "UMUD Aligned Fasc Timing 1374",
+        "version_msg": "P3 scaling check: 50% fasc pairs (1374), 256px stretch-aligned",
     },
 }
 

@@ -6,9 +6,9 @@ _Last updated: 2026-06-13 (inline timing runs 1–2 complete; pivot to prep+trai
 
 **Best results:** _(none yet — no scored runs)_
 
-**Active notebooks:** P1–P2 prep and **T1–T2 train timing baselines complete**. Next: full fasc prep dataset + multi-epoch train (or apo track).
+**Active notebooks:** **P3/T3 scaling check** — 1,374 fasc pairs (50% of 2,749) + **5 epochs** (50% of 10). Validate prep/train projections before full run.
 
-**Where we are:** Inline train proved infeasible (~54–103h full fasc@10ep). Adopt **prep notebook → Kaggle dataset → train notebook** ([birdclef_2026](https://github.com/CodeWithOz/birdclef_2026)). Dual timing ladder: benchmark **prep** and **train** separately at N=50 → 200 before scaling up.
+**Where we are:** P1–P2 timing ladder complete (0.11 s/pair/epoch train @ N=200). P3/T3 tests mid-scale scaling before committing to full fasc prep + 10-epoch train.
 
 **Carry-forward (not blocking Phase 3):**
 - **mm calibration** — Option C: deferred until **before leaderboard submit**; build baseline in pixels first.
@@ -97,6 +97,15 @@ P2 dataset **`umud-aligned-fasc-timing-200`** ready.
 
 T2 used `kagglehub.dataset_download` fallback (mount path missing after metadata swap on same kernel).
 
+### P3/T3 projections (before run — from P1–P2 rates)
+
+| Axis | Rate source | Projected P3/T3 |
+|------|-------------|-------------------|
+| Prep transform | P2: 0.114 s/pair | 1374 × 0.114 ≈ **157 s** (+ ~40 s manifest) |
+| Train | T2: 0.107 s/pair/epoch | 1374 × 0.107 × 5 ≈ **735 s (~12 min)** |
+
+Full fasc @ 10 ep projection if linear: 2749 × 0.107 × 10 ≈ **49 min** train.
+
 ### P1 prep results (v1 — upload failed; v2 fixes zip staging)
 
 | Metric | Value |
@@ -140,7 +149,7 @@ Benchmark **both axes** before full dataset, same philosophy as runs 1–2:
 |------|---------------|-----------------|-------|--------|------|
 | **P1** | 50 | `umud-aligned-fasc-timing-50` | T1: mount P1 | 1 | prep wall-clock + train wall-clock at micro N |
 | **P2** | 200 | `…-timing-200` | T2: mount P2 | 1 | confirm linear-ish scaling on **both** prep and train |
-| *(optional)* **P3** | 200 @ 384px | `…-384px-200` | T3 | 1 | only if T2 Dice OK but needs resolution A/B |
+| **P3** | 1,374 (50% fasc) | `…-timing-1374` | T3: 5 ep (50% of 10) | Scaling check vs P1–P2 extrapolation |
 
 After P1–P2: extrapolate prep time for 2,749 + 1,048 and train time @ target epochs; add fp16 / resnet18 / checkpoints only after mounted-dataset train baseline exists.
 
