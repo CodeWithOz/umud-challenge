@@ -42,7 +42,7 @@ cells.append(
     code(
         """# --- Parameters you can change ---
 RANDOM_SEED = 42
-TRAIN_RUN = 1  # 1=timing-50, 2=timing-200, 3=timing-1374 (50% fasc)
+TRAIN_RUN = 1  # 1=timing-50, 2=timing-200, 3=timing-1374, 4=fasc-full
 
 VALID_PCT = 0.20
 BATCH_SIZE = 8
@@ -69,6 +69,12 @@ TRAIN_PROFILES = {
         "mount_name": "umud-aligned-fasc-timing-1374",
         "epochs": FULL_EPOCHS // 2,
         "label": "T3 fasc 1374×5ep (50% data, 50% epochs)",
+    },
+    4: {
+        "dataset_slug": "ucheozoemena/umud-aligned-fasc-full",
+        "mount_name": "umud-aligned-fasc-full",
+        "epochs": FULL_EPOCHS,
+        "label": "T4 fasc full 2749×10ep",
     },
 }
 

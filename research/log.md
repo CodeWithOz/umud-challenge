@@ -6,11 +6,28 @@ _Last updated: 2026-06-13 (inline timing runs 1–2 complete; pivot to prep+trai
 
 **Best results:** _(none yet — no scored runs)_
 
-**Active notebooks:** Apo **AP1–AP2 / AT1–AT2** timing ladder complete. Next: AP3 (50% apo) or full apo prep, per plan.
+**Active notebooks:** **AP3/AT3** (524 apo, 5 ep) → full apo prep → full fasc train (per plan).
 
-**Where we are:** Fasc full prep done. Apo train rate at N=200 (**0.111 s/pair/epoch**) matches fasc T2 (**0.107**).
+### Phase 3 vs Phase 4 boundary
 
-**Where we are:** Fasc dataset published. Apo timing ladder started — first micro benchmark matches fasc (~0.16 s/pair/epoch @ N=50).
+| | Phase 3 | Phase 4 |
+|---|---------|---------|
+| **Goal** | First learned baseline + **first leaderboard submission** | Improve score via iteration |
+| **Includes** | Full fasc + apo train, val Dice, submission notebook, **mm calibration before first submit** | Augmentation, architecture tweaks, re-trains, re-submits |
+| **Ends when** | Baseline score is on the leaderboard | — |
+
+**Your reading is correct:** full-dataset training is still Phase 3 (baseline, not iteration). Phase 4 starts when we deliberately chase a better score.
+
+### mm calibration (Option C) — when and where
+
+| Question | Answer |
+|----------|--------|
+| **When?** | After both models are trained, **before the first scored Kaggle submit** — still Phase 3 (work item 5). |
+| **Where?** | Submission/inference pipeline: convert pixel geometry (FL, MT) to mm using `mm_per_pixel`. PA stays in degrees. |
+| **Not blocked on** | Training — models train in pixels at 256px; calibration is a post-train multiply on measured lengths. |
+| **How?** | Hunt scale from OSF/DLTrack docs, tick marks, or image metadata (TIFF tags empty in sample; deferred from Phase 2). |
+
+**Active notebooks:** **AP3/AT3** (524 apo, 5 ep) → full apo prep → full fasc train (per plan).
 
 **Carry-forward (not blocking Phase 3):**
 - **mm calibration** — Option C: deferred until **before leaderboard submit**; build baseline in pixels first.
@@ -118,6 +135,18 @@ Dataset **`ucheozoemena/umud-aligned-fasc-full`** ready.
 
 Apo prep faster (no fasc empty-mask scan). Train rate matches fasc at N=50. Datasets: `umud-aligned-apo-timing-50`.
 
+### Apo track — AP2/AT2 (200 pairs, 1 ep)
+
+| Axis | AP1 (50) | AP2 (200) | Fasc T2 (compare) |
+|------|----------|-----------|-------------------|
+| Prep total | 4.7 s | **18.6 s** | 63.4 s |
+| Prep sec/pair | 0.094 | **0.093** | 0.114 |
+| Train sec/pair/epoch | 0.161 | **0.111** | 0.107 |
+
+**Full apo projection (from AT2 rate):** prep ~2 min + train 1,048 × 0.111 × 10 ≈ **19 min** on T4.
+
+Dataset: `ucheozoemena/umud-aligned-apo-timing-200`.
+
 ### P3/T3 scaling check results (50% data, 50% epochs)
 
 **Config:** 1,374 fasc pairs (50% of 2,749 clean) · **5 epochs** (50% of 10) · 256px · resnet34 · T4
@@ -223,7 +252,7 @@ umud-aligned-fasc-timing-50/
 1. ~~**P1:** prep notebook (50 fasc) → dataset → **T1** train benchmark.~~ **Done**
 2. ~~**P2:** prep (200 fasc) → dataset → **T2** train benchmark.~~ **Done**
 3. ~~**Full fasc prep** (`umud-aligned-fasc-full`, 2,749 pairs)~~ **Done**; 10-epoch train pending.
-4. **Apo track:** ~~AP1 prep (50) → AT1 train~~ **Done**; AP2/AT2 (200) next in ladder.
+4. **Apo track:** ~~AP1–AP2 prep / AT1–AT2 train~~ **Done**; AP3 (524×5ep) or full apo prep next.
 5. Val Dice; submission notebook; mm calibration before submit.
 
 ### Key inputs from Phase 2
