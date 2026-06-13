@@ -6,7 +6,7 @@ _Last updated: 2026-06-13 (inline timing runs 1–2 complete; pivot to prep+trai
 
 **Best results:** _(none yet — no scored runs)_
 
-**Active notebooks:** **AT4 full apo train** (1048×10ep) running. Projection ~10 min from AT3 rate.
+**Active notebooks:** **Both baseline models trained** — `fasc_baseline.pkl` (T4) + `apo_baseline.pkl` (AT4). Next: val Dice, submission notebook, mm calibration.
 
 ### Phase 3 vs Phase 4 boundary
 
@@ -270,7 +270,7 @@ umud-aligned-fasc-timing-50/
 1. ~~**P1:** prep notebook (50 fasc) → dataset → **T1** train benchmark.~~ **Done**
 2. ~~**P2:** prep (200 fasc) → dataset → **T2** train benchmark.~~ **Done**
 3. ~~**Full fasc prep** (`umud-aligned-fasc-full`)~~ **Done**; ~~**T4 full fasc train** (2749×10ep)~~ **Done** (~24.6 min).
-4. **Apo track:** ~~AP1–AP3 timing ladder~~ **Done**; ~~**full apo prep**~~ **Done**; **full apo train** (1048×10ep) next.
+4. **Apo track:** ~~AP1–AP3 timing ladder~~ **Done**; ~~**full apo prep + train**~~ **Done** (AT4: 583s, 0.056 s/pair/epoch).
 5. Val Dice; submission notebook; **mm calibration before first submit** (still Phase 3).
 
 ### Key inputs from Phase 2

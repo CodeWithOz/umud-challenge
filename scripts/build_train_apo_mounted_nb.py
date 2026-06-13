@@ -40,7 +40,7 @@ cells.append(
     code(
         """# --- Parameters you can change ---
 RANDOM_SEED = 42
-TRAIN_RUN = 4  # 1=timing-50, 2=timing-200, 3=timing-524, 4=apo-full
+TRAIN_RUN = 1  # 1=timing-50, 2=timing-200, 3=timing-524, 4=apo-full
 
 VALID_PCT = 0.20
 BATCH_SIZE = 8
