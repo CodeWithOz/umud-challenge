@@ -40,7 +40,7 @@ cells.append(
     code(
         """# --- Parameters you can change ---
 RANDOM_SEED = 42
-TRAIN_RUN = 3  # 1=timing-50, 2=timing-200, 3=timing-524 (50% apo)
+TRAIN_RUN = 4  # 1=timing-50, 2=timing-200, 3=timing-524, 4=apo-full
 
 VALID_PCT = 0.20
 BATCH_SIZE = 8
@@ -64,6 +64,11 @@ TRAIN_PROFILES = {
         "dataset_slug": "ucheozoemena/umud-aligned-apo-timing-524",
         "epochs": FULL_EPOCHS // 2,
         "label": "AT3 apo 524×5ep (50% data, 50% epochs)",
+    },
+    4: {
+        "dataset_slug": "ucheozoemena/umud-aligned-apo-full",
+        "epochs": FULL_EPOCHS,
+        "label": "AT4 apo full 1048×10ep",
     },
 }
 

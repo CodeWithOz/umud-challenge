@@ -6,7 +6,7 @@ _Last updated: 2026-06-13 (inline timing runs 1–2 complete; pivot to prep+trai
 
 **Best results:** _(none yet — no scored runs)_
 
-**Active notebooks:** **T4 full fasc train complete** (2749×10ep). Full apo prep done; full apo train + submission pipeline remain in Phase 3.
+**Active notebooks:** **AT4 full apo train** (1048×10ep) running. Projection ~10 min from AT3 rate.
 
 ### Phase 3 vs Phase 4 boundary
 
@@ -156,6 +156,15 @@ Dataset: `ucheozoemena/umud-aligned-apo-timing-200`.
 
 **Full apo projection (from AT3):** prep ~1.5 min + train 1,048 × 0.058 × 10 ≈ **10 min**.
 
+### AP4 full apo prep + T4 full fasc train
+
+| Run | Pairs | Result | sec/pair (prep) or sec/pair/epoch (train) |
+|-----|-------|--------|-------------------------------------------|
+| **AP4 prep** | 1,048 | **93.0 s** total | **0.089** |
+| **T4 train** | 2,749 × 10 ep | **1474.3 s (~24.6 min)** | **0.054** |
+
+Both in line with scaling ladder. Models: `fasc_baseline.pkl` exported. Datasets: `umud-aligned-apo-full`, `umud-aligned-fasc-full`.
+
 ### P3/T3 scaling check results (50% data, 50% epochs)
 
 **Config:** 1,374 fasc pairs (50% of 2,749 clean) · **5 epochs** (50% of 10) · 256px · resnet34 · T4
@@ -260,9 +269,9 @@ umud-aligned-fasc-timing-50/
 
 1. ~~**P1:** prep notebook (50 fasc) → dataset → **T1** train benchmark.~~ **Done**
 2. ~~**P2:** prep (200 fasc) → dataset → **T2** train benchmark.~~ **Done**
-3. ~~**Full fasc prep** (`umud-aligned-fasc-full`, 2,749 pairs)~~ **Done**; 10-epoch train pending.
-4. **Apo track:** ~~AP1–AP2 prep / AT1–AT2 train~~ **Done**; AP3 (524×5ep) or full apo prep next.
-5. Val Dice; submission notebook; mm calibration before submit.
+3. ~~**Full fasc prep** (`umud-aligned-fasc-full`)~~ **Done**; ~~**T4 full fasc train** (2749×10ep)~~ **Done** (~24.6 min).
+4. **Apo track:** ~~AP1–AP3 timing ladder~~ **Done**; ~~**full apo prep**~~ **Done**; **full apo train** (1048×10ep) next.
+5. Val Dice; submission notebook; **mm calibration before first submit** (still Phase 3).
 
 ### Key inputs from Phase 2
 
