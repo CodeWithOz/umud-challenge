@@ -6,7 +6,7 @@ _Last updated: 2026-06-13 (inline timing runs 1–2 complete; pivot to prep+trai
 
 **Best results:** _(none yet — no scored runs)_
 
-**Active notebooks:** Inline timing **v9–v10 complete** (runs 1–2). Runs 3–5 cancelled. **Next:** prep dataset ladder (BirdCLEF pattern) — not full dataset yet. [kernel](https://www.kaggle.com/code/ucheozoemena/umud-baseline-phase-3-fastai-u-net)
+**Active notebooks:** **P1 prep** (`umud-prep-fasc-timing`, PREP_RUN=1) → **T1 train** (`umud-train-mounted-phase-3`). Inline baseline v9–v10 kept for reference only.
 
 **Where we are:** Inline train proved infeasible (~54–103h full fasc@10ep). Adopt **prep notebook → Kaggle dataset → train notebook** ([birdclef_2026](https://github.com/CodeWithOz/birdclef_2026)). Dual timing ladder: benchmark **prep** and **train** separately at N=50 → 200 before scaling up.
 
@@ -78,15 +78,16 @@ Runs 3–5 on inline train **cancelled**. Bottleneck: TIFF load + stretch-align 
 
 ### BirdCLEF reference workflow ([birdclef_2026](https://github.com/CodeWithOz/birdclef_2026))
 
-Applicable pattern — same three layers:
+**Correct pattern** (post-`b003ac9` — Kaggle-native gen notebooks; **not** early local `scripts/` upload):
 
 | Layer | BirdCLEF | UMUD equivalent |
 |-------|----------|-----------------|
-| Prep | `scripts/generate_spectrogram_batches.py` → mel PNG zips; Kaggle notebooks for pseudo-label spectrograms | `notebooks/prep/` → stretch-align, **resize 256**, PNG pairs + manifests |
-| Dataset | `species-001-010`, `species-011-090`, `soundscape-spectrograms` on Kaggle | `umud-aligned-fasc-50`, `umud-aligned-fasc-200`, … (versioned) |
-| Train | `multilabel-234/training.ipynb` with `dataset_sources`, `rglob` PNG lookup | `notebooks/baseline/` mounts dataset only; no competition TIFFs |
+| Gen prep | `multilabel-234-v2-gen-species-1/2` CPU notebooks: competition mount → process batches → `/kaggle/working/upload/` → `kaggle datasets version/create` **from notebook** | `notebooks/prep-fasc-timing/` (`PREP_RUN` 1=50, 2=200 fasc pairs) |
+| Split when session limit | gen-species-1: ranks 1–50 → `species-v2-001-050`; gen-species-2: 51+ → `species-v2-051-206` | Separate dataset slugs per timing tier; full 2,749 may need multi-notebook split later |
+| Train | `multilabel-234-v2` with `dataset_sources`; `get_image_files` on mounted PNGs | `notebooks/train-mounted/` (`TRAIN_RUN` 1→timing-50, 2→timing-200) |
+| Auth | Pre-authenticated on Kaggle — no secrets cell (`39becdc`) | Same |
 
-Key commits: `f6b2028` (spectrogram script), `438d2b3` (soundscape pipeline), `a15ce3e` (kernel metadata + dataset_sources), `3868ee6` (AGENTS workflow rules).
+Key commits: `b003ac9` (gen-species notebooks), `924ba26` (mount auto-extracted datasets, no unzip), `39becdc` (drop kaggle_secrets).
 
 ### Prep + train timing ladder (next — do NOT jump to full 2,749 + 1,048)
 
@@ -116,9 +117,9 @@ After P1–P2: extrapolate prep time for 2,749 + 1,048 and train time @ target e
 
 ### Prep dataset workflow (decision — BirdCLEF pattern)
 
-1. **`notebooks/prep/`** (CPU ok): competition TIFFs via `kagglehub` → stretch-align → **resize 256** (NEAREST masks) → PNG pairs + CSVs → `/kaggle/working/`.
-2. **Publish Kaggle dataset** (`kaggle datasets create` / `version`). Small tiers first (50, 200 pairs).
-3. **`notebooks/baseline/` train**: `dataset_sources` only; `rglob` lookup; **no** `align_mask` or manifest scan.
+1. **`notebooks/prep-fasc-timing/`** (CPU, internet on): competition TIFFs from `/kaggle/input/competitions/...` → stretch-align → **resize 256** (NEAREST masks) → PNG pairs + CSVs → `/kaggle/working/upload/`.
+2. **Publish from notebook** via `kaggle datasets version` / `create` (subprocess). Small tiers first (50, 200 pairs).
+3. **`notebooks/train-mounted/`**: `dataset_sources` only; `get_image_files`; **no** `align_mask` or manifest scan.
 
 **Dataset layout:**
 
