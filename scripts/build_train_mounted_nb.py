@@ -80,11 +80,20 @@ import time
 from pathlib import Path
 
 import pandas as pd
-from fastai.vision.all import *
-from fastai.vision.core import PILImage, PILMask
-from fastai.vision.data import ImageBlock, MaskBlock, TransformBlock
-from fastai.vision.augment import Resize
-from fastai.layers import CrossEntropyLossFlat
+from fastai.vision.all import (
+    CrossEntropyLossFlat,
+    Dice,
+    Normalize,
+    PILImage,
+    PILMask,
+    RandomSplitter,
+    Resize,
+    TransformBlock,
+    aug_transforms,
+    get_image_files,
+    unet_learner,
+)
+from fastai.data.block import DataBlock
 
 DATASET_ROOT = Path(f"/kaggle/input/datasets/{DATASET_SLUG}")
 WORKING = Path("/kaggle/working")
