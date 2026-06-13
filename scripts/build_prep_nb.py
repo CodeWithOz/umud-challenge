@@ -265,8 +265,15 @@ for z in zips:
 
 def upload_ok(result: subprocess.CompletedProcess) -> bool:
     out = (result.stdout or "") + (result.stderr or "")
-    bad = ("error" in out.lower() and "error log" not in out.lower()) or "forbidden" in out.lower()
-    return result.returncode == 0 and not bad
+    if "Your private Dataset is being created" in out:
+        return True
+    if "Dataset creation error" in out or "Upload failed" in out:
+        return False
+    if result.returncode != 0:
+        return False
+    if "Upload successful" in out:
+        return True
+    return False
 
 print("Running: kaggle datasets version ...")
 result = subprocess.run(

@@ -67,6 +67,19 @@ First **learned** baseline: train mask segmentation with **fastai** on Kaggle **
 | Refine PA geometry | Prototype PA (fascicle PCA vs deep apo slope) underestimates vs competition ref 5–45°. Improve before trusting mask-derived PA for analysis. |
 | DLTrack comparison | Run DLTrack on a sample for cross-check if needed. |
 
+### P1 prep results (v1 — upload failed; v2 fixes zip staging)
+
+| Metric | Value |
+|--------|-------|
+| Clean fasc pairs | 2,749 |
+| Prep targets | 50 |
+| Manifest scan | 35.5 s |
+| Transform (align+resize) | 4.4 s (0.088 s/pair) |
+| Total prep | 39.9 s |
+| Upload | **Failed** — CLI skipped loose `images/`/`masks/` folders; fixed in v2 with zip batch (BirdCLEF pattern) |
+
+Full fasc prep extrapolation @ 0.088 s/pair: ~242 s (~4 min) for 2,749 pairs (CPU).
+
 ### Inline timing results (v9–v10 — superseded, kept for reference)
 
 | Run | N fasc | Train sec | sec/pair/epoch | Total sec | Full fasc@10ep proj. |
