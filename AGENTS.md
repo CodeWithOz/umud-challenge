@@ -30,6 +30,13 @@
 **Loading competition data in notebooks:**
 - Use `kagglehub.competition_download("<competition-slug>")` inside the notebook (returns a path under `/kaggle/input/competitions/...`). Do not upload local data as a Kaggle dataset for EDA.
 
+**Prepared dataset workflow (Phase 3+ — pattern from [birdclef_2026](https://github.com/CodeWithOz/birdclef_2026)):**
+1. **Prep notebook** (`notebooks/prep/`): expensive transforms on competition data (stretch-align, resize, manifest filter) → write PNGs + CSVs to `/kaggle/working/`.
+2. **Publish Kaggle dataset**: `kaggle datasets create` / `kaggle datasets version` from prep output. Version when prep logic or size tier changes.
+3. **Train notebook** (`notebooks/baseline/`): `dataset_sources` in `kernel-metadata.json` — mount at `/kaggle/input/datasets/{owner}/{slug}/`. **No** inline TIFF load, align, or manifest scan in the training loop.
+4. **Benchmark prep and train separately** before full dataset — scale N (50 → 200 → …) on both axes. See `research/log.md` Phase 3 prep/train timing ladder.
+5. Reference: BirdCLEF used `scripts/generate_spectrogram_batches.py` + species batch datasets (`species-001-010`, etc.) + train notebooks with `dataset_sources`; UMUD equivalent is stretch-aligned PNG pairs per track.
+
 **Dataset zip uploads:**
 - Kaggle **automatically extracts zip files** when you upload them to a dataset via `kaggle datasets create` or `kaggle datasets version`. The mounted dataset directory contains extracted files, not zips.
 - Extraction structure is not guaranteed to be flat: files may appear at the dataset root OR inside subdirectories named after the zip (e.g. `batch_0001/file.png`).
@@ -64,4 +71,5 @@ _This section is updated whenever a new lesson is discovered. Any AI agent worki
 | 2026-06 | Add Python deps with `uv add`, never `uv pip install` or bare `pip`. |
 | 2026-06 | Every Kaggle kernel push needs a matching git commit on `main` (notebook + metadata + log) **before** the push; then `git push` to origin. Never Kaggle-ahead-of-uncommitted-git. |
 | 2026-06 | fastai / modern PyTorch on Kaggle: use **T4** (`NvidiaTeslaT4`), not P100 (`enable_gpu: true` alone defaults to P100). |
-| 2026-06 | **Prep notebook → Kaggle dataset → train notebook** for expensive transforms; train kernel only mounts pre-aligned data. |
+| 2026-06 | **Prep notebook → Kaggle dataset → train notebook** for expensive transforms (see [birdclef_2026](https://github.com/CodeWithOz/birdclef_2026)). Benchmark **prep time** and **train time** on small N before full dataset. |
+| 2026-06 | Bake **256×256 resize at prep** (NEAREST masks) — faster I/O + GPU; new dataset version if higher res needed. |

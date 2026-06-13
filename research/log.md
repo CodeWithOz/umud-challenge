@@ -2,13 +2,13 @@
 
 ## Current focus
 
-_Last updated: 2026-06-13 (v8 cancelled — no artifacts). Refresh at session start; verify against git and Kaggle before acting._
+_Last updated: 2026-06-13 (inline timing runs 1–2 complete; pivot to prep+train dataset ladder)._
 
 **Best results:** _(none yet — no scored runs)_
 
-**Active notebooks:** Phase 3 timing — **v9 complete** (run 1: 682s / 50 fasc); **v10 run 2 in progress** (~45min est). Runs 3–5 **cancelled** — trend confirmed, pivot to speed + multi-session. [kernel](https://www.kaggle.com/code/ucheozoemena/umud-baseline-phase-3-fastai-u-net)
+**Active notebooks:** Inline timing **v9–v10 complete** (runs 1–2). Runs 3–5 cancelled. **Next:** prep dataset ladder (BirdCLEF pattern) — not full dataset yet. [kernel](https://www.kaggle.com/code/ucheozoemena/umud-baseline-phase-3-fastai-u-net)
 
-**Where we are:** Run 1: **16.9 s/pair/epoch** → full fasc@10ep **~103h** (unacceptable). Pivot: **prep notebook → Kaggle dataset → train notebook** (user-proven pattern), plus fp16 / smaller model / multi-session checkpoints.
+**Where we are:** Inline train proved infeasible (~54–103h full fasc@10ep). Adopt **prep notebook → Kaggle dataset → train notebook** ([birdclef_2026](https://github.com/CodeWithOz/birdclef_2026)). Dual timing ladder: benchmark **prep** and **train** separately at N=50 → 200 before scaling up.
 
 **Carry-forward (not blocking Phase 3):**
 - **mm calibration** — Option C: deferred until **before leaderboard submit**; build baseline in pixels first.
@@ -54,6 +54,10 @@ First **learned** baseline: train mask segmentation with **fastai** on Kaggle **
 | Alignment at train time | **Stretch** when `img.shape != mask.shape` | 2026-06-09 |
 | Val split (v1) | Random **80/20** by image filename | 2026-06-12 |
 | mm calibration | **Defer** until before submission; train/eval masks in pixels first (Option C) | 2026-06-09 |
+| Data for training | **Prep notebook → Kaggle dataset → train notebook** (BirdCLEF pattern; not inline transforms) | 2026-06-13 |
+| Prep output resolution | **256×256 PNG** baked at prep (NEAREST masks) — see annotation below | 2026-06-13 |
+
+**Why 256px at prep (not resize at train time):** The alternative is storing full-resolution aligned PNGs and calling `Resize(384)` in fastai during training. That still reads large files from disk every epoch. Baking 256 at prep cuts file size, I/O, and GPU pixels in one step. Trade-off: resolution is fixed per dataset version — if val Dice is poor, publish a `…-384px` dataset variant as a follow-up benchmark, not the default path.
 
 ### Optional later (do not lose)
 
@@ -63,7 +67,42 @@ First **learned** baseline: train mask segmentation with **fastai** on Kaggle **
 | Refine PA geometry | Prototype PA (fascicle PCA vs deep apo slope) underestimates vs competition ref 5–45°. Improve before trusting mask-derived PA for analysis. |
 | DLTrack comparison | Run DLTrack on a sample for cross-check if needed. |
 
-### Phase 3 speed strategy (after timing run 2 — do not run 3–5)
+### Inline timing results (v9–v10 — superseded, kept for reference)
+
+| Run | N fasc | Train sec | sec/pair/epoch | Total sec | Full fasc@10ep proj. |
+|-----|--------|-----------|----------------|-----------|----------------------|
+| 1 | 50 | 676 | 16.91 | 682 | ~103h |
+| 2 | 200 | 1424 | 8.90 | 1430 | ~54h (improved GPU util; still infeasible) |
+
+Runs 3–5 on inline train **cancelled**. Bottleneck: TIFF load + stretch-align every batch.
+
+### BirdCLEF reference workflow ([birdclef_2026](https://github.com/CodeWithOz/birdclef_2026))
+
+Applicable pattern — same three layers:
+
+| Layer | BirdCLEF | UMUD equivalent |
+|-------|----------|-----------------|
+| Prep | `scripts/generate_spectrogram_batches.py` → mel PNG zips; Kaggle notebooks for pseudo-label spectrograms | `notebooks/prep/` → stretch-align, **resize 256**, PNG pairs + manifests |
+| Dataset | `species-001-010`, `species-011-090`, `soundscape-spectrograms` on Kaggle | `umud-aligned-fasc-50`, `umud-aligned-fasc-200`, … (versioned) |
+| Train | `multilabel-234/training.ipynb` with `dataset_sources`, `rglob` PNG lookup | `notebooks/baseline/` mounts dataset only; no competition TIFFs |
+
+Key commits: `f6b2028` (spectrogram script), `438d2b3` (soundscape pipeline), `a15ce3e` (kernel metadata + dataset_sources), `3868ee6` (AGENTS workflow rules).
+
+### Prep + train timing ladder (next — do NOT jump to full 2,749 + 1,048)
+
+Benchmark **both axes** before full dataset, same philosophy as runs 1–2:
+
+| Step | Prep N (fasc) | Publish dataset | Train | Epochs | Goal |
+|------|---------------|-----------------|-------|--------|------|
+| **P1** | 50 | `umud-aligned-fasc-timing-50` | T1: mount P1 | 1 | prep wall-clock + train wall-clock at micro N |
+| **P2** | 200 | `…-timing-200` | T2: mount P2 | 1 | confirm linear-ish scaling on **both** prep and train |
+| *(optional)* **P3** | 200 @ 384px | `…-384px-200` | T3 | 1 | only if T2 Dice OK but needs resolution A/B |
+
+After P1–P2: extrapolate prep time for 2,749 + 1,048 and train time @ target epochs; add fp16 / resnet18 / checkpoints only after mounted-dataset train baseline exists.
+
+**Prep notebook outputs:** `prep_timing.csv` (pairs/sec, total sec, bytes written). **Train notebook outputs:** `timing_report.csv` (as now, but no manifest scan / align).
+
+### Phase 3 speed strategy (after inline timing — do not run inline 3–5)
 
 **Problem:** On-the-fly TIFF load + stretch-align per sample dominates (~135s/batch at bs=8). Full dataset @ resnet34/384px/10ep is **~100h+** per track.
 
@@ -72,44 +111,31 @@ First **learned** baseline: train mask segmentation with **fastai** on Kaggle **
 | Lever | Expected impact | Notes |
 |-------|-----------------|-------|
 | **Prep notebook → Kaggle dataset** | Large — alignment once, reused every train run | **Preferred over `/kaggle/working/` cache** (working dir wiped each session). User-proven pattern from prior competition. |
-| **Mixed precision** `learn.to_fp16()` | ~1.5–2× on T4 Tensor Cores | fastai `MixedPrecision` callback |
-| **Smaller `IMG_SIZE`** (384→256 or 224) | ~2× compute reduction | Can bake into prep dataset version |
-| **Lighter encoder** (resnet18 vs resnet34) | ~1.5–2× | Trade accuracy for speed in baseline |
+| **Smaller encoder** (resnet18 vs resnet34) | ~1.5–2× | After mounted-dataset baseline |
 | **Multi-session checkpointing** | Fits任意 length | `SaveModelCallback(with_opt=True)` + `learn.load()` + `start_epoch` |
 
-### Prep dataset workflow (decision — use this)
+### Prep dataset workflow (decision — BirdCLEF pattern)
 
-1. **`notebooks/prep/`** (CPU ok): load competition TIFFs, stretch-align masks, apply clean fasc manifest + apo manifest, write PNG pairs + CSVs to `/kaggle/working/`.
-2. **Publish Kaggle dataset** via `kaggle datasets create` / `version` from notebook output (or CLI upload). Version when alignment or manifest rules change.
-3. **`notebooks/baseline/` train notebook**: `dataset_sources` only — mount pre-aligned data at `/kaggle/input/datasets/{owner}/{slug}/`. Use `rglob` + filename lookup (AGENTS.md). **No** `align_mask` or manifest scan in the train loop.
+1. **`notebooks/prep/`** (CPU ok): competition TIFFs via `kagglehub` → stretch-align → **resize 256** (NEAREST masks) → PNG pairs + CSVs → `/kaggle/working/`.
+2. **Publish Kaggle dataset** (`kaggle datasets create` / `version`). Small tiers first (50, 200 pairs).
+3. **`notebooks/baseline/` train**: `dataset_sources` only; `rglob` lookup; **no** `align_mask` or manifest scan.
 
-**Proposed dataset layout:**
+**Dataset layout:**
 
 ```
-umud-aligned-segmentation-v1/
-  fasc/images/   fasc/masks/     # 2,749 clean pairs
-  apo/images/    apo/masks/      # 1,048 pairs
-  manifests/train_fasc_clean.csv, train_apo_all.csv
+umud-aligned-fasc-timing-50/
+  images/   masks/   manifests/train_fasc_clean.csv
 ```
 
-Optional: resize to `IMG_SIZE` at prep time (locks resolution per dataset version; faster still).
-
-**Multi-session layout (training only — prep runs once):**
-1. **prep-aligned** — one-time (or re-run when manifests change).
-2. **train-fasc** — mount dataset, train N epochs per push, checkpoint to `/kaggle/working/`.
-3. **train-apo** — same for apo.
-4. Resume until target epochs; export `.pkl`.
-
-**Next:** confirm run 2 ~45min linear scale → implement prep notebook + dataset v1 → micro train benchmark on mounted dataset vs run 1.
+(Full dataset: separate `umud-aligned-fasc-full` / `umud-aligned-apo-full` only after ladder extrapolation says feasible.)
 
 ### Phase 3 work items (remaining)
 
-1. Prep notebook + first Kaggle dataset version.
-2. Refactor train notebook to load from dataset (remove on-the-fly align).
-3. Micro benchmark (50 pairs, 1ep) on mounted data + fp16.
-4. Full train with checkpoints + multi-session as needed.
-5. Val Dice / preview; submission notebook (segment-then-measure).
-6. mm calibration before mm leaderboard submit.
+1. **P1:** prep notebook (50 fasc) → dataset → **T1** train benchmark.
+2. **P2:** prep (200 fasc) → dataset → **T2** train benchmark.
+3. Extrapolate; then fp16 / resnet18 / multi-session on mounted data.
+4. Full prep datasets + full train (split sessions if needed).
+5. Val Dice; submission notebook; mm calibration before submit.
 
 ### Key inputs from Phase 2
 
@@ -232,8 +258,8 @@ Historical checklist — all items done or explicitly deferred.
 | 2026-06-12 | baseline-phase-3 v6 | resnet34 | fasc 2,749 + apo 1,048 | dataloader OK; ResNet34 weight download blocked (no internet) | — | **error** |
 | 2026-06-12 | baseline-phase-3 v7 | resnet34 | fasc 2,749 + apo 1,048 | weights OK; loss not inferred from mask batch | — | **error** |
 | 2026-06-12 | baseline-phase-3 v8 | resnet34 | fasc 2,749 + apo 1,048 | full train 10 epochs × 2; 6h+ then CANCEL_ACKNOWLEDGED; no exports | — | **cancelled** |
-| 2026-06-13 | baseline-phase-3 v9 | resnet34 | fasc 50 × 1ep | 682s total; 16.9 s/pair/ep; full fasc@10ep ~103h | — | **complete** |
-| 2026-06-13 | baseline-phase-3 v10 | resnet34 | fasc 200 × 1ep (timing run 2) | est ~45min from run 1 scale | — | **running** |
+| 2026-06-13 | baseline-phase-3 v9 | resnet34 | fasc 50 × 1ep inline | 682s; 16.9 s/pair/ep | — | **complete** |
+| 2026-06-13 | baseline-phase-3 v10 | resnet34 | fasc 200 × 1ep inline | 1430s; 8.9 s/pair/ep | — | **complete** |
 
 ---
 
@@ -251,7 +277,8 @@ Historical checklist — all items done or explicitly deferred.
 | 2026-06-12 | Val split v1: random 80/20; **stratify by image size** noted for later | — |
 | 2026-06-12 | **Training timing baseline** before long GPU runs; stop ladder once full-train projection is infeasible | — |
 | 2026-06-13 | Full fasc@10ep ~103h @ current config; pivot to **prep dataset + train notebook** + fp16 + multi-session (runs 3–5 cancelled) | — |
-| 2026-06-13 | **Prep notebook → Kaggle dataset → train notebook** for aligned segmentation pairs (not inline prep in train run) | — |
+| 2026-06-13 | **Prep notebook → Kaggle dataset → train notebook** (BirdCLEF pattern) | — |
+| 2026-06-13 | **256px resize baked at prep** (NEAREST masks); 384px = optional dataset A/B | — |
 | 2026-06-10 | Dual-track 1040 not 1048: 8 apo filenames on fasc exclude list | Expected, not a data bug |
 | 2026-06-10 | FL bimodality in px: driven by **800×1200 vs 1080×1640** image sizes | Not multi-fascicle per image |
 | 2026-06-10 | Split geometry into Kaggle + local notebooks; shared builder | — |
@@ -286,7 +313,8 @@ Historical checklist — all items done or explicitly deferred.
 - Phase 2 geometry: **Kaggle notebook** (`kagglehub`) vs **local notebook** (`data/umud-challenge/`); generate both via `scripts/build_geometry_nb.py`. (2026-06-10)
 - Histogram **ref** lines = competition **reference** plausible ranges for manual expert measurements, not model targets. (2026-06-12)
 - FL px bimodality tracks **image dimensions** (800×1200 vs 1080×1640), not multiple fascicles per image. (2026-06-10)
-- **Prep dataset pattern:** heavy transforms (stretch-align, manifest filter) in a **dedicated prep notebook** → publish as **Kaggle dataset** → train notebook mounts it. Do not repeat alignment in the training loop; `/kaggle/working/` cache is wiped each session. (2026-06-13)
+- **Prep dataset pattern (BirdCLEF):** expensive transforms in **prep notebook** → **Kaggle dataset** → train notebook mounts via `dataset_sources`. Reference: [birdclef_2026](https://github.com/CodeWithOz/birdclef_2026) (`generate_spectrogram_batches.py`, `species-*` datasets, `multilabel-234` train). Benchmark **prep** and **train** at N=50→200 before full data. (2026-06-13)
+- **256px at prep:** resize images+masks once when building dataset (not at train). Faster than full-res PNGs + `Resize()` in fastai. New dataset version if higher res needed. (2026-06-13)
 - Kaggle `enable_gpu: true` defaults to **P100**, which is incompatible with current **fastai/PyTorch**. Use **T4**: `"machine_shape": "NvidiaTeslaT4"` + `kaggle kernels push --accelerator NvidiaTeslaT4`. (2026-06-12)
 - **Training timing baseline (mandatory before long runs):** … v8 (2,749 fasc + 1,048 apo, 10 epochs × 2 models) ran 6h+ without this step. Run 1 (50 fasc, 1ep): **682s**, **16.9 s/pair/epoch** → **~103h** full fasc@10ep. Runs 3–5 skipped after run 2 confirms linear scale. (2026-06-13)
 
