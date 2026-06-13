@@ -81,6 +81,7 @@ from pathlib import Path
 
 import pandas as pd
 import numpy as np
+import kagglehub
 from fastai.vision.all import (
     AddMaskCodes,
     CrossEntropyLossFlat,
@@ -101,9 +102,11 @@ from fastai.vision.all import (
 from fastai.data.block import DataBlock
 
 DATASET_ROOT = Path(f"/kaggle/input/datasets/{DATASET_SLUG}")
+if not DATASET_ROOT.exists():
+    DATASET_ROOT = Path(kagglehub.dataset_download(DATASET_SLUG))
 WORKING = Path("/kaggle/working")
 
-print(f"Dataset root exists: {DATASET_ROOT.exists()}")
+print(f"Dataset root: {DATASET_ROOT} (exists={DATASET_ROOT.exists()})")
 """
     )
 )
