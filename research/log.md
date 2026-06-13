@@ -6,7 +6,7 @@ _Last updated: 2026-06-13 (inline timing runs 1–2 complete; pivot to prep+trai
 
 **Best results:** _(none yet — no scored runs)_
 
-**Active notebooks:** P1 dataset **`umud-aligned-fasc-timing-50`** ready (prep v2; kernel ERROR was false negative on upload_ok). **T1 train** (`umud-train-mounted-phase-3` v1) running.
+**Active notebooks:** P1 dataset **`umud-aligned-fasc-timing-50`** ready. **T1 train v3** running (`umud-train-mounted-phase-3` — v1 failed on `CrossEntropyLossFlat` import; fixed).
 
 **Where we are:** Inline train proved infeasible (~54–103h full fasc@10ep). Adopt **prep notebook → Kaggle dataset → train notebook** ([birdclef_2026](https://github.com/CodeWithOz/birdclef_2026)). Dual timing ladder: benchmark **prep** and **train** separately at N=50 → 200 before scaling up.
 

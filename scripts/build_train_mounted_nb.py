@@ -80,10 +80,12 @@ import time
 from pathlib import Path
 
 import pandas as pd
+import numpy as np
 from fastai.vision.all import (
+    AddMaskCodes,
     CrossEntropyLossFlat,
     Dice,
-    Normalize,
+    IntToFloatTensor,
     PILImage,
     PILMask,
     RandomSplitter,
@@ -92,6 +94,8 @@ from fastai.vision.all import (
     aug_transforms,
     get_image_files,
     imagenet_stats,
+    resnet34,
+    resnet50,
     unet_learner,
 )
 from fastai.data.block import DataBlock
@@ -125,21 +129,41 @@ print(f"masks: {MSK_DIR}")
 
 cells.append(
     code(
-        """def open_image_pil(fn):
-    return PILImage.create(fn)
+        """SEG_CODES = ["background", "structure"]
+
+
+def encoder():
+    return resnet50 if ARCH == "resnet50" else resnet34
+
+
+def open_image_pil(fn):
+    gray = np.array(PILImage.create(fn))
+    if gray.ndim == 3:
+        gray = gray[..., 0]
+    rgb = np.stack([gray, gray, gray], axis=-1).astype(np.uint8)
+    return PILImage.create(rgb)
+
 
 def open_mask_pil(fn):
     return PILMask.create(fn, mode="L")
 
+
 def make_dls(fnames, valid_pct=0.20, bs=8, seed=42):
     block = DataBlock(
-        blocks=(TransformBlock(type_tfms=open_image_pil), TransformBlock(type_tfms=open_mask_pil)),
+        blocks=(
+            TransformBlock(type_tfms=open_image_pil, batch_tfms=IntToFloatTensor),
+            TransformBlock(
+                type_tfms=open_mask_pil,
+                item_tfms=AddMaskCodes(codes=SEG_CODES),
+                batch_tfms=IntToFloatTensor,
+            ),
+        ),
         get_items=lambda _: fnames,
         get_x=lambda f: IMG_DIR / f.name,
         get_y=lambda f: MSK_DIR / f.name,
         splitter=RandomSplitter(valid_pct=valid_pct, seed=seed),
         item_tfms=Resize(IMG_SIZE),
-        batch_tfms=[*aug_transforms(size=IMG_SIZE, min_scale=0.75), Normalize.from_stats(*imagenet_stats)],
+        batch_tfms=aug_transforms(size=IMG_SIZE, min_scale=0.75, flip_vert=False, do_flip=True),
     )
     return block.dataloaders(fnames, bs=bs, num_workers=2)
 
@@ -156,6 +180,8 @@ cells.append(
     code(
         """t0 = time.perf_counter()
 dls = make_dls(fnames, valid_pct=VALID_PCT, bs=BATCH_SIZE, seed=RANDOM_SEED)
+_ = dls.one_batch()
+print(f"Dataloader ready: {time.perf_counter() - t0:.1f}s")
 dls.show_batch(max_n=4)
 """
     )
@@ -163,11 +189,13 @@ dls.show_batch(max_n=4)
 
 cells.append(
     code(
-        """learn = unet_learner(
+        """t_train = time.perf_counter()
+learn = unet_learner(
     dls,
-    ARCH,
+    encoder(),
     metrics=[Dice()],
     loss_func=CrossEntropyLossFlat(axis=1),
+    self_attention=True,
 )
 learn.fine_tune(EPOCHS)
 t1 = time.perf_counter()
