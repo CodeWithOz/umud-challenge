@@ -106,6 +106,16 @@ T2 used `kagglehub.dataset_download` fallback (mount path missing after metadata
 
 Dataset **`ucheozoemena/umud-aligned-fasc-full`** ready.
 
+### Apo track baseline — AP1/AT1 (50 pairs, 1 ep)
+
+| Axis | AP1 prep | AT1 train | Fasc T1 (compare) |
+|------|----------|-----------|-------------------|
+| Total | 4.7 s | 8.0 s | 39.9 s / 7.9 s |
+| sec/pair (prep) | **0.094** | — | 0.088 |
+| sec/pair/epoch (train) | — | **0.161** | 0.158 |
+
+Apo prep faster (no fasc empty-mask scan). Train rate matches fasc at N=50. Datasets: `umud-aligned-apo-timing-50`.
+
 ### P3/T3 scaling check results (50% data, 50% epochs)
 
 **Config:** 1,374 fasc pairs (50% of 2,749 clean) · **5 epochs** (50% of 10) · 256px · resnet34 · T4
