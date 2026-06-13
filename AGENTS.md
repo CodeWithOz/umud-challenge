@@ -64,4 +64,4 @@ _This section is updated whenever a new lesson is discovered. Any AI agent worki
 | 2026-06 | Add Python deps with `uv add`, never `uv pip install` or bare `pip`. |
 | 2026-06 | Every Kaggle kernel push needs a matching git commit on `main` (notebook + metadata + log) **before** the push; then `git push` to origin. Never Kaggle-ahead-of-uncommitted-git. |
 | 2026-06 | fastai / modern PyTorch on Kaggle: use **T4** (`NvidiaTeslaT4`), not P100 (`enable_gpu: true` alone defaults to P100). |
-| 2026-06 | **Training timing baseline:** before a long GPU run, benchmark tiny data + min epochs, scale up 1–2 steps, project wall-clock — do not jump straight to full data × many epochs. |
+| 2026-06 | **Prep notebook → Kaggle dataset → train notebook** for expensive transforms; train kernel only mounts pre-aligned data. |

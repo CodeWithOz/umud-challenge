@@ -8,7 +8,7 @@ _Last updated: 2026-06-13 (v8 cancelled — no artifacts). Refresh at session st
 
 **Active notebooks:** Phase 3 timing — **v9 complete** (run 1: 682s / 50 fasc); **v10 run 2 in progress** (~45min est). Runs 3–5 **cancelled** — trend confirmed, pivot to speed + multi-session. [kernel](https://www.kaggle.com/code/ucheozoemena/umud-baseline-phase-3-fastai-u-net)
 
-**Where we are:** Run 1: **16.9 s/pair/epoch** → full fasc@10ep **~103h** (unacceptable). After run 2 confirms linear scaling, **stop timing ladder** and implement faster training: pre-cache aligned pairs, mixed precision, smaller encoder/resolution, checkpointed multi-session runs.
+**Where we are:** Run 1: **16.9 s/pair/epoch** → full fasc@10ep **~103h** (unacceptable). Pivot: **prep notebook → Kaggle dataset → train notebook** (user-proven pattern), plus fp16 / smaller model / multi-session checkpoints.
 
 **Carry-forward (not blocking Phase 3):**
 - **mm calibration** — Option C: deferred until **before leaderboard submit**; build baseline in pixels first.
@@ -71,26 +71,45 @@ First **learned** baseline: train mask segmentation with **fastai** on Kaggle **
 
 | Lever | Expected impact | Notes |
 |-------|-----------------|-------|
-| **Pre-cache aligned pairs** to `/kaggle/working/cache/` (PNG) | Large — pay alignment once, not per epoch | Biggest win; one cache pass per track per session |
+| **Prep notebook → Kaggle dataset** | Large — alignment once, reused every train run | **Preferred over `/kaggle/working/` cache** (working dir wiped each session). User-proven pattern from prior competition. |
 | **Mixed precision** `learn.to_fp16()` | ~1.5–2× on T4 Tensor Cores | fastai `MixedPrecision` callback |
-| **Smaller `IMG_SIZE`** (384→256 or 224) | ~2× compute reduction | Acceptable for sparse masks? validate Dice |
+| **Smaller `IMG_SIZE`** (384→256 or 224) | ~2× compute reduction | Can bake into prep dataset version |
 | **Lighter encoder** (resnet18 vs resnet34) | ~1.5–2× | Trade accuracy for speed in baseline |
 | **Multi-session checkpointing** | Fits任意 length | `SaveModelCallback(with_opt=True)` + `learn.load()` + `start_epoch` |
-| **Split notebooks** | Avoid single-session timeout | e.g. cache → train ep1–3 → train ep4–6 → export |
 
-**Multi-session layout (proposed):**
-1. **cache-fasc** / **cache-apo** — build aligned PNG cache (can share one notebook with `TRACK` flag).
-2. **train-fasc** — `TIMING_BASELINE=False`, load cache, train N epochs per push, save `fasc_ckpt.pth` each epoch to `/kaggle/working/`.
+### Prep dataset workflow (decision — use this)
+
+1. **`notebooks/prep/`** (CPU ok): load competition TIFFs, stretch-align masks, apply clean fasc manifest + apo manifest, write PNG pairs + CSVs to `/kaggle/working/`.
+2. **Publish Kaggle dataset** via `kaggle datasets create` / `version` from notebook output (or CLI upload). Version when alignment or manifest rules change.
+3. **`notebooks/baseline/` train notebook**: `dataset_sources` only — mount pre-aligned data at `/kaggle/input/datasets/{owner}/{slug}/`. Use `rglob` + filename lookup (AGENTS.md). **No** `align_mask` or manifest scan in the train loop.
+
+**Proposed dataset layout:**
+
+```
+umud-aligned-segmentation-v1/
+  fasc/images/   fasc/masks/     # 2,749 clean pairs
+  apo/images/    apo/masks/      # 1,048 pairs
+  manifests/train_fasc_clean.csv, train_apo_all.csv
+```
+
+Optional: resize to `IMG_SIZE` at prep time (locks resolution per dataset version; faster still).
+
+**Multi-session layout (training only — prep runs once):**
+1. **prep-aligned** — one-time (or re-run when manifests change).
+2. **train-fasc** — mount dataset, train N epochs per push, checkpoint to `/kaggle/working/`.
 3. **train-apo** — same for apo.
-4. Re-run train notebook with `RESUME=True` until target epochs; final push exports `.pkl`.
+4. Resume until target epochs; export `.pkl`.
 
-**Next after run 2:** micro-benchmark cache+fp16+256 on 50 pairs (1ep) vs run 1 baseline → extrapolate again before full train.
-2. Load manifests from Phase 2 (`train_fasc_clean.csv`, `train_apo_all.csv`) or regenerate in notebook.
-3. fastai `SegmentationItemList` / dataloaders with stretch-aligned image–mask pairs.
-4. Train fascicle model → export weights; train apo model → export weights.
-5. Local or notebook val: mask IoU/Dice + optional geometry on val set (pixels OK).
-6. Submission notebook: load test images, predict masks, geometry → `sample_submission.csv`.
-7. mm calibration hunt before first **mm** leaderboard submit (not before mask training).
+**Next:** confirm run 2 ~45min linear scale → implement prep notebook + dataset v1 → micro train benchmark on mounted dataset vs run 1.
+
+### Phase 3 work items (remaining)
+
+1. Prep notebook + first Kaggle dataset version.
+2. Refactor train notebook to load from dataset (remove on-the-fly align).
+3. Micro benchmark (50 pairs, 1ep) on mounted data + fp16.
+4. Full train with checkpoints + multi-session as needed.
+5. Val Dice / preview; submission notebook (segment-then-measure).
+6. mm calibration before mm leaderboard submit.
 
 ### Key inputs from Phase 2
 
@@ -231,7 +250,8 @@ Historical checklist — all items done or explicitly deferred.
 | 2026-06-12 | Phase 3: **fastai + Kaggle GPU**; mm calibration deferred to pre-submit | — |
 | 2026-06-12 | Val split v1: random 80/20; **stratify by image size** noted for later | — |
 | 2026-06-12 | **Training timing baseline** before long GPU runs; stop ladder once full-train projection is infeasible | — |
-| 2026-06-13 | Full fasc@10ep ~103h @ current config; pivot to cache + fp16 + multi-session (runs 3–5 cancelled) | — |
+| 2026-06-13 | Full fasc@10ep ~103h @ current config; pivot to **prep dataset + train notebook** + fp16 + multi-session (runs 3–5 cancelled) | — |
+| 2026-06-13 | **Prep notebook → Kaggle dataset → train notebook** for aligned segmentation pairs (not inline prep in train run) | — |
 | 2026-06-10 | Dual-track 1040 not 1048: 8 apo filenames on fasc exclude list | Expected, not a data bug |
 | 2026-06-10 | FL bimodality in px: driven by **800×1200 vs 1080×1640** image sizes | Not multi-fascicle per image |
 | 2026-06-10 | Split geometry into Kaggle + local notebooks; shared builder | — |
@@ -266,6 +286,7 @@ Historical checklist — all items done or explicitly deferred.
 - Phase 2 geometry: **Kaggle notebook** (`kagglehub`) vs **local notebook** (`data/umud-challenge/`); generate both via `scripts/build_geometry_nb.py`. (2026-06-10)
 - Histogram **ref** lines = competition **reference** plausible ranges for manual expert measurements, not model targets. (2026-06-12)
 - FL px bimodality tracks **image dimensions** (800×1200 vs 1080×1640), not multiple fascicles per image. (2026-06-10)
+- **Prep dataset pattern:** heavy transforms (stretch-align, manifest filter) in a **dedicated prep notebook** → publish as **Kaggle dataset** → train notebook mounts it. Do not repeat alignment in the training loop; `/kaggle/working/` cache is wiped each session. (2026-06-13)
 - Kaggle `enable_gpu: true` defaults to **P100**, which is incompatible with current **fastai/PyTorch**. Use **T4**: `"machine_shape": "NvidiaTeslaT4"` + `kaggle kernels push --accelerator NvidiaTeslaT4`. (2026-06-12)
 - **Training timing baseline (mandatory before long runs):** … v8 (2,749 fasc + 1,048 apo, 10 epochs × 2 models) ran 6h+ without this step. Run 1 (50 fasc, 1ep): **682s**, **16.9 s/pair/epoch** → **~103h** full fasc@10ep. Runs 3–5 skipped after run 2 confirms linear scale. (2026-06-13)
 
