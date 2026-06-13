@@ -6,9 +6,9 @@ _Last updated: 2026-06-13 (v8 cancelled — no artifacts). Refresh at session st
 
 **Best results:** _(none yet — no scored runs)_
 
-**Active notebooks:** Phase 3: `notebooks/baseline/baseline-phase-3.ipynb` — **Kaggle v9 RUNNING** timing baseline run 1 ([kernel](https://www.kaggle.com/code/ucheozoemena/umud-baseline-phase-3-fastai-u-net)). v8 cancelled (full train, no exports). **Now:** timing runs 1→5 before full retry.
+**Active notebooks:** Phase 3 timing baseline — **v9 complete** (run 1: 682s, 50 fasc × 1ep); **v10 pushing** run 2 (200 fasc × 1ep, ~45min est). Full fasc@10ep projection **~103h** — confirms v8 timeout. [kernel](https://www.kaggle.com/code/ucheozoemena/umud-baseline-phase-3-fastai-u-net)
 
-**Where we are:** Timing baseline mode implemented (`TIMING_BASELINE=True`, `TIMING_RUN=1`: fasc 50 pairs × 1 epoch). Logs `timing_report.csv` + full-run projection. After runs 1–5: pick full config within Kaggle session budget.
+**Where we are:** Timing runs 1/5 done. Chaining 2→5 with poll intervals calibrated from prior `total_sec`. Pause only on error or anomaly.
 
 **Carry-forward (not blocking Phase 3):**
 - **mm calibration** — Option C: deferred until **before leaderboard submit**; build baseline in pixels first.
@@ -195,7 +195,8 @@ Historical checklist — all items done or explicitly deferred.
 | 2026-06-12 | baseline-phase-3 v6 | resnet34 | fasc 2,749 + apo 1,048 | dataloader OK; ResNet34 weight download blocked (no internet) | — | **error** |
 | 2026-06-12 | baseline-phase-3 v7 | resnet34 | fasc 2,749 + apo 1,048 | weights OK; loss not inferred from mask batch | — | **error** |
 | 2026-06-12 | baseline-phase-3 v8 | resnet34 | fasc 2,749 + apo 1,048 | full train 10 epochs × 2; 6h+ then CANCEL_ACKNOWLEDGED; no exports | — | **cancelled** |
-| 2026-06-13 | baseline-phase-3 v9 | resnet34 | fasc 50 × 1ep (timing run 1) | `TIMING_BASELINE` mode; wall-clock + projection CSV | — | **running** |
+| 2026-06-13 | baseline-phase-3 v9 | resnet34 | fasc 50 × 1ep | 682s total; 16.9 s/pair/ep; full fasc@10ep ~103h | — | **complete** |
+| 2026-06-13 | baseline-phase-3 v10 | resnet34 | fasc 200 × 1ep (timing run 2) | est ~45min from run 1 scale | — | **running** |
 
 ---
 

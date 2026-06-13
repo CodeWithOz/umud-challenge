@@ -56,7 +56,7 @@ RANDOM_SEED = 42
 
 # Timing baseline: run small configs first to estimate wall-clock (see research/log.md).
 TIMING_BASELINE = True
-TIMING_RUN = 1  # 1=fasc 50×1ep, 2=fasc 200×1ep, 3=fasc 200×3ep, 4=apo 50×1ep, 5=apo 200×1ep
+TIMING_RUN = 2  # 1=fasc 50×1ep, 2=fasc 200×1ep, 3=fasc 200×3ep, 4=apo 50×1ep, 5=apo 200×1ep
 
 # Full-run defaults (used when TIMING_BASELINE = False)
 TRAIN_TRACK = "both"  # "fasc", "apo", or "both"
