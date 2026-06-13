@@ -2,13 +2,13 @@
 
 ## Current focus
 
-_Last updated: 2026-06-12 (~6h into v8; awaiting completion or Kaggle timeout). Refresh at session start; verify against git and Kaggle before acting._
+_Last updated: 2026-06-13 (v8 cancelled — no artifacts). Refresh at session start; verify against git and Kaggle before acting._
 
 **Best results:** _(none yet — no scored runs)_
 
-**Active notebooks:** Phase 3: `notebooks/baseline/baseline-phase-3.ipynb` — **Kaggle v8 still RUNNING** on T4 (~6h+; full data, 10 epochs × 2 models) ([kernel](https://www.kaggle.com/code/ucheozoemena/umud-baseline-phase-3-fastai-u-net)). Waiting for finish or timeout — **not cancelling**. Phase 0+1: `data-audit.ipynb` (v3). Phase 2: `geometry-phase-2.ipynb` (v3) + local.
+**Active notebooks:** Phase 3: `notebooks/baseline/baseline-phase-3.ipynb` — **Kaggle v8 CANCEL_ACKNOWLEDGED** ([kernel](https://www.kaggle.com/code/ucheozoemena/umud-baseline-phase-3-fastai-u-net)). Ran 6h+ then killed; no `.pkl` exports. Dataloader + weights OK; died mid fasc `fine_tune`. **Next:** timing-baseline runs before any full train retry.
 
-**Where we are:** Phase 3 v8 is a **full-scale first train** (2,749 fasc + 1,048 apo, resnet34, 384px, 10 epochs each). No timing baseline was run first — lesson recorded below. After v8: review output; **future runs** must start with a timing baseline (tiny data + 1–2 epochs) before scaling up.
+**Where we are:** Phase 3 pipeline code works through training start (v8). Full-scale config (2,749 fasc + 1,048 apo, 10 epochs × 2) exceeded practical Kaggle session budget without prior timing baseline. Establish wall-clock benchmarks (tiny data → scale up) before re-attempting full train.
 
 **Carry-forward (not blocking Phase 3):**
 - **mm calibration** — Option C: deferred until **before leaderboard submit**; build baseline in pixels first.
@@ -194,7 +194,7 @@ Historical checklist — all items done or explicitly deferred.
 | 2026-06-12 | baseline-phase-3 v5 | resnet34 | fasc 2,749 + apo 1,048 | `TransformBlock(fn, ImageBlock)` invalid on Kaggle fastai | — | **error** |
 | 2026-06-12 | baseline-phase-3 v6 | resnet34 | fasc 2,749 + apo 1,048 | dataloader OK; ResNet34 weight download blocked (no internet) | — | **error** |
 | 2026-06-12 | baseline-phase-3 v7 | resnet34 | fasc 2,749 + apo 1,048 | weights OK; loss not inferred from mask batch | — | **error** |
-| 2026-06-12 | baseline-phase-3 v8 | resnet34 | fasc 2,749 + apo 1,048 | full train, 10 epochs × 2; no timing baseline first; 6h+ RUNNING | — | **running** |
+| 2026-06-12 | baseline-phase-3 v8 | resnet34 | fasc 2,749 + apo 1,048 | full train 10 epochs × 2; 6h+ then CANCEL_ACKNOWLEDGED; no exports | — | **cancelled** |
 
 ---
 
