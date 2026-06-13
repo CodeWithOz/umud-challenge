@@ -6,7 +6,9 @@ _Last updated: 2026-06-13 (inline timing runs 1–2 complete; pivot to prep+trai
 
 **Best results:** _(none yet — no scored runs)_
 
-**Active notebooks:** **AP2/AT2** (200 apo pairs, 1 ep) running.
+**Active notebooks:** Apo **AP1–AP2 / AT1–AT2** timing ladder complete. Next: AP3 (50% apo) or full apo prep, per plan.
+
+**Where we are:** Fasc full prep done. Apo train rate at N=200 (**0.111 s/pair/epoch**) matches fasc T2 (**0.107**).
 
 **Where we are:** Fasc dataset published. Apo timing ladder started — first micro benchmark matches fasc (~0.16 s/pair/epoch @ N=50).
 
