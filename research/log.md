@@ -6,9 +6,9 @@ _Last updated: 2026-06-13 (v8 cancelled — no artifacts). Refresh at session st
 
 **Best results:** _(none yet — no scored runs)_
 
-**Active notebooks:** Phase 3: `notebooks/baseline/baseline-phase-3.ipynb` — **Kaggle v8 CANCEL_ACKNOWLEDGED** ([kernel](https://www.kaggle.com/code/ucheozoemena/umud-baseline-phase-3-fastai-u-net)). Ran 6h+ then killed; no `.pkl` exports. Dataloader + weights OK; died mid fasc `fine_tune`. **Next:** timing-baseline runs before any full train retry.
+**Active notebooks:** Phase 3: `notebooks/baseline/baseline-phase-3.ipynb` — **Kaggle v9 RUNNING** timing baseline run 1 ([kernel](https://www.kaggle.com/code/ucheozoemena/umud-baseline-phase-3-fastai-u-net)). v8 cancelled (full train, no exports). **Now:** timing runs 1→5 before full retry.
 
-**Where we are:** Phase 3 pipeline code works through training start (v8). Full-scale config (2,749 fasc + 1,048 apo, 10 epochs × 2) exceeded practical Kaggle session budget without prior timing baseline. Establish wall-clock benchmarks (tiny data → scale up) before re-attempting full train.
+**Where we are:** Timing baseline mode implemented (`TIMING_BASELINE=True`, `TIMING_RUN=1`: fasc 50 pairs × 1 epoch). Logs `timing_report.csv` + full-run projection. After runs 1–5: pick full config within Kaggle session budget.
 
 **Carry-forward (not blocking Phase 3):**
 - **mm calibration** — Option C: deferred until **before leaderboard submit**; build baseline in pixels first.
@@ -195,6 +195,7 @@ Historical checklist — all items done or explicitly deferred.
 | 2026-06-12 | baseline-phase-3 v6 | resnet34 | fasc 2,749 + apo 1,048 | dataloader OK; ResNet34 weight download blocked (no internet) | — | **error** |
 | 2026-06-12 | baseline-phase-3 v7 | resnet34 | fasc 2,749 + apo 1,048 | weights OK; loss not inferred from mask batch | — | **error** |
 | 2026-06-12 | baseline-phase-3 v8 | resnet34 | fasc 2,749 + apo 1,048 | full train 10 epochs × 2; 6h+ then CANCEL_ACKNOWLEDGED; no exports | — | **cancelled** |
+| 2026-06-13 | baseline-phase-3 v9 | resnet34 | fasc 50 × 1ep (timing run 1) | `TIMING_BASELINE` mode; wall-clock + projection CSV | — | **running** |
 
 ---
 

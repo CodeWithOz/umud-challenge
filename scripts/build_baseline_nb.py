@@ -39,7 +39,11 @@ cells.append(
 
 > Geometry (PA / FL / MT) runs at inference in a later notebook — this kernel only trains masks.
 
-> Edit *Configuration*, then re-run from there downward."""
+> Edit *Configuration*, then re-run from there downward.
+
+### Timing baseline mode
+
+Set `TIMING_BASELINE = True` and pick `TIMING_RUN` (1–5) before any full-scale train. Each run logs wall-clock to `timing_report.csv` and prints a full-run projection."""
     )
 )
 
@@ -49,7 +53,14 @@ cells.append(
     code(
         """# --- Parameters you can change ---
 RANDOM_SEED = 42
+
+# Timing baseline: run small configs first to estimate wall-clock (see research/log.md).
+TIMING_BASELINE = True
+TIMING_RUN = 1  # 1=fasc 50×1ep, 2=fasc 200×1ep, 3=fasc 200×3ep, 4=apo 50×1ep, 5=apo 200×1ep
+
+# Full-run defaults (used when TIMING_BASELINE = False)
 TRAIN_TRACK = "both"  # "fasc", "apo", or "both"
+MAX_SAMPLES = None  # None = all pairs; int = cap per track
 VALID_PCT = 0.20
 IMG_SIZE = 384
 BATCH_SIZE = 8
@@ -57,6 +68,23 @@ EPOCHS = 10
 ARCH = "resnet34"  # fastai encoder
 FASC_NEAR_EMPTY_THRESHOLD = 0.0005
 DEFAULT_ALIGN_MODE = "stretch"
+
+TIMING_PROFILES = {
+    1: {"track": "fasc", "max_samples": 50, "epochs": 1, "label": "micro fasc"},
+    2: {"track": "fasc", "max_samples": 200, "epochs": 1, "label": "scale fasc N"},
+    3: {"track": "fasc", "max_samples": 200, "epochs": 3, "label": "scale fasc epochs"},
+    4: {"track": "apo", "max_samples": 50, "epochs": 1, "label": "micro apo"},
+    5: {"track": "apo", "max_samples": 200, "epochs": 1, "label": "scale apo N"},
+}
+
+if TIMING_BASELINE:
+    profile = TIMING_PROFILES[TIMING_RUN]
+    TRAIN_TRACK = profile["track"]
+    MAX_SAMPLES = profile["max_samples"]
+    EPOCHS = profile["epochs"]
+    print(f"TIMING BASELINE run {TIMING_RUN}: {profile['label']} | track={TRAIN_TRACK} n<={MAX_SAMPLES} epochs={EPOCHS}")
+else:
+    print(f"FULL RUN | track={TRAIN_TRACK} epochs={EPOCHS} max_samples={MAX_SAMPLES}")
 """
     )
 )
@@ -72,6 +100,8 @@ Competition data via **`kagglehub.competition_download`** (no internet required 
 cells.append(
     code(
         """from pathlib import Path
+import random
+import time
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -203,6 +233,14 @@ cells.append(
     return mask_coverage(load_mask(path))
 
 
+def subsample_pairs(fnames: list[str], max_n: int | None, seed: int) -> list[str]:
+    if max_n is None or len(fnames) <= max_n:
+        return fnames
+    rng = random.Random(seed)
+    return sorted(rng.sample(fnames, max_n))
+
+
+t_manifest_start = time.perf_counter()
 print("Scanning fascicle masks for empty / near-empty pairs...")
 fasc_common = sorted(set(lookups["fasc_img"]) & set(lookups["fasc_mask"]))
 exclude_rows = []
@@ -214,11 +252,16 @@ for name in fasc_common:
         exclude_rows.append({"filename": name, "mask_coverage": cov, "reason": "near_empty"})
 
 exclude_names = {r["filename"] for r in exclude_rows}
-train_fasc = [n for n in fasc_common if n not in exclude_names]
-train_apo = sorted(set(lookups["apo_img"]) & set(lookups["apo_mask"]))
+train_fasc_all = [n for n in fasc_common if n not in exclude_names]
+train_apo_all = sorted(set(lookups["apo_img"]) & set(lookups["apo_mask"]))
+t_manifest_end = time.perf_counter()
 
-print(f"Fasc pairs total: {len(fasc_common)} | exclude: {len(exclude_names)} | clean: {len(train_fasc)}")
-print(f"Apo pairs: {len(train_apo)}")
+train_fasc = subsample_pairs(train_fasc_all, MAX_SAMPLES, RANDOM_SEED)
+train_apo = subsample_pairs(train_apo_all, MAX_SAMPLES, RANDOM_SEED + 1)
+
+print(f"Fasc pairs total: {len(fasc_common)} | exclude: {len(exclude_names)} | clean: {len(train_fasc_all)} | using: {len(train_fasc)}")
+print(f"Apo pairs total: {len(train_apo_all)} | using: {len(train_apo)}")
+print(f"Manifest scan: {t_manifest_end - t_manifest_start:.1f}s")
 """
     )
 )
@@ -282,23 +325,65 @@ cells.append(md("""## Train fascicle model"""))
 
 cells.append(
     code(
-        """fasc_learn = None
-if TRAIN_TRACK in ("fasc", "both"):
-    print(f"Training fascicle U-Net ({len(train_fasc)} pairs)...")
-    fasc_dls = make_dls(train_fasc, "fasc_img", "fasc_mask")
-    fasc_learn = unet_learner(
-        fasc_dls,
+        """timing_rows = []
+FASC_FULL = 2749
+APO_FULL = 1048
+
+
+def train_track(track: str, fnames: list[str], img_key: str, mask_key: str, export_stem: str):
+    if TRAIN_TRACK != "both" and TRAIN_TRACK != track:
+        print(f"Skipping {track} (TRAIN_TRACK={TRAIN_TRACK})")
+        return None
+
+    print(f"\\n=== Training {track} U-Net ({len(fnames)} pairs, {EPOCHS} epochs) ===", flush=True)
+    t0 = time.perf_counter()
+
+    t_dls = time.perf_counter()
+    dls = make_dls(fnames, img_key, mask_key)
+    _ = dls.one_batch()  # warmup — catches dataloader errors early
+    t_dls_done = time.perf_counter()
+    print(f"Dataloader ready: {t_dls_done - t_dls:.1f}s", flush=True)
+
+    learn = unet_learner(
+        dls,
         encoder(),
         loss_func=CrossEntropyLossFlat(axis=1),
         metrics=[Dice(), foreground_acc],
         self_attention=True,
     )
-    fasc_learn.fine_tune(EPOCHS)
-    fasc_export = OUT / "fasc_baseline"
-    fasc_learn.export(fasc_export)
-    print("Exported:", fasc_export.with_suffix(".pkl"))
-else:
-    print("Skipping fascicle training (TRAIN_TRACK != fasc/both)")
+    t_learn = time.perf_counter()
+    print(f"Learner created: {t_learn - t_dls_done:.1f}s", flush=True)
+
+    learn.fine_tune(EPOCHS)
+    t_train = time.perf_counter()
+    print(f"fine_tune done: {t_train - t_learn:.1f}s", flush=True)
+
+    export_path = OUT / export_stem
+    learn.export(export_path)
+    t_export = time.perf_counter()
+    print(f"Exported: {export_path.with_suffix('.pkl')} ({t_export - t_train:.1f}s)", flush=True)
+
+    n_train = max(1, int(len(fnames) * (1 - VALID_PCT)))
+    train_secs = t_train - t_learn
+    row = {
+        "timing_run": TIMING_RUN if TIMING_BASELINE else 0,
+        "track": track,
+        "n_pairs": len(fnames),
+        "epochs": EPOCHS,
+        "manifest_sec": round(t_manifest_end - t_manifest_start, 1),
+        "dataloader_sec": round(t_dls_done - t_dls, 1),
+        "learner_sec": round(t_learn - t_dls_done, 1),
+        "train_sec": round(train_secs, 1),
+        "export_sec": round(t_export - t_train, 1),
+        "total_sec": round(t_export - t0, 1),
+        "sec_per_pair_epoch": round(train_secs / (n_train * EPOCHS), 3),
+    }
+    timing_rows.append(row)
+    display(pd.DataFrame([row]))
+    return learn
+
+
+fasc_learn = train_track("fasc", train_fasc, "fasc_img", "fasc_mask", "fasc_baseline")
 """
     )
 )
@@ -307,23 +392,37 @@ cells.append(md("""## Train aponeurosis model"""))
 
 cells.append(
     code(
-        """apo_learn = None
-if TRAIN_TRACK in ("apo", "both"):
-    print(f"Training aponeurosis U-Net ({len(train_apo)} pairs)...")
-    apo_dls = make_dls(train_apo, "apo_img", "apo_mask")
-    apo_learn = unet_learner(
-        apo_dls,
-        encoder(),
-        loss_func=CrossEntropyLossFlat(axis=1),
-        metrics=[Dice(), foreground_acc],
-        self_attention=True,
+        """apo_learn = train_track("apo", train_apo, "apo_img", "apo_mask", "apo_baseline")
+"""
     )
-    apo_learn.fine_tune(EPOCHS)
-    apo_export = OUT / "apo_baseline"
-    apo_learn.export(apo_export)
-    print("Exported:", apo_export.with_suffix(".pkl"))
-else:
-    print("Skipping apo training (TRAIN_TRACK != apo/both)")
+)
+
+cells.append(md("""## Timing report and full-run projection"""))
+
+cells.append(
+    code(
+        """if timing_rows:
+    timing_df = pd.DataFrame(timing_rows)
+    timing_path = OUT / "timing_report.csv"
+    timing_df.to_csv(timing_path, index=False)
+    print("Wrote", timing_path)
+    display(timing_df)
+
+    full_epochs = 10
+    for row in timing_rows:
+        n_full = FASC_FULL if row["track"] == "fasc" else APO_FULL
+        n_train_full = int(n_full * (1 - VALID_PCT))
+        projected_train_h = row["sec_per_pair_epoch"] * n_train_full * full_epochs / 3600
+        print(
+            f"Projected {row['track']} full train ({n_full} pairs, {full_epochs} ep): "
+            f"~{projected_train_h:.1f}h training only (excl. manifest + export)"
+        )
+    if TRAIN_TRACK == "both" or len(timing_rows) == 2:
+        total_h = sum(
+            r["sec_per_pair_epoch"] * (FASC_FULL if r["track"] == "fasc" else APO_FULL) * (1 - VALID_PCT) * full_epochs
+            for r in timing_rows
+        ) / 3600
+        print(f"Projected both tracks @ {full_epochs} ep: ~{total_h:.1f}h training (add manifest ~1–2 min per run)")
 """
     )
 )
