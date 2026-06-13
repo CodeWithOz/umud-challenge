@@ -87,13 +87,28 @@ from fastai.vision.augment import Resize
 from fastai.layers import CrossEntropyLossFlat
 
 DATASET_ROOT = Path(f"/kaggle/input/datasets/{DATASET_SLUG}")
-IMG_DIR = DATASET_ROOT / "images"
-MSK_DIR = DATASET_ROOT / "masks"
 WORKING = Path("/kaggle/working")
 
 print(f"Dataset root exists: {DATASET_ROOT.exists()}")
-for p in [IMG_DIR, MSK_DIR]:
-    print(f"  {p.name}: exists={p.exists()}")
+"""
+    )
+)
+
+cells.append(
+    code(
+        """def resolve_subdir(root: Path, name: str) -> Path:
+    direct = root / name
+    if direct.exists():
+        return direct
+    candidates = [p for p in root.rglob(name) if p.is_dir() and p.name == name]
+    if not candidates:
+        raise FileNotFoundError(f"Could not find {name}/ under {root}")
+    return candidates[0]
+
+IMG_DIR = resolve_subdir(DATASET_ROOT, "images")
+MSK_DIR = resolve_subdir(DATASET_ROOT, "masks")
+print(f"images: {IMG_DIR}")
+print(f"masks: {MSK_DIR}")
 """
     )
 )

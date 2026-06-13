@@ -233,7 +233,20 @@ print(f"Wrote {len(targets)} pairs to {UPLOAD}")
 
 cells.append(
     code(
-        """(UPLOAD / "dataset-metadata.json").write_text(
+        """import zipfile
+
+ZIP_STAGING = Path("/kaggle/working/upload_staging")
+ZIP_STAGING.mkdir(parents=True, exist_ok=True)
+for old in ZIP_STAGING.glob("*.zip"):
+    old.unlink()
+
+archive = ZIP_STAGING / f"umud_fasc_timing_{PREP_RUN}.zip"
+with zipfile.ZipFile(archive, "w", compression=zipfile.ZIP_DEFLATED) as zf:
+    for fp in UPLOAD.rglob("*"):
+        if fp.is_file() and fp.name != "dataset-metadata.json":
+            zf.write(fp, arcname=fp.relative_to(UPLOAD))
+
+(ZIP_STAGING / "dataset-metadata.json").write_text(
     json.dumps(
         {
             "title": DATASET_TITLE,
@@ -244,12 +257,20 @@ cells.append(
     )
 )
 
-total_mb = sum(p.stat().st_size for p in UPLOAD.rglob("*") if p.is_file()) / 1e6
-print(f"Upload folder: {total_mb:.1f} MB")
+zips = sorted(ZIP_STAGING.glob("*.zip"))
+total_mb = sum(p.stat().st_size for p in zips) / 1e6
+print(f"Uploading {len(zips)} zip(s), {total_mb:.1f} MB")
+for z in zips:
+    print(f"  {z.name} ({z.stat().st_size / 1e6:.1f} MB)")
+
+def upload_ok(result: subprocess.CompletedProcess) -> bool:
+    out = (result.stdout or "") + (result.stderr or "")
+    bad = ("error" in out.lower() and "error log" not in out.lower()) or "forbidden" in out.lower()
+    return result.returncode == 0 and not bad
 
 print("Running: kaggle datasets version ...")
 result = subprocess.run(
-    ["kaggle", "datasets", "version", "-p", str(UPLOAD), "-m", VERSION_MSG],
+    ["kaggle", "datasets", "version", "-p", str(ZIP_STAGING), "-m", VERSION_MSG],
     capture_output=True,
     text=True,
 )
@@ -257,10 +278,10 @@ print(result.stdout)
 if result.stderr:
     print("STDERR:", result.stderr)
 
-if result.returncode != 0:
+if not upload_ok(result):
     print("version failed — trying create ...")
     result = subprocess.run(
-        ["kaggle", "datasets", "create", "-p", str(UPLOAD)],
+        ["kaggle", "datasets", "create", "-p", str(ZIP_STAGING)],
         capture_output=True,
         text=True,
     )
@@ -268,8 +289,8 @@ if result.returncode != 0:
     if result.stderr:
         print("STDERR:", result.stderr)
 
-if result.returncode != 0:
-    raise RuntimeError("Kaggle dataset upload failed")
+if not upload_ok(result):
+    raise RuntimeError("Kaggle dataset upload failed — check logs above")
 
 print("Dataset published:", DATASET_ID)
 """
