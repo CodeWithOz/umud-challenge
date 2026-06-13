@@ -6,9 +6,9 @@ _Last updated: 2026-06-13 (inline timing runs 1–2 complete; pivot to prep+trai
 
 **Best results:** _(none yet — no scored runs)_
 
-**Active notebooks:** **P4 full fasc prep** (`umud-aligned-fasc-full`, 2,749 pairs) running. Next: apo track timing baseline (`prep-apo-timing`).
+**Active notebooks:** Full fasc prep **done** (`umud-aligned-fasc-full`). **AP1 apo prep** (50 pairs) starting apo track baseline.
 
-**Where we are:** P3/T3 validated scaling. Full fasc prep before apo baselining (per Phase 3 work order).
+**Where we are:** Fasc prep complete per work order. Apo timing ladder next (mirror fasc P1→P2 pattern).
 
 **Carry-forward (not blocking Phase 3):**
 - **mm calibration** — Option C: deferred until **before leaderboard submit**; build baseline in pixels first.
@@ -96,6 +96,15 @@ P2 dataset **`umud-aligned-fasc-timing-200`** ready.
 | Train wall-clock (1 ep) | 7.9 s | **21.4 s** |
 
 T2 used `kagglehub.dataset_download` fallback (mount path missing after metadata swap on same kernel).
+
+### P4 full fasc prep results
+
+| Metric | P3 (1374) | P4 (2749) | Projected |
+|--------|-----------|-----------|-----------|
+| Prep total | 187.4 s | **358.0 s** | ~316 s transform |
+| Prep sec/pair | 0.115 | **0.112** | 0.114 |
+
+Dataset **`ucheozoemena/umud-aligned-fasc-full`** ready.
 
 ### P3/T3 scaling check results (50% data, 50% epochs)
 
@@ -201,8 +210,8 @@ umud-aligned-fasc-timing-50/
 
 1. ~~**P1:** prep notebook (50 fasc) → dataset → **T1** train benchmark.~~ **Done**
 2. ~~**P2:** prep (200 fasc) → dataset → **T2** train benchmark.~~ **Done**
-3. **Full fasc prep** (`umud-aligned-fasc-full`, 2,749 pairs) — **in progress**; 10-epoch train after prep.
-4. **Apo track:** `prep-apo-timing` notebook added; timing ladder (50 → 200 → …) after full fasc prep.
+3. ~~**Full fasc prep** (`umud-aligned-fasc-full`, 2,749 pairs)~~ **Done**; 10-epoch train pending.
+4. **Apo track:** AP1 prep (50) → AT1 train — **in progress**; then AP2/AT2 ladder.
 5. Val Dice; submission notebook; mm calibration before submit.
 
 ### Key inputs from Phase 2
