@@ -86,7 +86,16 @@ P2 dataset **`umud-aligned-fasc-timing-200`** ready.
 | sec/pair/epoch | 16.91 | **0.158** |
 | Train wall-clock (1 ep) | 676 s | **7.9 s** |
 
-**Extrapolation (mounted, 256px, resnet34):** full fasc 2,749 × 10 ep ≈ **72 min** train + ~4 min prep. Feasible on Kaggle T4.
+**Extrapolation (mounted, 256px, resnet34):** full fasc 2,749 × 10 ep ≈ **49–72 min** train + ~5 min prep. Feasible on Kaggle T4.
+
+### T2 mounted train results (v9 — success)
+
+| Metric | T1 (50) | T2 (200) |
+|--------|---------|----------|
+| sec/pair/epoch | 0.158 | **0.107** |
+| Train wall-clock (1 ep) | 7.9 s | **21.4 s** |
+
+T2 used `kagglehub.dataset_download` fallback (mount path missing after metadata swap on same kernel).
 
 ### P1 prep results (v1 — upload failed; v2 fixes zip staging)
 
@@ -166,10 +175,10 @@ umud-aligned-fasc-timing-50/
 
 ### Phase 3 work items (remaining)
 
-1. **P1:** prep notebook (50 fasc) → dataset → **T1** train benchmark.
-2. **P2:** prep (200 fasc) → dataset → **T2** train benchmark.
-3. Extrapolate; then fp16 / resnet18 / multi-session on mounted data.
-4. Full prep datasets + full train (split sessions if needed).
+1. ~~**P1:** prep notebook (50 fasc) → dataset → **T1** train benchmark.~~ **Done**
+2. ~~**P2:** prep (200 fasc) → dataset → **T2** train benchmark.~~ **Done**
+3. **Full fasc prep** (`umud-aligned-fasc-full`, 2,749 pairs) → **10-epoch train** on T4.
+4. **Apo track:** prep + train timing ladder, then full apo (1,048 pairs).
 5. Val Dice; submission notebook; mm calibration before submit.
 
 ### Key inputs from Phase 2
