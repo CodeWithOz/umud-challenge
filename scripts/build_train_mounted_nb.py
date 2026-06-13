@@ -145,7 +145,11 @@ def open_image_pil(fn):
 
 
 def open_mask_pil(fn):
-    return PILMask.create(fn, mode="L")
+    arr = np.array(PILImage.create(fn))
+    if arr.ndim == 3:
+        arr = arr[..., 0]
+    binary = (arr > 0).astype(np.uint8)
+    return PILMask.create(binary)
 
 
 def make_dls(fnames, valid_pct=0.20, bs=8, seed=42):
@@ -199,7 +203,7 @@ learn = unet_learner(
 )
 learn.fine_tune(EPOCHS)
 t1 = time.perf_counter()
-train_sec = t1 - t0
+train_sec = t1 - t_train
 print(f"Train wall-clock: {train_sec:.1f}s ({train_sec / max(1, len(fnames)) / max(1, EPOCHS):.2f}s/pair/epoch)")
 
 learn.export(WORKING / "fasc_baseline.pkl")
