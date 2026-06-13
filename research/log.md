@@ -6,7 +6,7 @@ _Last updated: 2026-06-13 (inline timing runs 1–2 complete; pivot to prep+trai
 
 **Best results:** _(none yet — no scored runs)_
 
-**Active notebooks:** **P1 prep** (`umud-prep-fasc-timing`, PREP_RUN=1) → **T1 train** (`umud-train-mounted-phase-3`). Inline baseline v9–v10 kept for reference only.
+**Active notebooks:** P1 dataset **`umud-aligned-fasc-timing-50`** ready (prep v2; kernel ERROR was false negative on upload_ok). **T1 train** (`umud-train-mounted-phase-3` v1) running.
 
 **Where we are:** Inline train proved infeasible (~54–103h full fasc@10ep). Adopt **prep notebook → Kaggle dataset → train notebook** ([birdclef_2026](https://github.com/CodeWithOz/birdclef_2026)). Dual timing ladder: benchmark **prep** and **train** separately at N=50 → 200 before scaling up.
 
@@ -76,7 +76,7 @@ First **learned** baseline: train mask segmentation with **fastai** on Kaggle **
 | Manifest scan | 35.5 s |
 | Transform (align+resize) | 4.4 s (0.088 s/pair) |
 | Total prep | 39.9 s |
-| Upload | **Failed** — CLI skipped loose `images/`/`masks/` folders; fixed in v2 with zip batch (BirdCLEF pattern) |
+| Upload | v1 failed (loose folders); v2 **dataset created** despite kernel ERROR — `upload_ok` too strict on kaggle 2.0 token warning; fixed in v3 |
 
 Full fasc prep extrapolation @ 0.088 s/pair: ~242 s (~4 min) for 2,749 pairs (CPU).
 
