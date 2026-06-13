@@ -42,7 +42,7 @@ cells.append(
     code(
         """# --- Parameters you can change ---
 RANDOM_SEED = 42
-TRAIN_RUN = 1  # 1 = mount timing-50, 2 = mount timing-200
+TRAIN_RUN = 2  # 1 = mount timing-50, 2 = mount timing-200
 
 VALID_PCT = 0.20
 BATCH_SIZE = 8
