@@ -9,7 +9,7 @@
   "enable_tpu": false,
   "enable_internet": true,
   "keywords": ["gpu"],
-  "dataset_sources": ["ucheozoemena/umud-aligned-apo-timing-50"],
+  "dataset_sources": ["ucheozoemena/umud-aligned-apo-timing-200"],
   "kernel_sources": [],
   "competition_sources": [],
   "model_sources": [],

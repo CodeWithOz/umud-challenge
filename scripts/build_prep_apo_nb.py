@@ -45,7 +45,7 @@ cells.append(
     code(
         """# --- Parameters you can change ---
 RANDOM_SEED = 42
-PREP_RUN = 1  # 1=50, 2=200, 3=524 (50%), 4=1048 (full apo)
+PREP_RUN = 2  # 1=50, 2=200, 3=524 (50%), 4=1048 (full apo)
 
 IMG_SIZE = 256
 APO_FULL = 1048
