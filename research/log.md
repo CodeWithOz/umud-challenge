@@ -6,9 +6,9 @@ _Last updated: 2026-06-13 (v8 cancelled — no artifacts). Refresh at session st
 
 **Best results:** _(none yet — no scored runs)_
 
-**Active notebooks:** Phase 3 timing baseline — **v9 complete** (run 1: 682s, 50 fasc × 1ep); **v10 pushing** run 2 (200 fasc × 1ep, ~45min est). Full fasc@10ep projection **~103h** — confirms v8 timeout. [kernel](https://www.kaggle.com/code/ucheozoemena/umud-baseline-phase-3-fastai-u-net)
+**Active notebooks:** Phase 3 timing — **v9 complete** (run 1: 682s / 50 fasc); **v10 run 2 in progress** (~45min est). Runs 3–5 **cancelled** — trend confirmed, pivot to speed + multi-session. [kernel](https://www.kaggle.com/code/ucheozoemena/umud-baseline-phase-3-fastai-u-net)
 
-**Where we are:** Timing runs 1/5 done. Chaining 2→5 with poll intervals calibrated from prior `total_sec`. Pause only on error or anomaly.
+**Where we are:** Run 1: **16.9 s/pair/epoch** → full fasc@10ep **~103h** (unacceptable). After run 2 confirms linear scaling, **stop timing ladder** and implement faster training: pre-cache aligned pairs, mixed precision, smaller encoder/resolution, checkpointed multi-session runs.
 
 **Carry-forward (not blocking Phase 3):**
 - **mm calibration** — Option C: deferred until **before leaderboard submit**; build baseline in pixels first.
@@ -63,10 +63,28 @@ First **learned** baseline: train mask segmentation with **fastai** on Kaggle **
 | Refine PA geometry | Prototype PA (fascicle PCA vs deep apo slope) underestimates vs competition ref 5–45°. Improve before trusting mask-derived PA for analysis. |
 | DLTrack comparison | Run DLTrack on a sample for cross-check if needed. |
 
-### Phase 3 work items (suggested order)
+### Phase 3 speed strategy (after timing run 2 — do not run 3–5)
 
-0. **Timing baseline first** (before any long GPU run): smallest useful subset + 1 epoch → 1–2 scaling runs (more data and/or epochs) → project wall-clock for full train. See Lessons / Process corrections.
-1. Create `notebooks/baseline/` (or similar) with `kernel-metadata.json` (`enable_gpu: true`, T4, internet if pretrained).
+**Problem:** On-the-fly TIFF load + stretch-align per sample dominates (~135s/batch at bs=8). Full dataset @ resnet34/384px/10ep is **~100h+** per track.
+
+**Target:** Full fasc + apo training within Kaggle session budget (~9–12h) via combined optimizations.
+
+| Lever | Expected impact | Notes |
+|-------|-----------------|-------|
+| **Pre-cache aligned pairs** to `/kaggle/working/cache/` (PNG) | Large — pay alignment once, not per epoch | Biggest win; one cache pass per track per session |
+| **Mixed precision** `learn.to_fp16()` | ~1.5–2× on T4 Tensor Cores | fastai `MixedPrecision` callback |
+| **Smaller `IMG_SIZE`** (384→256 or 224) | ~2× compute reduction | Acceptable for sparse masks? validate Dice |
+| **Lighter encoder** (resnet18 vs resnet34) | ~1.5–2× | Trade accuracy for speed in baseline |
+| **Multi-session checkpointing** | Fits任意 length | `SaveModelCallback(with_opt=True)` + `learn.load()` + `start_epoch` |
+| **Split notebooks** | Avoid single-session timeout | e.g. cache → train ep1–3 → train ep4–6 → export |
+
+**Multi-session layout (proposed):**
+1. **cache-fasc** / **cache-apo** — build aligned PNG cache (can share one notebook with `TRACK` flag).
+2. **train-fasc** — `TIMING_BASELINE=False`, load cache, train N epochs per push, save `fasc_ckpt.pth` each epoch to `/kaggle/working/`.
+3. **train-apo** — same for apo.
+4. Re-run train notebook with `RESUME=True` until target epochs; final push exports `.pkl`.
+
+**Next after run 2:** micro-benchmark cache+fp16+256 on 50 pairs (1ep) vs run 1 baseline → extrapolate again before full train.
 2. Load manifests from Phase 2 (`train_fasc_clean.csv`, `train_apo_all.csv`) or regenerate in notebook.
 3. fastai `SegmentationItemList` / dataloaders with stretch-aligned image–mask pairs.
 4. Train fascicle model → export weights; train apo model → export weights.
@@ -212,7 +230,8 @@ Historical checklist — all items done or explicitly deferred.
 | 2026-06-10 | Apo MT/PA edges: **contour + linear fit** (DLTrack-style), not horizontal row peaks | Replaces v1 row-peak prototype |
 | 2026-06-12 | Phase 3: **fastai + Kaggle GPU**; mm calibration deferred to pre-submit | — |
 | 2026-06-12 | Val split v1: random 80/20; **stratify by image size** noted for later | — |
-| 2026-06-12 | **Training timing baseline** before long GPU runs: tiny data + min epochs first, then scale to project wall-clock | — |
+| 2026-06-12 | **Training timing baseline** before long GPU runs; stop ladder once full-train projection is infeasible | — |
+| 2026-06-13 | Full fasc@10ep ~103h @ current config; pivot to cache + fp16 + multi-session (runs 3–5 cancelled) | — |
 | 2026-06-10 | Dual-track 1040 not 1048: 8 apo filenames on fasc exclude list | Expected, not a data bug |
 | 2026-06-10 | FL bimodality in px: driven by **800×1200 vs 1080×1640** image sizes | Not multi-fascicle per image |
 | 2026-06-10 | Split geometry into Kaggle + local notebooks; shared builder | — |
@@ -248,7 +267,7 @@ Historical checklist — all items done or explicitly deferred.
 - Histogram **ref** lines = competition **reference** plausible ranges for manual expert measurements, not model targets. (2026-06-12)
 - FL px bimodality tracks **image dimensions** (800×1200 vs 1080×1640), not multiple fascicles per image. (2026-06-10)
 - Kaggle `enable_gpu: true` defaults to **P100**, which is incompatible with current **fastai/PyTorch**. Use **T4**: `"machine_shape": "NvidiaTeslaT4"` + `kaggle kernels push --accelerator NvidiaTeslaT4`. (2026-06-12)
-- **Training timing baseline (mandatory before long runs):** Do not launch full-data, multi-epoch GPU training without a wall-clock baseline for that architecture + dataset. (1) Run smallest useful subset with minimum epochs (e.g. 1 epoch, N≈50–100 pairs). (2) Do 1–2 scaling runs (more data and/or more epochs). (3) Extrapolate time for the target config before committing GPU hours. v8 (2,749 fasc + 1,048 apo, 10 epochs × 2 models) ran 6h+ without this step. (2026-06-12)
+- **Training timing baseline (mandatory before long runs):** … v8 (2,749 fasc + 1,048 apo, 10 epochs × 2 models) ran 6h+ without this step. Run 1 (50 fasc, 1ep): **682s**, **16.9 s/pair/epoch** → **~103h** full fasc@10ep. Runs 3–5 skipped after run 2 confirms linear scale. (2026-06-13)
 
 ### Technical notes (Phase 0/1)
 
