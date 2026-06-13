@@ -6,9 +6,9 @@ _Last updated: 2026-06-13 (inline timing runs 1–2 complete; pivot to prep+trai
 
 **Best results:** _(none yet — no scored runs)_
 
-**Active notebooks:** Full fasc prep **done** (`umud-aligned-fasc-full`). **AP1 apo prep** (50 pairs) starting apo track baseline.
+**Active notebooks:** Full fasc prep **done**. Apo **AP1/AT1** complete (50 pairs). Next: **AP2/AT2** (200 apo pairs).
 
-**Where we are:** Fasc prep complete per work order. Apo timing ladder next (mirror fasc P1→P2 pattern).
+**Where we are:** Fasc dataset published. Apo timing ladder started — first micro benchmark matches fasc (~0.16 s/pair/epoch @ N=50).
 
 **Carry-forward (not blocking Phase 3):**
 - **mm calibration** — Option C: deferred until **before leaderboard submit**; build baseline in pixels first.
@@ -211,7 +211,7 @@ umud-aligned-fasc-timing-50/
 1. ~~**P1:** prep notebook (50 fasc) → dataset → **T1** train benchmark.~~ **Done**
 2. ~~**P2:** prep (200 fasc) → dataset → **T2** train benchmark.~~ **Done**
 3. ~~**Full fasc prep** (`umud-aligned-fasc-full`, 2,749 pairs)~~ **Done**; 10-epoch train pending.
-4. **Apo track:** AP1 prep (50) → AT1 train — **in progress**; then AP2/AT2 ladder.
+4. **Apo track:** ~~AP1 prep (50) → AT1 train~~ **Done**; AP2/AT2 (200) next in ladder.
 5. Val Dice; submission notebook; mm calibration before submit.
 
 ### Key inputs from Phase 2
