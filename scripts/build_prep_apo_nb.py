@@ -1,4 +1,4 @@
-"""Generate notebooks/prep-fasc-timing/prep-fasc-timing.ipynb — Kaggle-native aligned dataset prep."""
+"""Generate notebooks/prep-apo-timing/prep-apo-timing.ipynb — Kaggle-native aligned apo dataset prep."""
 import json
 from pathlib import Path
 
@@ -26,16 +26,14 @@ cells: list[dict] = []
 
 cells.append(
     md(
-        """# UMUD — Prepare Aligned Fascicle Dataset (Kaggle-native)
+        """# UMUD — Prepare Aligned Aponeurosis Dataset (Kaggle-native)
 
-**CPU notebook** — pattern from BirdCLEF `multilabel-234-v2-gen-species-1/2` (commit `b003ac9`).
+**CPU notebook** — same BirdCLEF gen-species pattern as fasc prep.
 
-1. Read competition TIFFs from `/kaggle/input/competitions/...`
+1. Read competition apo TIFFs from `/kaggle/input/competitions/...`
 2. Stretch-align masks, resize to **256×256** (NEAREST masks)
 3. Write PNG pairs + manifest to `/kaggle/working/upload/`
 4. **`kaggle datasets create` / `version`** from inside this notebook
-
-> Training notebooks mount the published dataset via `dataset_sources` — no inline transforms.
 
 > Edit *Configuration*, then re-run from there downward."""
     )
@@ -47,41 +45,39 @@ cells.append(
     code(
         """# --- Parameters you can change ---
 RANDOM_SEED = 42
-PREP_RUN = 4  # 1=50, 2=200, 3=1374 (50%), 4=2749 (full fasc)
+PREP_RUN = 1  # 1=50, 2=200, 3=524 (50%), 4=1048 (full apo)
 
 IMG_SIZE = 256
-FASC_NEAR_EMPTY_THRESHOLD = 0.0005
-DEFAULT_ALIGN_MODE = "stretch"
-FASC_FULL_CLEAN = 2749
+APO_FULL = 1048
 
 PREP_PROFILES = {
     1: {
         "max_samples": 50,
-        "dataset_id": "ucheozoemena/umud-aligned-fasc-timing-50",
-        "dataset_title": "UMUD Aligned Fasc Timing 50",
-        "version_msg": "P1 timing: 50 fasc pairs, 256px stretch-aligned",
-        "zip_name": "umud_fasc_timing_1",
+        "dataset_id": "ucheozoemena/umud-aligned-apo-timing-50",
+        "dataset_title": "UMUD Aligned Apo Timing 50",
+        "version_msg": "AP1 timing: 50 apo pairs, 256px stretch-aligned",
+        "zip_name": "umud_apo_timing_1",
     },
     2: {
         "max_samples": 200,
-        "dataset_id": "ucheozoemena/umud-aligned-fasc-timing-200",
-        "dataset_title": "UMUD Aligned Fasc Timing 200",
-        "version_msg": "P2 timing: 200 fasc pairs, 256px stretch-aligned",
-        "zip_name": "umud_fasc_timing_2",
+        "dataset_id": "ucheozoemena/umud-aligned-apo-timing-200",
+        "dataset_title": "UMUD Aligned Apo Timing 200",
+        "version_msg": "AP2 timing: 200 apo pairs, 256px stretch-aligned",
+        "zip_name": "umud_apo_timing_2",
     },
     3: {
-        "max_samples": FASC_FULL_CLEAN // 2,
-        "dataset_id": "ucheozoemena/umud-aligned-fasc-timing-1374",
-        "dataset_title": "UMUD Aligned Fasc Timing 1374",
-        "version_msg": "P3 scaling check: 50% fasc pairs (1374), 256px stretch-aligned",
-        "zip_name": "umud_fasc_timing_3",
+        "max_samples": APO_FULL // 2,
+        "dataset_id": "ucheozoemena/umud-aligned-apo-timing-524",
+        "dataset_title": "UMUD Aligned Apo Timing 524",
+        "version_msg": "AP3 scaling check: 50% apo pairs (524), 256px stretch-aligned",
+        "zip_name": "umud_apo_timing_3",
     },
     4: {
-        "max_samples": FASC_FULL_CLEAN,
-        "dataset_id": "ucheozoemena/umud-aligned-fasc-full",
-        "dataset_title": "UMUD Aligned Fasc Full",
-        "version_msg": "Full fasc prep: 2749 clean pairs, 256px stretch-aligned",
-        "zip_name": "umud_fasc_full",
+        "max_samples": APO_FULL,
+        "dataset_id": "ucheozoemena/umud-aligned-apo-full",
+        "dataset_title": "UMUD Aligned Apo Full",
+        "version_msg": "Full apo prep: 1048 pairs, 256px stretch-aligned",
+        "zip_name": "umud_apo_full",
     },
 }
 
@@ -120,8 +116,8 @@ MANIFEST_OUT = UPLOAD / "manifests"
 TIMING_OUT = Path("/kaggle/working")
 
 DIRS = {
-    "fasc_img": COMPETITION_DIR / "fasc_imgs_v1/fasc_images_new_model_v1",
-    "fasc_mask": COMPETITION_DIR / "fasc_masks_v1/fasc_masks_new_model_v1",
+    "apo_img": COMPETITION_DIR / "apo_imgs_v1/apo_images_new_model_v1",
+    "apo_mask": COMPETITION_DIR / "apo_masks_v1/apo_masks_new_model_v1",
 }
 IMAGE_EXTS = {".tif", ".tiff", ".png", ".jpg", ".jpeg"}
 
@@ -191,18 +187,11 @@ lookups = {k: build_lookup(v) for k, v in DIRS.items()}
 print("Lookups:", {k: len(v) for k, v in lookups.items()})
 
 t0 = time.perf_counter()
-fasc_common = sorted(set(lookups["fasc_img"]) & set(lookups["fasc_mask"]))
-clean = []
-for name in fasc_common:
-    mask = load_mask(lookups["fasc_mask"][name])
-    cov = float(mask.mean())
-    if cov <= 0.0 or cov < FASC_NEAR_EMPTY_THRESHOLD:
-        continue
-    clean.append(name)
+apo_common = sorted(set(lookups["apo_img"]) & set(lookups["apo_mask"]))
 t_manifest = time.perf_counter()
 
-targets = subsample(clean, MAX_SAMPLES, RANDOM_SEED)
-print(f"Clean fasc: {len(clean)} | prep targets: {len(targets)}")
+targets = subsample(apo_common, MAX_SAMPLES, RANDOM_SEED)
+print(f"Apo pairs: {len(apo_common)} | prep targets: {len(targets)}")
 print(f"Manifest scan: {t_manifest - t0:.1f}s")
 """
     )
@@ -213,8 +202,8 @@ cells.append(
         """rows = []
 t_prep = time.perf_counter()
 for name in tqdm(targets, desc="prep pairs"):
-    img = load_gray(lookups["fasc_img"][name])
-    mask = load_mask(lookups["fasc_mask"][name])
+    img = load_gray(lookups["apo_img"][name])
+    mask = load_mask(lookups["apo_mask"][name])
     aligned = align_mask(mask, img.shape[0], img.shape[1])
     img_r, mask_r = resize_pair(img, aligned, IMG_SIZE)
     stem = Path(name).stem
@@ -226,7 +215,7 @@ for name in tqdm(targets, desc="prep pairs"):
 t_done = time.perf_counter()
 
 manifest = pd.DataFrame(rows)
-manifest.to_csv(MANIFEST_OUT / "train_fasc_clean.csv", index=False)
+manifest.to_csv(MANIFEST_OUT / "train_apo_all.csv", index=False)
 
 timing = pd.DataFrame(
     [
@@ -339,8 +328,8 @@ def write_nb(path: Path) -> None:
 
 
 def main() -> None:
-    out = Path(__file__).resolve().parents[1] / "notebooks/prep-fasc-timing"
-    write_nb(out / "prep-fasc-timing.ipynb")
+    out = Path(__file__).resolve().parents[1] / "notebooks/prep-apo-timing"
+    write_nb(out / "prep-apo-timing.ipynb")
 
 
 if __name__ == "__main__":

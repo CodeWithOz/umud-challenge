@@ -6,9 +6,9 @@ _Last updated: 2026-06-13 (inline timing runs 1–2 complete; pivot to prep+trai
 
 **Best results:** _(none yet — no scored runs)_
 
-**Active notebooks:** **P3/T3 complete** — 50% scaling check confirms prep linear and train faster than T2 extrapolation. Ready for full fasc when approved.
+**Active notebooks:** **P4 full fasc prep** (`umud-aligned-fasc-full`, 2,749 pairs) running. Next: apo track timing baseline (`prep-apo-timing`).
 
-**Where we are:** P1–P2 timing ladder complete (0.11 s/pair/epoch train @ N=200). P3/T3 tests mid-scale scaling before committing to full fasc prep + 10-epoch train.
+**Where we are:** P3/T3 validated scaling. Full fasc prep before apo baselining (per Phase 3 work order).
 
 **Carry-forward (not blocking Phase 3):**
 - **mm calibration** — Option C: deferred until **before leaderboard submit**; build baseline in pixels first.
@@ -201,8 +201,8 @@ umud-aligned-fasc-timing-50/
 
 1. ~~**P1:** prep notebook (50 fasc) → dataset → **T1** train benchmark.~~ **Done**
 2. ~~**P2:** prep (200 fasc) → dataset → **T2** train benchmark.~~ **Done**
-3. **Full fasc prep** (`umud-aligned-fasc-full`, 2,749 pairs) → **10-epoch train** on T4.
-4. **Apo track:** prep + train timing ladder, then full apo (1,048 pairs).
+3. **Full fasc prep** (`umud-aligned-fasc-full`, 2,749 pairs) — **in progress**; 10-epoch train after prep.
+4. **Apo track:** `prep-apo-timing` notebook added; timing ladder (50 → 200 → …) after full fasc prep.
 5. Val Dice; submission notebook; mm calibration before submit.
 
 ### Key inputs from Phase 2
