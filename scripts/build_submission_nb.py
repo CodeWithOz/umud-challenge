@@ -34,7 +34,7 @@ cells.append(
 2. Predict masks on each test `.tif` (256px inference, upscale masks to native size)
 3. Derive **PA / FL / MT** via Phase 2 geometry (pixels)
 4. Apply **`MM_PER_PIXEL`** to convert FL/MT to mm (set before first scored submit)
-5. Write `submission.csv` (semicolon-separated)
+5. Write `submission.csv` (comma-separated)
 
 > Edit *Configuration*, then re-run from there downward."""
     )
@@ -313,7 +313,7 @@ for path in tqdm(test_paths, desc="infer test"):
 
     rows.append(
         {
-            "image_id": path.stem,
+            "image_id": path.name,
             "pa_deg": pa,
             "fl_mm": fl_mm,
             "mt_mm": mt_mm,
@@ -332,21 +332,41 @@ print("NaN rates:", pred_df[["pa_deg", "fl_mm", "mt_mm"]].isna().mean().round(4)
 
 cells.append(
     code(
-        """if SAMPLE_SUBMISSION.exists():
-    template = pd.read_csv(SAMPLE_SUBMISSION, sep=";")
+        """def read_sample_submission(path: Path) -> pd.DataFrame:
+    for sep in (",", ";"):
+        try:
+            df = pd.read_csv(path, sep=sep)
+            if {"image_id", "pa_deg", "fl_mm", "mt_mm"}.issubset(df.columns):
+                return df
+        except Exception:
+            pass
+    return pd.read_csv(path, sep=None, engine="python")
+
+
+tif_pred = pred_df[pred_df["image_id"].str.lower().str.endswith((".tif", ".tiff"))].copy()
+pred_lookup = tif_pred.set_index("image_id")
+
+if SAMPLE_SUBMISSION.exists():
+    template = read_sample_submission(SAMPLE_SUBMISSION)
     template_ids = template["image_id"].astype(str)
-    pred_lookup = pred_df.set_index("image_id")
     missing = [i for i in template_ids if i not in pred_lookup.index]
     if missing:
         print(f"Warning: {len(missing)} template ids missing predictions (first 5): {missing[:5]}")
-    submit = template.copy()
-    for col_src, col_dst in [("pa_deg", "pa_deg"), ("fl_mm", "fl_mm"), ("mt_mm", "mt_mm")]:
-        submit[col_dst] = submit["image_id"].map(pred_lookup[col_src])
+    if len(template_ids) >= max(10, len(tif_pred) // 2):
+        submit = template[["image_id"]].copy()
+        for col in ["pa_deg", "fl_mm", "mt_mm"]:
+            submit[col] = submit["image_id"].map(pred_lookup[col])
+    else:
+        print(
+            f"Template has only {len(template_ids)} rows; "
+            f"writing {len(tif_pred)} .tif predictions instead"
+        )
+        submit = tif_pred[["image_id", "pa_deg", "fl_mm", "mt_mm"]].sort_values("image_id")
 else:
-    submit = pred_df[["image_id", "pa_deg", "fl_mm", "mt_mm"]].copy()
+    submit = tif_pred[["image_id", "pa_deg", "fl_mm", "mt_mm"]].sort_values("image_id")
 
 out_path = Path("/kaggle/working/submission.csv")
-submit.to_csv(out_path, sep=";", index=False)
+submit.to_csv(out_path, index=False)
 pred_df.to_csv("/kaggle/working/submission_debug.csv", index=False)
 print(f"Wrote {out_path} ({len(submit)} rows)")
 """

@@ -42,7 +42,9 @@ cells.append(md("""## Configuration"""))
 
 cells.append(
     code(
-        """RANDOM_SEED = 42
+        """from pathlib import Path
+
+RANDOM_SEED = 42
 VALID_PCT = 0.20
 BATCH_SIZE = 8
 IMG_SIZE = 256
