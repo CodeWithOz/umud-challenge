@@ -6,7 +6,7 @@ _Last updated: 2026-06-12 (AT4 complete; both baseline models exported)._
 
 **Best results:** _(none yet — no scored runs)_
 
-**Active notebooks:** **Both baseline models trained** — `fasc_baseline.pkl` (T4) + `apo_baseline.pkl` (AT4). **Scaffolded:** `eval-val-dice-phase-3` + `submission-phase-3`. Next: run val Dice on Kaggle, mm calibration, first submit.
+**Active notebooks:** v2 **eval** + **submission** kernels complete. Val Dice near-zero (investigate). Submission: 251-row comma CSV. Next: mm calibration, segmentation quality.
 
 ### Phase 3 vs Phase 4 boundary
 
@@ -165,6 +165,17 @@ Dataset: `ucheozoemena/umud-aligned-apo-timing-200`.
 | **AT4 train** | 1,048 × 10 ep | **583.3 s (~9.7 min)** | **0.056** |
 
 Both in line with scaling ladder. Models: `fasc_baseline.pkl`, `apo_baseline.pkl` exported.
+
+### Val Dice + submission v2 (2026-06-13)
+
+| Track | Val pairs | Val loss | Val Dice |
+|-------|-----------|----------|----------|
+| fasc | 549 / 2749 | 0.031 | **0.000** |
+| apo | 209 / 1048 | 0.664 | **0.0006** |
+
+Near-zero val Dice aligns with submission geometry failures (96% PA/FL NaN on test). Investigate eval metric vs train-time Dice logs; may indicate models predict mostly background.
+
+**Submission v2:** 251 `.tif` rows, comma-separated `submission.csv`. Template in competition bundle has only 2 placeholder rows — notebook writes all `.tif` predictions instead.
 
 ### P3/T3 scaling check results (50% data, 50% epochs)
 
