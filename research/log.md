@@ -2,11 +2,23 @@
 
 ## Current focus
 
-_Last updated: 2026-06-12 (AT4 complete; both baseline models exported)._
+_Last updated: 2026-06-15 (segmentation debug complete; weighted retrain **pending user approval**)._
 
-**Best results:** _(none yet — no scored runs)_
+**Best results:** _(none yet — no scored leaderboard runs)_
 
-**Active notebooks:** v2 **eval** + **submission** kernels complete. Val Dice near-zero (investigate). Submission: 251-row comma CSV. Next: mm calibration, segmentation quality.
+**Active notebooks:**
+
+| Notebook | Kaggle slug | Status |
+|----------|-------------|--------|
+| Train fasc | `umud-train-mounted-phase-3` | **Unweighted T4 complete** — models collapsed; **weighted retrain not run yet** (code ready, `TRAIN_RUN=4`) |
+| Train apo | `umud-train-apo-mounted-phase-3` | Same — **unweighted AT4** exported; weighted retrain pending |
+| Eval val Dice | `umud-eval-val-dice-phase-3` | v3 pushed (metric column fix) |
+| Submission | `umud-submission-phase-3` | v2 complete — 251-row comma CSV; ~97% PA/FL NaN (bad models) |
+| Debug | `umud-debug-phase-3` | v2 complete — root-cause evidence |
+
+**Blocked on:** User approval to run **full weighted retrain** (fasc 2749×10ep + apo 1048×10ep, ~35 min T4 total). Then re-eval + re-submission. mm calibration still deferred until before first scored submit.
+
+**Do not use for inference:** `fasc_baseline.pkl` / `apo_baseline.pkl` from unweighted T4/AT4 — predict all-background (fasc) or near-empty (apo).
 
 ### Phase 3 vs Phase 4 boundary
 
@@ -73,6 +85,7 @@ First **learned** baseline: train mask segmentation with **fastai** on Kaggle **
 | mm calibration | **Defer** until before submission; train/eval masks in pixels first (Option C) | 2026-06-09 |
 | Data for training | **Prep notebook → Kaggle dataset → train notebook** (BirdCLEF pattern; not inline transforms) | 2026-06-13 |
 | Prep output resolution | **256×256 PNG** baked at prep (NEAREST masks) — see annotation below | 2026-06-13 |
+| Segmentation loss | **Class-weighted cross-entropy** (`CrossEntropyLossFlat` + `weight=[1, w_fg]`). Fasc `w_fg=150`, apo `w_fg=15`. Unweighted CE **failed** on sparse fasc masks — see debug dossier below. | 2026-06-15 |
 
 **Why 256px at prep (not resize at train time):** The alternative is storing full-resolution aligned PNGs and calling `Resize(384)` in fastai during training. That still reads large files from disk every epoch. Baking 256 at prep cuts file size, I/O, and GPU pixels in one step. Trade-off: resolution is fixed per dataset version — if val Dice is poor, publish a `…-384px` dataset variant as a follow-up benchmark, not the default path.
 
@@ -166,18 +179,75 @@ Dataset: `ucheozoemena/umud-aligned-apo-timing-200`.
 
 Both in line with scaling ladder. Models: `fasc_baseline.pkl`, `apo_baseline.pkl` exported.
 
-### Val Dice + submission v2 (2026-06-13)
+### Segmentation debug dossier (2026-06-15)
 
-| Track | Val pairs | Val loss | Val Dice |
-|-------|-----------|----------|----------|
-| fasc | 549 / 2749 | 0.031 | **0.000** |
-| apo | 209 / 1048 | 0.664 | **0.0006** |
+**Glossary (used in this log):**
 
-**Root cause (debug kernel v1):** models collapsed to **all-background** predictions under unweighted CE — fasc val had **0** foreground pixels predicted across 15.7M val pixels (GT foreground ~0.3%). Submission NaNs follow: empty fasc masks → no PCA → PA/FL NaN (~97%); weak apo masks → MT NaN (~52%).
+| Term | Meaning |
+|------|---------|
+| **GT** | Ground truth — human-annotated mask (white = structure, black = background) |
+| **CE** | Cross-entropy loss (`CrossEntropyLossFlat`) — per-pixel classification loss |
+| **Dice** | Overlap metric between predicted and GT structure pixels (0 = none, 1 = perfect) |
+| **fasc_pca_ok** | Submission debug metric: predicted fasc mask has ≥3 foreground pixels so PCA geometry (PA/FL) can run |
 
-**Fix:** class-weighted `CrossEntropyLossFlat` (fasc structure weight 150, apo 15). Verification: 50×5ep weighted fasc → Dice **0.008**, 1848 pred fg pixels, test `fasc_pca_ok` **50%** (was 0%). **Full retrain needed** (T4/AT4 with weights).
+**Mask sparsity (prep datasets, measured):**
 
-**Eval CSV bug:** metric columns used `str(Dice())` object repr — fixed to `dice` via `type(m).__name__.lower()`.
+| Track | Mean mask coverage | Notes |
+|-------|-------------------|--------|
+| Fasc | **~0.29%** foreground | Thin lines; extreme class imbalance |
+| Apo | mean ~47%, **median ~6.4%** | Bimodal: line-style vs region-style |
+
+**Unweighted T4/AT4 results (eval kernel v2):**
+
+| Track | Val loss | Val Dice | Pred fg (debug sample) | GT fg |
+|-------|----------|----------|------------------------|-------|
+| fasc | 0.031 | **0.000** | **0** pixels (all background) | ~0.30% |
+| apo | 0.664 | **0.0006** | ~0.22% predicted | ~41% GT val avg |
+
+Low fasc loss + zero Dice = model learned to predict **all background** (cheap under unweighted CE).
+
+**Submission v2 (unweighted models):** 251 `.tif` rows, comma CSV. PA/FL NaN **~97%**, MT NaN **~52%**. Chain: empty fasc pred mask → `fascicle_pca` fails → PA/FL NaN.
+
+**Root cause:** Unweighted CE treats every pixel equally; ~99.7% background pixels dominate gradient → structure class ignored.
+
+**Proposed fix — class-weighted CE:**
+
+| Class | Weight | Rationale |
+|-------|--------|-----------|
+| Background | 1.0 | baseline |
+| Fasc structure | **150** | Inverse-freq ≈ (1−0.003)/0.003 ≈ **331**; 150 is conservative half-step |
+| Apo structure | **15** | Inverse-freq for median line-style apo (~6.4% fg) ≈ **14.6** |
+
+Code: `scripts/build_train_mounted_nb.py`, `scripts/build_train_apo_mounted_nb.py` — `USE_CLASS_WEIGHTS=True`, `TRAIN_RUN=4` for full retrain.
+
+**Verification only (NOT full retrain):** fasc **50 pairs × 5 epochs**, weighted CE 150, Kaggle train kernel v12. Evaluated via `umud-debug-phase-3` v2 against **full** val set (model still tiny):
+
+| Metric | Unweighted full T4 | Weighted 50×5ep only |
+|--------|-------------------|----------------------|
+| Val Dice | 0.000 | **0.008** (still poor; proves direction) |
+| Pred fg pixels (240-val-image sample) | 0 | **1,848** / 15.7M (~0.012% vs GT ~0.30%) |
+| Test `fasc_pca_ok` (80 images) | 0% | **50%** |
+
+**Notebook fixes this session:**
+
+| Issue | Fix |
+|-------|-----|
+| Eval `NameError: Path` | Import `Path` in config cell |
+| Eval CSV columns `<fastai.metrics.Dice object at …>` | Use `type(m).__name__.lower()` → column `dice` |
+| Submission `image_id` mismatch | Use `path.name` (`IMG_00001.tif`), not stem |
+| Submission 2-row NaN CSV | Template has 2 placeholder rows → write all 251 `.tif` preds |
+| CSV separator | Comma (not semicolon); no competition requirement for `;` |
+| Kaggle CLI auth in agent shells | `export KAGGLE_API_TOKEN=$(.venv/bin/kaggle auth print-access-token)` before CLI calls |
+
+**Local `.pkl` load:** fastai 2.8 / Python 3.13 locally cannot unpickle Kaggle-exported learners (`Resolver` pickle error). **Debug and inference validation must run on Kaggle** (or pin older fastai). Datasets load fine via `kagglehub`.
+
+**Artifacts:** `notebooks/debug-phase3/`, `scripts/build_debug_phase3_nb.py`, `scripts/debug_val_submission.py` (local script; pkl load blocked). Debug outputs: `tmp/kaggle-output/debug/`, `tmp/kaggle-output/debug-v2/`.
+
+**Pending (awaiting user approval):** Full weighted T4 + AT4 → eval v3+ → submission v3 → tune weights if Dice still low.
+
+### Val Dice + submission v2 (2026-06-13) — summary
+
+See **Segmentation debug dossier** above for full detail. Unweighted models unusable; weighted retrain is next step.
 
 ### P3/T3 scaling check results (50% data, 50% epochs)
 
@@ -281,11 +351,12 @@ umud-aligned-fasc-timing-50/
 
 ### Phase 3 work items (remaining)
 
-1. ~~**P1:** prep notebook (50 fasc) → dataset → **T1** train benchmark.~~ **Done**
-2. ~~**P2:** prep (200 fasc) → dataset → **T2** train benchmark.~~ **Done**
-3. ~~**Full fasc prep** (`umud-aligned-fasc-full`)~~ **Done**; ~~**T4 full fasc train** (2749×10ep)~~ **Done** (~24.6 min).
-4. **Apo track:** ~~AP1–AP3 timing ladder~~ **Done**; ~~**full apo prep + train**~~ **Done** (AT4: 583s, 0.056 s/pair/epoch).
-5. ~~Submission notebook scaffold~~ **Done** (`notebooks/submission/`). **Val Dice** eval notebook scaffold (`notebooks/eval-val-dice/`). Run both on Kaggle; **mm calibration before first submit** (still Phase 3).
+1. ~~Timing ladders, full prep, unweighted T4/AT4 train~~ **Done** (models exported but **segmentation failed** — see debug dossier).
+2. ~~Eval + submission notebook scaffold~~ **Done** (`eval-val-dice-phase-3`, `submission-phase-3`).
+3. ~~Root-cause debug~~ **Done** (`debug-phase-3`); class-weighted CE coded; **50×5ep verification** only.
+4. **Weighted full retrain** (fasc T4 + apo AT4) — **pending user approval**.
+5. Re-run eval + submission on weighted models; confirm Dice and NaN rates improved.
+6. **mm calibration** before first scored Kaggle submit (still Phase 3).
 
 ### Key inputs from Phase 2
 
@@ -410,6 +481,14 @@ Historical checklist — all items done or explicitly deferred.
 | 2026-06-12 | baseline-phase-3 v8 | resnet34 | fasc 2,749 + apo 1,048 | full train 10 epochs × 2; 6h+ then CANCEL_ACKNOWLEDGED; no exports | — | **cancelled** |
 | 2026-06-13 | baseline-phase-3 v9 | resnet34 | fasc 50 × 1ep inline | 682s; 16.9 s/pair/ep | — | **complete** |
 | 2026-06-13 | baseline-phase-3 v10 | resnet34 | fasc 200 × 1ep inline | 1430s; 8.9 s/pair/ep | — | **complete** |
+| 2026-06-13 | train-mounted T4 | resnet34 | fasc 2749 × 10ep mounted | unweighted CE; 1474s; `fasc_baseline.pkl` | — | **complete** (seg useless) |
+| 2026-06-13 | train-apo-mounted AT4 | resnet34 | apo 1048 × 10ep mounted | unweighted CE; 583s; `apo_baseline.pkl` | — | **complete** (seg useless) |
+| 2026-06-15 | eval-val-dice v2 | — | val split 80/20 | fasc Dice 0, apo 0.0006; metric CSV column bug fixed v3 | — | **complete** |
+| 2026-06-15 | submission-phase-3 v2 | — | 251 test tif | comma CSV; 97% PA/FL NaN | — | **complete** (bad models) |
+| 2026-06-15 | debug-phase-3 v1/v2 | — | — | root cause: CE collapse; weighted 50×5ep verify | — | **complete** |
+| 2026-06-15 | train-mounted v12 | resnet34 | fasc **50** × **5ep** weighted | verification only; Dice 0.008 | — | **complete** |
+| _pending_ | train-mounted T4 weighted | resnet34 | fasc 2749 × 10ep | `USE_CLASS_WEIGHTS`, w_fg=150 | — | **not started** |
+| _pending_ | train-apo-mounted AT4 weighted | resnet34 | apo 1048 × 10ep | `USE_CLASS_WEIGHTS`, w_fg=15 | — | **not started** |
 
 ---
 
@@ -427,6 +506,8 @@ Historical checklist — all items done or explicitly deferred.
 | 2026-06-12 | Val split v1: random 80/20; **stratify by image size** noted for later | — |
 | 2026-06-12 | **Training timing baseline** before long GPU runs; stop ladder once full-train projection is infeasible | — |
 | 2026-06-13 | Full fasc@10ep ~103h @ current config; pivot to **prep dataset + train notebook** + fp16 + multi-session (runs 3–5 cancelled) | — |
+| 2026-06-15 | **Unweighted CE unusable** for fasc (~0.3% fg); use **class-weighted CE** (fasc w=150, apo w=15) | — |
+| 2026-06-15 | **Submission CSV:** comma separator; `image_id` = full filename (`IMG_00001.tif`) | — |
 | 2026-06-13 | **Prep notebook → Kaggle dataset → train notebook** (BirdCLEF pattern) | — |
 | 2026-06-13 | **256px resize baked at prep** (NEAREST masks); 384px = optional dataset A/B | — |
 | 2026-06-10 | Dual-track 1040 not 1048: 8 apo filenames on fasc exclude list | Expected, not a data bug |
@@ -467,6 +548,10 @@ Historical checklist — all items done or explicitly deferred.
 - **256px at prep:** resize images+masks once when building dataset (not at train). Faster than full-res PNGs + `Resize()` in fastai. New dataset version if higher res needed. (2026-06-13)
 - Kaggle `enable_gpu: true` defaults to **P100**, which is incompatible with current **fastai/PyTorch**. Use **T4**: `"machine_shape": "NvidiaTeslaT4"` + `kaggle kernels push --accelerator NvidiaTeslaT4`. (2026-06-12)
 - **Training timing baseline (mandatory before long runs):** … v8 (2,749 fasc + 1,048 apo, 10 epochs × 2 models) ran 6h+ without this step. Run 1 (50 fasc, 1ep): **682s**, **16.9 s/pair/epoch** → **~103h** full fasc@10ep. Runs 3–5 skipped after run 2 confirms linear scale. (2026-06-13)
+- **Unweighted CE + sparse fasc masks (~0.3% fg):** model collapses to all-background; val Dice ≈ 0, low loss, submission PA/FL mostly NaN. Fix: **class-weighted CE** (fasc structure weight ~150, apo ~15). Verify on Kaggle before trusting local `.pkl` load. (2026-06-15)
+- **Kaggle OAuth CLI in non-interactive shells:** run `export KAGGLE_API_TOKEN=$(.venv/bin/kaggle auth print-access-token)` before `.venv/bin/kaggle` commands; venv activation alone is insufficient. (2026-06-15)
+- **fastai `load_learner` locally:** Kaggle-exported `.pkl` may fail on local fastai 2.8 / Py 3.13 (`Resolver` pickle). Run eval/debug on Kaggle matching docker image. (2026-06-15)
+- **Eval CSV metrics:** never use `str(metric)` as column name — use `type(m).__name__.lower()` (e.g. `dice`). (2026-06-15)
 
 ### Technical notes (Phase 0/1)
 

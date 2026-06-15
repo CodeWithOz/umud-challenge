@@ -77,3 +77,7 @@ _This section is updated whenever a new lesson is discovered. Any AI agent worki
 | 2026-06 | **Kaggle-native gen notebooks** publish datasets via `kaggle datasets version/create` from inside the prep kernel (BirdCLEF `gen-species-1/2`, commit `b003ac9`). Split prep when session limit hit. |
 | 2026-06 | `kaggle datasets` skips loose folders — zip batches to staging (BirdCLEF `batch_*.zip` + `dataset-metadata.json` alongside). Check stdout for errors; CLI may print success on failure. |
 | 2026-06 | Changing `dataset_sources` on an existing kernel may not remount inputs — use `kagglehub.dataset_download` fallback or update Kaggle sidebar. |
+| 2026-06 | **Unweighted CE fails** on ~0.3% fasc foreground — use class-weighted `CrossEntropyLossFlat` (see `research/log.md` debug dossier). |
+| 2026-06 | **Kaggle CLI auth:** `export KAGGLE_API_TOKEN=$(.venv/bin/kaggle auth print-access-token)` before CLI in agent/background shells. |
+| 2026-06 | **Exported `.pkl` inference/debug** on Kaggle docker, not local fastai 2.8 — pickle `Resolver` mismatch. |
+| 2026-06 | Eval report: metric columns via `type(m).__name__.lower()`, not `str(m)`. Submission CSV: comma sep; `image_id` = full `.tif` filename. |
