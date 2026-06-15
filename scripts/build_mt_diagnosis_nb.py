@@ -10,7 +10,9 @@ from build_submission_nb import code, md
 
 
 def _geometry_source() -> str:
-    return sub.cells[2]["source"] if isinstance(sub.cells[2]["source"], list) else [sub.cells[2]["source"]]
+    geom_cell = sub.cells[3]
+    src = geom_cell["source"]
+    return "".join(src) if isinstance(src, list) else src
 
 
 cells: list[dict] = [
@@ -46,8 +48,7 @@ TEST_DIR = COMPETITION_DIR / "test_images_v2/test_set_v2"
 ]
 
 # geometry + helpers cell from submission builder
-geom_src = "".join(_geometry_source())
-cells.append(code(geom_src))
+cells.append(code(_geometry_source()))
 
 cells.extend(
     [
