@@ -20,6 +20,20 @@ _Last updated: 2026-06-15 (segmentation debug complete; weighted retrain **pendi
 
 **Do not use for inference:** `fasc_baseline.pkl` / `apo_baseline.pkl` from unweighted T4/AT4 — predict all-background (fasc) or near-empty (apo).
 
+### New session handoff
+
+**Yes — you can start a fresh chat and paste your decision.** A new agent should read this file (`research/log.md` **Current focus** + **Segmentation debug dossier**) and `AGENTS.md` before acting.
+
+**Suggested opener for the new chat** (edit as needed):
+
+> Continue UMUD Phase 3 from `research/log.md`. Unweighted T4/AT4 models failed (val Dice ≈ 0). Class-weighted CE is coded (`USE_CLASS_WEIGHTS=True`, fasc w=150, apo w=15, `TRAIN_RUN=4`). My decision on weighted full retrain: **[approve / reject / change weights to X]**. Run on Kaggle yourself; do not ask me to run locally.
+
+**If approved, agent should:** (1) `git pull`, (2) push + run `umud-train-mounted-phase-3` and `umud-train-apo-mounted-phase-3` on T4, (3) re-run `umud-debug-phase-3` or `umud-eval-val-dice-phase-3`, (4) re-run `umud-submission-phase-3`, (5) update this log with Dice/NaN results.
+
+**Key code paths:** `scripts/build_train_mounted_nb.py`, `scripts/build_train_apo_mounted_nb.py`, `scripts/build_eval_val_dice_nb.py`, `scripts/build_submission_nb.py`, `scripts/build_debug_phase3_nb.py`. Regenerate `.ipynb` from builders before Kaggle push.
+
+**Kaggle CLI:** `.venv/bin/kaggle` with `export KAGGLE_API_TOKEN=$(.venv/bin/kaggle auth print-access-token)` first in agent shells.
+
 ### Phase 3 vs Phase 4 boundary
 
 | | Phase 3 | Phase 4 |
@@ -241,7 +255,7 @@ Code: `scripts/build_train_mounted_nb.py`, `scripts/build_train_apo_mounted_nb.p
 
 **Local `.pkl` load:** fastai 2.8 / Python 3.13 locally cannot unpickle Kaggle-exported learners (`Resolver` pickle error). **Debug and inference validation must run on Kaggle** (or pin older fastai). Datasets load fine via `kagglehub`.
 
-**Artifacts:** `notebooks/debug-phase3/`, `scripts/build_debug_phase3_nb.py`, `scripts/debug_val_submission.py` (local script; pkl load blocked). Debug outputs: `tmp/kaggle-output/debug/`, `tmp/kaggle-output/debug-v2/`.
+**Artifacts:** `notebooks/debug-phase3/`, `scripts/build_debug_phase3_nb.py`. Debug outputs (local): `tmp/kaggle-output/debug/`, `tmp/kaggle-output/debug-v2/`.
 
 **Pending (awaiting user approval):** Full weighted T4 + AT4 → eval v3+ → submission v3 → tune weights if Dice still low.
 
