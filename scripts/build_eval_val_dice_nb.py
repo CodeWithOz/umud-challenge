@@ -157,7 +157,7 @@ def eval_track(name: str, dataset_slug: str, model_path: Path) -> dict:
     learn = load_learner(model_path)
     learn.dls = dls
     results = learn.validate(dl=dls.valid)
-    metric_names = [str(m) for m in learn.metrics]
+    metric_names = [getattr(m, "name", None) or type(m).__name__.lower() for m in learn.metrics]
     out = {
         "track": name,
         "n_pairs": len(fnames),

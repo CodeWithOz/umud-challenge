@@ -42,7 +42,7 @@ cells.append(
     code(
         """# --- Parameters you can change ---
 RANDOM_SEED = 42
-TRAIN_RUN = 1  # 1=timing-50, 2=timing-200, 3=timing-1374, 4=fasc-full
+TRAIN_RUN = 4  # 1=timing-50, 2=timing-200, 3=timing-1374, 4=fasc-full (weighted CE)
 
 VALID_PCT = 0.20
 BATCH_SIZE = 8
@@ -50,6 +50,10 @@ ARCH = "resnet34"
 IMG_SIZE = 256  # must match prep dataset
 FASC_FULL_CLEAN = 2749
 FULL_EPOCHS = 10
+
+# Extreme foreground sparsity (~0.3% pixels) — unweighted CE collapses to all-background.
+USE_CLASS_WEIGHTS = True
+FASC_FG_WEIGHT = 150.0  # background=1.0, structure=150.0
 
 TRAIN_PROFILES = {
     1: {
@@ -213,11 +217,20 @@ dls.show_batch(max_n=4)
 cells.append(
     code(
         """t_train = time.perf_counter()
+import torch
+
+if USE_CLASS_WEIGHTS:
+    loss_weights = torch.tensor([1.0, FASC_FG_WEIGHT])
+    loss_func = CrossEntropyLossFlat(axis=1, weight=loss_weights)
+    print(f"Class weights: background=1.0, structure={FASC_FG_WEIGHT}")
+else:
+    loss_func = CrossEntropyLossFlat(axis=1)
+
 learn = unet_learner(
     dls,
     encoder(),
     metrics=[Dice()],
-    loss_func=CrossEntropyLossFlat(axis=1),
+    loss_func=loss_func,
     self_attention=True,
 )
 learn.fine_tune(EPOCHS)

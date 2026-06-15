@@ -40,7 +40,7 @@ cells.append(
     code(
         """# --- Parameters you can change ---
 RANDOM_SEED = 42
-TRAIN_RUN = 1  # 1=timing-50, 2=timing-200, 3=timing-524, 4=apo-full
+TRAIN_RUN = 4  # 1=timing-50, 2=timing-200, 3=timing-524, 4=apo-full (weighted CE)
 
 VALID_PCT = 0.20
 BATCH_SIZE = 8
@@ -48,6 +48,9 @@ ARCH = "resnet34"
 IMG_SIZE = 256
 APO_FULL = 1048
 FULL_EPOCHS = 10
+
+USE_CLASS_WEIGHTS = True
+APO_FG_WEIGHT = 15.0  # apo masks larger on average but still imbalanced
 
 TRAIN_PROFILES = {
     1: {
@@ -204,11 +207,20 @@ dls.show_batch(max_n=4)
 cells.append(
     code(
         """t_train = time.perf_counter()
+import torch
+
+if USE_CLASS_WEIGHTS:
+    loss_weights = torch.tensor([1.0, APO_FG_WEIGHT])
+    loss_func = CrossEntropyLossFlat(axis=1, weight=loss_weights)
+    print(f"Class weights: background=1.0, structure={APO_FG_WEIGHT}")
+else:
+    loss_func = CrossEntropyLossFlat(axis=1)
+
 learn = unet_learner(
     dls,
     encoder(),
     metrics=[Dice()],
-    loss_func=CrossEntropyLossFlat(axis=1),
+    loss_func=loss_func,
     self_attention=True,
 )
 learn.fine_tune(EPOCHS)

@@ -173,9 +173,11 @@ Both in line with scaling ladder. Models: `fasc_baseline.pkl`, `apo_baseline.pkl
 | fasc | 549 / 2749 | 0.031 | **0.000** |
 | apo | 209 / 1048 | 0.664 | **0.0006** |
 
-Near-zero val Dice aligns with submission geometry failures (96% PA/FL NaN on test). Investigate eval metric vs train-time Dice logs; may indicate models predict mostly background.
+**Root cause (debug kernel v1):** models collapsed to **all-background** predictions under unweighted CE — fasc val had **0** foreground pixels predicted across 15.7M val pixels (GT foreground ~0.3%). Submission NaNs follow: empty fasc masks → no PCA → PA/FL NaN (~97%); weak apo masks → MT NaN (~52%).
 
-**Submission v2:** 251 `.tif` rows, comma-separated `submission.csv`. Template in competition bundle has only 2 placeholder rows — notebook writes all `.tif` predictions instead.
+**Fix:** class-weighted `CrossEntropyLossFlat` (fasc structure weight 150, apo 15). Verification: 50×5ep weighted fasc → Dice **0.008**, 1848 pred fg pixels, test `fasc_pca_ok` **50%** (was 0%). **Full retrain needed** (T4/AT4 with weights).
+
+**Eval CSV bug:** metric columns used `str(Dice())` object repr — fixed to `dice` via `type(m).__name__.lower()`.
 
 ### P3/T3 scaling check results (50% data, 50% epochs)
 
