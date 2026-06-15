@@ -2,20 +2,24 @@
 
 ## Current focus
 
-_Last updated: 2026-06-15 (weighted full retrain @256 — **in progress**)._
+_Last updated: 2026-06-15 (weighted full retrain @256 **complete**)._
 
-**Best results:** _(none yet — no scored leaderboard runs)_
+**Best results:** Weighted @256 full train — fasc val Dice **0.108**, apo val Dice **0.039**. Submission v3: PA/FL NaN **0%**, MT NaN **44.6%** (was 97%/52% with unweighted models). No leaderboard score yet (mm calibration deferred).
 
-**Active — weighted full retrain @256:**
+**Weighted full retrain @256 — results:**
 
-| Track | Notebook | Kaggle slug | Config | Status |
-|-------|----------|-------------|--------|--------|
-| Fasc | `train-mounted` | `umud-train-mounted-phase-3` | `TRAIN_RUN=4` — 2749×10ep, w_fg=150, @256 | **pushing** |
-| Apo | `train-apo-mounted` | `umud-train-apo-mounted-phase-3` | `TRAIN_RUN=4` — 1048×10ep, w_fg=15, @256 | **pushing** |
+| Track | Kernel | Version | Train time | Val Dice |
+|-------|--------|---------|------------|----------|
+| Fasc | `umud-train-mounted-phase-3` | v14 | 1506s (~25 min), 0.055 s/pair/epoch | **0.108** |
+| Apo | `umud-train-apo-mounted-phase-3` | v5 | 539s (~9 min), 0.051 s/pair/epoch | **0.039** |
+| Eval | `umud-eval-val-dice-phase-3` | v4 | — | see above |
+| Submission | `umud-submission-phase-3` | v3 | 251 rows | PA/FL NaN 0%, MT NaN 44.6% |
 
-After both complete: `umud-eval-val-dice-phase-3` → `umud-submission-phase-3`.
+**Compare to unweighted T4/AT4:** fasc Dice 0.000 → **0.108**; apo Dice 0.0006 → **0.039**. Class-weighted CE on full data works.
 
-**512 ablation (closed):** 512 val Dice 0.000 vs 256 verify 0.008 — stay @256.
+**Next:** mm calibration before first scored Kaggle submit; tune apo/MT (44.6% NaN still high); optional weight/arch iteration in Phase 4.
+
+**Models for inference:** `fasc_baseline.pkl` (train-mounted v14), `apo_baseline.pkl` (train-apo-mounted v5).
 
 ### 512px resize ablation — baseline synthesis
 
@@ -379,10 +383,10 @@ umud-aligned-fasc-timing-50/
 1. ~~Timing ladders, full prep, unweighted T4/AT4 train~~ **Done** (models exported but **segmentation failed** — see debug dossier).
 2. ~~Eval + submission notebook scaffold~~ **Done** (`eval-val-dice-phase-3`, `submission-phase-3`).
 3. ~~Root-cause debug~~ **Done** (`debug-phase-3`); class-weighted CE coded; **50×5ep verification** only.
-4. **Weighted full retrain** (fasc T4 + apo AT4 @256) — **next** (512 ablation did not justify higher resolution).
-5. ~~**512px resize ablation**~~ **Done** — 512 worse than 256 on 50×5ep; no full 512 prep.
-6. Re-run eval + submission on weighted @256 models.
-7. **mm calibration** before first scored Kaggle submit (still Phase 3).
+4. ~~**Weighted full retrain** (fasc T4 + apo AT4 @256)~~ **Done** — fasc Dice 0.108, apo 0.039.
+5. ~~Re-run eval + submission on weighted @256 models~~ **Done** (eval v4, submission v3).
+6. **mm calibration** before first scored Kaggle submit (still Phase 3).
+7. Reduce MT NaN rate (44.6%) — apo segmentation / geometry iteration (Phase 4).
 
 ### Key inputs from Phase 2
 
@@ -514,8 +518,10 @@ Historical checklist — all items done or explicitly deferred.
 | 2026-06-15 | debug-phase-3 v1/v2 | — | — | root cause: CE collapse; weighted 50×5ep verify | — | **complete** |
 | 2026-06-15 | train-mounted v12 | resnet34 | fasc **50** × **5ep** weighted | verification only; Dice 0.008 | — | **complete** |
 | 2026-06-15 | prep P5 + train T5 + eval resize ablation | resnet34 | fasc 50 × 5ep @512 | weighted w=150; val Dice **0.000** vs 256 verify 0.008 | — | **complete** (512 rejected) |
-| _pending_ | train-mounted T4 weighted | resnet34 | fasc 2749 × 10ep | `USE_CLASS_WEIGHTS`, w_fg=150 @256 | — | **not started** |
-| _pending_ | train-apo-mounted AT4 weighted | resnet34 | apo 1048 × 10ep | `USE_CLASS_WEIGHTS`, w_fg=15 @256 | — | **not started** |
+| 2026-06-15 | train-mounted T4 weighted | resnet34 | fasc 2749 × 10ep | `USE_CLASS_WEIGHTS`, w_fg=150 @256; val Dice **0.108** | — | **complete** |
+| 2026-06-15 | train-apo-mounted AT4 weighted | resnet34 | apo 1048 × 10ep | `USE_CLASS_WEIGHTS`, w_fg=15 @256; val Dice **0.039** | — | **complete** |
+| 2026-06-15 | eval-val-dice v4 | — | weighted models | fasc 0.108, apo 0.039 | — | **complete** |
+| 2026-06-15 | submission-phase-3 v3 | — | 251 test tif | PA/FL NaN 0%, MT NaN 44.6% | — | **complete** |
 
 ---
 
