@@ -2,35 +2,47 @@
 
 ## Current focus
 
-_Last updated: 2026-06-15 (segmentation debug complete; weighted retrain **pending user approval**)._
+_Last updated: 2026-06-15 (512px resize ablation — prep/train/eval wired; Kaggle run pending commit)._
 
 **Best results:** _(none yet — no scored leaderboard runs)_
 
-**Active notebooks:**
+**Active experiment — resize ablation (isolated):**
 
-| Notebook | Kaggle slug | Status |
-|----------|-------------|--------|
-| Train fasc | `umud-train-mounted-phase-3` | **Unweighted T4 complete** — models collapsed; **weighted retrain not run yet** (code ready, `TRAIN_RUN=4`) |
-| Train apo | `umud-train-apo-mounted-phase-3` | Same — **unweighted AT4** exported; weighted retrain pending |
-| Eval val Dice | `umud-eval-val-dice-phase-3` | v3 pushed (metric column fix) |
-| Submission | `umud-submission-phase-3` | v2 complete — 251-row comma CSV; ~97% PA/FL NaN (bad models) |
-| Debug | `umud-debug-phase-3` | v2 complete — root-cause evidence |
+| Step | Notebook | Kaggle slug | Config | Status |
+|------|----------|-------------|--------|--------|
+| Prep | `prep-fasc-timing` | `umud-prep-fasc-timing` | `PREP_RUN=5` → 50 pairs @ **512px**, same seed 42 as P1 | **not started** |
+| Train | `train-mounted` | `umud-train-mounted-phase-3` | `TRAIN_RUN=5` → 50×5ep, weighted CE w=150, resnet34, bs=8 | **not started** |
+| Eval | `eval-resize-ablation` | `umud-eval-resize-ablation-phase-3` | val Dice vs 256px verify baseline (Dice 0.008) | **not started** |
 
-**Blocked on:** User approval to run **full weighted retrain** (fasc 2749×10ep + apo 1048×10ep, ~35 min T4 total). Then re-eval + re-submission. mm calibration still deferred until before first scored submit.
+**Compare against (256px verify, unchanged):** train-mounted v12 — fasc 50×5ep weighted @256 → val Dice **0.008**, pred fg ~0.012% vs GT ~0.30%, `fasc_pca_ok` 50% on 80 test images.
 
-**Do not use for inference:** `fasc_baseline.pkl` / `apo_baseline.pkl` from unweighted T4/AT4 — predict all-background (fasc) or near-empty (apo).
+**Blocked on:** Git commit + user OK to push Kaggle ablation ladder (prep → train → eval). **Defer** full weighted retrain @256 and any full-dataset 512 prep until ablation result is in.
+
+**Do not use for inference:** existing `fasc_baseline.pkl` / `apo_baseline.pkl` from unweighted T4/AT4 — predict all-background (fasc) or near-empty (apo).
+
+### 512px resize ablation — baseline synthesis
+
+**Hypothesis:** 256px downsampling from ~800×1200 native images discards too much absolute structure signal for sparse fasc masks (~0.26% fg). 512px should retain ~4× more structure pixels (local analysis on P1 sample: mean **170** fg px @256 vs **682** @512; coverage *fraction* stays ~0.26% at both sizes).
+
+| Layer | @256 (current) | @512 (ablation) | Recreate full baseline? |
+|-------|----------------|-----------------|-------------------------|
+| Prep datasets | `umud-aligned-fasc-*`, `umud-aligned-apo-*` all baked @256 | New slug `umud-aligned-fasc-timing-50-512px` only for micro-test | **Yes, eventually** — full fasc+apo @512 = new dataset versions + new train runs; **not until** 50×5ep ablation shows Dice improvement |
+| Train notebooks | `IMG_SIZE` from profile; `Resize()` matches prep | `TRAIN_RUN=5`, `img_size=512` | Same code path; different `TRAIN_RUN` / dataset mount |
+| Exported models | `fasc_baseline.pkl` tied to resolution | Ablation overwrites train kernel output | Full 512 baseline = separate export after full 512 prep |
+| Eval / debug | `IMG_SIZE=256`, full datasets | `eval-resize-ablation` on timing-50 @512 | Point eval at matching dataset + model |
+| Submission | `IMG_SIZE=256`, upscale preds to native | Would need `IMG_SIZE=512` + same upscale path | **Deferred** — no submission until we pick a resolution for full train |
+
+**Cost @512 (extrapolated from 256 ladder):** ~4× GPU pixels → expect ~2–4× slower per epoch; T4 may need `BATCH_SIZE=4` at full 2749 scale (micro N=50 keeps bs=8 for isolation).
+
+**What stays identical in ablation:** same 50 fasc filenames (seed 42), stretch align, NEAREST masks, val 80/20 seed 42, resnet34, weighted CE w=150, 5 epochs, aug settings.
 
 ### New session handoff
 
-**Yes — you can start a fresh chat and paste your decision.** A new agent should read this file (`research/log.md` **Current focus** + **Segmentation debug dossier**) and `AGENTS.md` before acting.
+**Suggested opener:**
 
-**Suggested opener for the new chat** (edit as needed):
+> Continue UMUD Phase 3 resize ablation from `research/log.md`. Run Kaggle prep `PREP_RUN=5` → train `TRAIN_RUN=5` → eval `umud-eval-resize-ablation-phase-3`. Compare val Dice to 256px verify (0.008). Do not full-retrain until ablation result is reviewed.
 
-> Continue UMUD Phase 3 from `research/log.md`. Unweighted T4/AT4 models failed (val Dice ≈ 0). Class-weighted CE is coded (`USE_CLASS_WEIGHTS=True`, fasc w=150, apo w=15, `TRAIN_RUN=4`). My decision on weighted full retrain: **[approve / reject / change weights to X]**. Run on Kaggle yourself; do not ask me to run locally.
-
-**If approved, agent should:** (1) `git pull`, (2) push + run `umud-train-mounted-phase-3` and `umud-train-apo-mounted-phase-3` on T4, (3) re-run `umud-debug-phase-3` or `umud-eval-val-dice-phase-3`, (4) re-run `umud-submission-phase-3`, (5) update this log with Dice/NaN results.
-
-**Key code paths:** `scripts/build_train_mounted_nb.py`, `scripts/build_train_apo_mounted_nb.py`, `scripts/build_eval_val_dice_nb.py`, `scripts/build_submission_nb.py`, `scripts/build_debug_phase3_nb.py`. Regenerate `.ipynb` from builders before Kaggle push.
+**Key code paths:** `scripts/build_prep_nb.py` (`PREP_RUN=5`), `scripts/build_train_mounted_nb.py` (`TRAIN_RUN=5`), `scripts/build_eval_resize_ablation_nb.py`. Regenerate `.ipynb` from builders before Kaggle push.
 
 **Kaggle CLI:** `.venv/bin/kaggle` with `export KAGGLE_API_TOKEN=$(.venv/bin/kaggle auth print-access-token)` first in agent shells.
 
@@ -98,10 +110,12 @@ First **learned** baseline: train mask segmentation with **fastai** on Kaggle **
 | Val split (v1) | Random **80/20** by image filename | 2026-06-12 |
 | mm calibration | **Defer** until before submission; train/eval masks in pixels first (Option C) | 2026-06-09 |
 | Data for training | **Prep notebook → Kaggle dataset → train notebook** (BirdCLEF pattern; not inline transforms) | 2026-06-13 |
-| Prep output resolution | **256×256 PNG** baked at prep (NEAREST masks) — see annotation below | 2026-06-13 |
+| Prep output resolution | **256×256 PNG** baked at prep (NEAREST masks) — see annotation below; **512px ablation** on P1 sample (`PREP_RUN=5`) before full retrain | 2026-06-13 / 2026-06-15 |
 | Segmentation loss | **Class-weighted cross-entropy** (`CrossEntropyLossFlat` + `weight=[1, w_fg]`). Fasc `w_fg=150`, apo `w_fg=15`. Unweighted CE **failed** on sparse fasc masks — see debug dossier below. | 2026-06-15 |
 
-**Why 256px at prep (not resize at train time):** The alternative is storing full-resolution aligned PNGs and calling `Resize(384)` in fastai during training. That still reads large files from disk every epoch. Baking 256 at prep cuts file size, I/O, and GPU pixels in one step. Trade-off: resolution is fixed per dataset version — if val Dice is poor, publish a `…-384px` dataset variant as a follow-up benchmark, not the default path.
+**Why 256px at prep (not resize at train time):** The alternative is storing full-resolution aligned PNGs and calling `Resize(384)` in fastai during training. That still reads large files from disk every epoch. Baking 256 at prep cuts file size, I/O, and GPU pixels in one step. Trade-off: resolution is fixed per dataset version — if val Dice is poor, publish a `…-512px` dataset variant (ablation first on 50 pairs) as a follow-up benchmark, not the default path until validated.
+
+**512px ablation rationale (2026-06-15):** Native fasc images ~500–1080 × 760–1640; 256px retains ~7% of native structure pixels vs ~29% @512 (local P1 sample). Coverage *fraction* is similar at 256 and 512 (~0.26%) but absolute fg pixel count scales ~4× — relevant for U-Net learning on sparse lines.
 
 ### Optional later (do not lose)
 
@@ -368,9 +382,10 @@ umud-aligned-fasc-timing-50/
 1. ~~Timing ladders, full prep, unweighted T4/AT4 train~~ **Done** (models exported but **segmentation failed** — see debug dossier).
 2. ~~Eval + submission notebook scaffold~~ **Done** (`eval-val-dice-phase-3`, `submission-phase-3`).
 3. ~~Root-cause debug~~ **Done** (`debug-phase-3`); class-weighted CE coded; **50×5ep verification** only.
-4. **Weighted full retrain** (fasc T4 + apo AT4) — **pending user approval**.
-5. Re-run eval + submission on weighted models; confirm Dice and NaN rates improved.
-6. **mm calibration** before first scored Kaggle submit (still Phase 3).
+4. **Weighted full retrain** (fasc T4 + apo AT4 @256) — **deferred** until 512px micro-ablation reviewed.
+5. **512px resize ablation** — `PREP_RUN=5` → `TRAIN_RUN=5` → `eval-resize-ablation` on Kaggle.
+6. Re-run eval + submission on chosen resolution after ablation + full train.
+7. **mm calibration** before first scored Kaggle submit (still Phase 3).
 
 ### Key inputs from Phase 2
 
@@ -501,8 +516,9 @@ Historical checklist — all items done or explicitly deferred.
 | 2026-06-15 | submission-phase-3 v2 | — | 251 test tif | comma CSV; 97% PA/FL NaN | — | **complete** (bad models) |
 | 2026-06-15 | debug-phase-3 v1/v2 | — | — | root cause: CE collapse; weighted 50×5ep verify | — | **complete** |
 | 2026-06-15 | train-mounted v12 | resnet34 | fasc **50** × **5ep** weighted | verification only; Dice 0.008 | — | **complete** |
-| _pending_ | train-mounted T4 weighted | resnet34 | fasc 2749 × 10ep | `USE_CLASS_WEIGHTS`, w_fg=150 | — | **not started** |
-| _pending_ | train-apo-mounted AT4 weighted | resnet34 | apo 1048 × 10ep | `USE_CLASS_WEIGHTS`, w_fg=15 | — | **not started** |
+| _pending_ | train-mounted T4 weighted | resnet34 | fasc 2749 × 10ep | `USE_CLASS_WEIGHTS`, w_fg=150 @256 | — | **deferred** (after 512 ablation) |
+| _pending_ | train-apo-mounted AT4 weighted | resnet34 | apo 1048 × 10ep | `USE_CLASS_WEIGHTS`, w_fg=15 @256 | — | **deferred** (after 512 ablation) |
+| _pending_ | prep P5 + train T5 + eval resize ablation | resnet34 | fasc 50 × 5ep @512 | isolated vs 256 verify; `PREP_RUN=5`, `TRAIN_RUN=5` | — | **not started** |
 
 ---
 

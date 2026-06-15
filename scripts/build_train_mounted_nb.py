@@ -42,12 +42,11 @@ cells.append(
     code(
         """# --- Parameters you can change ---
 RANDOM_SEED = 42
-TRAIN_RUN = 4  # 1=timing-50, 2=timing-200, 3=timing-1374, 4=fasc-full (weighted CE)
+TRAIN_RUN = 5  # 1=50@256×1ep, 2=200@256×1ep, 3=1374@256×5ep, 4=full@256×10ep, 5=50@512×5ep ablation
 
 VALID_PCT = 0.20
 BATCH_SIZE = 8
 ARCH = "resnet34"
-IMG_SIZE = 256  # must match prep dataset
 FASC_FULL_CLEAN = 2749
 FULL_EPOCHS = 10
 
@@ -59,34 +58,46 @@ TRAIN_PROFILES = {
     1: {
         "dataset_slug": "ucheozoemena/umud-aligned-fasc-timing-50",
         "mount_name": "umud-aligned-fasc-timing-50",
+        "img_size": 256,
         "epochs": 1,
-        "label": "T1 fasc 50×1ep",
+        "label": "T1 fasc 50×1ep @256",
     },
     2: {
         "dataset_slug": "ucheozoemena/umud-aligned-fasc-timing-200",
         "mount_name": "umud-aligned-fasc-timing-200",
+        "img_size": 256,
         "epochs": 1,
-        "label": "T2 fasc 200×1ep",
+        "label": "T2 fasc 200×1ep @256",
     },
     3: {
         "dataset_slug": "ucheozoemena/umud-aligned-fasc-timing-1374",
         "mount_name": "umud-aligned-fasc-timing-1374",
+        "img_size": 256,
         "epochs": FULL_EPOCHS // 2,
-        "label": "T3 fasc 1374×5ep (50% data, 50% epochs)",
+        "label": "T3 fasc 1374×5ep @256 (50% data, 50% epochs)",
     },
     4: {
         "dataset_slug": "ucheozoemena/umud-aligned-fasc-full",
         "mount_name": "umud-aligned-fasc-full",
+        "img_size": 256,
         "epochs": FULL_EPOCHS,
-        "label": "T4 fasc full 2749×10ep",
+        "label": "T4 fasc full 2749×10ep @256",
+    },
+    5: {
+        "dataset_slug": "ucheozoemena/umud-aligned-fasc-timing-50-512px",
+        "mount_name": "umud-aligned-fasc-timing-50-512px",
+        "img_size": 512,
+        "epochs": 5,
+        "label": "T5 fasc 50×5ep @512 ablation (weighted CE; matches 256 verify config except size)",
     },
 }
 
 profile = TRAIN_PROFILES[TRAIN_RUN]
 DATASET_SLUG = profile["dataset_slug"]
 MOUNT_NAME = profile["mount_name"]
+IMG_SIZE = profile["img_size"]
 EPOCHS = profile["epochs"]
-print(f"TRAIN_RUN={TRAIN_RUN} | {profile['label']} | dataset={DATASET_SLUG} | epochs={EPOCHS}")
+print(f"TRAIN_RUN={TRAIN_RUN} | {profile['label']} | dataset={DATASET_SLUG} | img_size={IMG_SIZE} | epochs={EPOCHS}")
 """
     )
 )

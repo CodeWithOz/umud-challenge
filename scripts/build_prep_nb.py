@@ -31,7 +31,7 @@ cells.append(
 **CPU notebook** — pattern from BirdCLEF `multilabel-234-v2-gen-species-1/2` (commit `b003ac9`).
 
 1. Read competition TIFFs from `/kaggle/input/competitions/...`
-2. Stretch-align masks, resize to **256×256** (NEAREST masks)
+2. Stretch-align masks, resize to target square (default **256×256**; ablation **512×512**, NEAREST masks)
 3. Write PNG pairs + manifest to `/kaggle/working/upload/`
 4. **`kaggle datasets create` / `version`** from inside this notebook
 
@@ -47,9 +47,8 @@ cells.append(
     code(
         """# --- Parameters you can change ---
 RANDOM_SEED = 42
-PREP_RUN = 1  # 1=50, 2=200, 3=1374 (50%), 4=2749 (full fasc)
+PREP_RUN = 5  # 1=50@256, 2=200@256, 3=1374@256, 4=2749@256, 5=50@512 (resize ablation)
 
-IMG_SIZE = 256
 FASC_NEAR_EMPTY_THRESHOLD = 0.0005
 DEFAULT_ALIGN_MODE = "stretch"
 FASC_FULL_CLEAN = 2749
@@ -57,6 +56,7 @@ FASC_FULL_CLEAN = 2749
 PREP_PROFILES = {
     1: {
         "max_samples": 50,
+        "img_size": 256,
         "dataset_id": "ucheozoemena/umud-aligned-fasc-timing-50",
         "dataset_title": "UMUD Aligned Fasc Timing 50",
         "version_msg": "P1 timing: 50 fasc pairs, 256px stretch-aligned",
@@ -64,6 +64,7 @@ PREP_PROFILES = {
     },
     2: {
         "max_samples": 200,
+        "img_size": 256,
         "dataset_id": "ucheozoemena/umud-aligned-fasc-timing-200",
         "dataset_title": "UMUD Aligned Fasc Timing 200",
         "version_msg": "P2 timing: 200 fasc pairs, 256px stretch-aligned",
@@ -71,6 +72,7 @@ PREP_PROFILES = {
     },
     3: {
         "max_samples": FASC_FULL_CLEAN // 2,
+        "img_size": 256,
         "dataset_id": "ucheozoemena/umud-aligned-fasc-timing-1374",
         "dataset_title": "UMUD Aligned Fasc Timing 1374",
         "version_msg": "P3 scaling check: 50% fasc pairs (1374), 256px stretch-aligned",
@@ -78,20 +80,30 @@ PREP_PROFILES = {
     },
     4: {
         "max_samples": FASC_FULL_CLEAN,
+        "img_size": 256,
         "dataset_id": "ucheozoemena/umud-aligned-fasc-full",
         "dataset_title": "UMUD Aligned Fasc Full",
         "version_msg": "Full fasc prep: 2749 clean pairs, 256px stretch-aligned",
         "zip_name": "umud_fasc_full",
     },
+    5: {
+        "max_samples": 50,
+        "img_size": 512,
+        "dataset_id": "ucheozoemena/umud-aligned-fasc-timing-50-512px",
+        "dataset_title": "UMUD Aligned Fasc Timing 50 512px",
+        "version_msg": "P5 resize ablation: 50 fasc pairs, 512px stretch-aligned (same sample as P1)",
+        "zip_name": "umud_fasc_timing_50_512px",
+    },
 }
 
 profile = PREP_PROFILES[PREP_RUN]
 MAX_SAMPLES = profile["max_samples"]
+IMG_SIZE = profile["img_size"]
 DATASET_ID = profile["dataset_id"]
 DATASET_TITLE = profile["dataset_title"]
 VERSION_MSG = profile["version_msg"]
 ZIP_NAME = profile["zip_name"]
-print(f"PREP_RUN={PREP_RUN} | n<={MAX_SAMPLES} | dataset={DATASET_ID}")
+print(f"PREP_RUN={PREP_RUN} | n<={MAX_SAMPLES} | img_size={IMG_SIZE} | dataset={DATASET_ID}")
 """
     )
 )
