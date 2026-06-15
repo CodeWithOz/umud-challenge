@@ -2,6 +2,13 @@
 import json
 from pathlib import Path
 
+import pandas as pd
+
+
+def load_exclude_apo_names() -> list[str]:
+    csv_path = Path(__file__).resolve().parents[1] / "research/exclude_apo_mt_invalid.csv"
+    return pd.read_csv(csv_path)["filename"].astype(str).tolist()
+
 
 def md(source: str) -> dict:
     lines = source.split("\n")
@@ -41,45 +48,49 @@ cells.append(
 
 cells.append(md("""## Configuration"""))
 
+exclude_apo = load_exclude_apo_names()
+exclude_literal = repr(exclude_apo)
+
 cells.append(
     code(
-        """# --- Parameters you can change ---
+        f"""# --- Parameters you can change ---
 RANDOM_SEED = 42
-PREP_RUN = 1  # 1=50, 2=200, 3=524 (50%), 4=1048 (full apo)
+PREP_RUN = 4  # 1=50, 2=200, 3=524 (50%), 4=1044 (full apo, MT-valid)
 
 IMG_SIZE = 256
-APO_FULL = 1048
+APO_FULL = 1044  # 1048 competition apo pairs − 4 single-contour MT-invalid
+EXCLUDE_APO_MT = {exclude_literal}
 
-PREP_PROFILES = {
-    1: {
+PREP_PROFILES = {{
+    1: {{
         "max_samples": 50,
         "dataset_id": "ucheozoemena/umud-aligned-apo-timing-50",
         "dataset_title": "UMUD Aligned Apo Timing 50",
         "version_msg": "AP1 timing: 50 apo pairs, 256px stretch-aligned",
         "zip_name": "umud_apo_timing_1",
-    },
-    2: {
+    }},
+    2: {{
         "max_samples": 200,
         "dataset_id": "ucheozoemena/umud-aligned-apo-timing-200",
         "dataset_title": "UMUD Aligned Apo Timing 200",
         "version_msg": "AP2 timing: 200 apo pairs, 256px stretch-aligned",
         "zip_name": "umud_apo_timing_2",
-    },
-    3: {
+    }},
+    3: {{
         "max_samples": APO_FULL // 2,
         "dataset_id": "ucheozoemena/umud-aligned-apo-timing-524",
         "dataset_title": "UMUD Aligned Apo Timing 524",
-        "version_msg": "AP3 scaling check: 50% apo pairs (524), 256px stretch-aligned",
+        "version_msg": "AP3 scaling check: 50% apo pairs (522), 256px stretch-aligned",
         "zip_name": "umud_apo_timing_3",
-    },
-    4: {
+    }},
+    4: {{
         "max_samples": APO_FULL,
         "dataset_id": "ucheozoemena/umud-aligned-apo-full",
         "dataset_title": "UMUD Aligned Apo Full",
-        "version_msg": "Full apo prep: 1048 pairs, 256px stretch-aligned",
+        "version_msg": "Full apo prep: 1044 MT-valid pairs (excl 4 single-contour), 256px",
         "zip_name": "umud_apo_full",
-    },
-}
+    }},
+}}
 
 profile = PREP_PROFILES[PREP_RUN]
 MAX_SAMPLES = profile["max_samples"]
@@ -87,7 +98,7 @@ DATASET_ID = profile["dataset_id"]
 DATASET_TITLE = profile["dataset_title"]
 VERSION_MSG = profile["version_msg"]
 ZIP_NAME = profile["zip_name"]
-print(f"PREP_RUN={PREP_RUN} | n<={MAX_SAMPLES} | dataset={DATASET_ID}")
+print(f"PREP_RUN={{PREP_RUN}} | n<={{MAX_SAMPLES}} | dataset={{DATASET_ID}} | exclude={{len(EXCLUDE_APO_MT)}}")
 """
     )
 )
@@ -187,11 +198,12 @@ lookups = {k: build_lookup(v) for k, v in DIRS.items()}
 print("Lookups:", {k: len(v) for k, v in lookups.items()})
 
 t0 = time.perf_counter()
-apo_common = sorted(set(lookups["apo_img"]) & set(lookups["apo_mask"]))
+apo_all = sorted(set(lookups["apo_img"]) & set(lookups["apo_mask"]))
+apo_common = [n for n in apo_all if n not in EXCLUDE_APO_MT]
 t_manifest = time.perf_counter()
 
 targets = subsample(apo_common, MAX_SAMPLES, RANDOM_SEED)
-print(f"Apo pairs: {len(apo_common)} | prep targets: {len(targets)}")
+print(f"Apo pairs (raw): {len(apo_all)} | after exclude: {len(apo_common)} | prep targets: {len(targets)}")
 print(f"Manifest scan: {t_manifest - t0:.1f}s")
 """
     )

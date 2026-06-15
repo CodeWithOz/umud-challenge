@@ -228,7 +228,7 @@ def acute_angle_deg(a1: float, a2: float) -> float:
     return float(min(d, 180.0 - d))
 
 
-def apo_geometry_from_mask(apo_mask: np.ndarray, style: str) -> dict:
+def apo_geometry_attempt(apo_mask: np.ndarray, style: str) -> dict:
     eff, method = effective_apo_mask(apo_mask, style)
     contours = find_apo_contours(eff)
     sup_c, deep_c, n_contours = pick_superficial_deep(contours)
@@ -237,6 +237,7 @@ def apo_geometry_from_mask(apo_mask: np.ndarray, style: str) -> dict:
         "n_contours": n_contours,
         "mt_px": np.nan,
         "deep_angle_deg": np.nan,
+        "mt_fail_reason": "ok",
         "sup_line": None,
         "deep_line": None,
         "sup_xs": None,
@@ -244,19 +245,49 @@ def apo_geometry_from_mask(apo_mask: np.ndarray, style: str) -> dict:
         "deep_xs": None,
         "deep_ys": None,
     }
-    if sup_c is None or deep_c is None:
+    if len(contours) == 0:
+        out["mt_fail_reason"] = "no_contours"
+        return out
+    if n_contours < 2 or sup_c is None or deep_c is None:
+        out["mt_fail_reason"] = "single_contour"
         return out
     sup_x, sup_y = edge_polyline(sup_c, which="bottom")
     deep_x, deep_y = edge_polyline(deep_c, which="top")
     sup_line = fit_line(sup_x, sup_y)
     deep_line = fit_line(deep_x, deep_y)
     out.update(sup_line=sup_line, deep_line=deep_line, sup_xs=sup_x, sup_ys=sup_y, deep_xs=deep_x, deep_ys=deep_y)
-    if sup_line and deep_line and len(sup_x) and len(deep_x):
-        x_left = max(sup_x.min(), deep_x.min())
-        x_right = min(sup_x.max(), deep_x.max())
-        out["mt_px"] = mt_from_apo_edges(sup_line, deep_line, x_left, x_right)
-        out["deep_angle_deg"] = line_angle_deg(deep_line)
+    if sup_line is None or deep_line is None:
+        out["mt_fail_reason"] = "line_fit_fail"
+        return out
+    if len(sup_x) == 0 or len(deep_x) == 0:
+        out["mt_fail_reason"] = "empty_edge_polyline"
+        return out
+    x_left = max(sup_x.min(), deep_x.min())
+    x_right = min(sup_x.max(), deep_x.max())
+    if x_right <= x_left:
+        out["mt_fail_reason"] = "no_x_overlap"
+        return out
+    out["mt_px"] = mt_from_apo_edges(sup_line, deep_line, x_left, x_right)
+    out["deep_angle_deg"] = line_angle_deg(deep_line)
+    if np.isnan(out["mt_px"]):
+        out["mt_fail_reason"] = "mt_compute_nan"
     return out
+
+
+def apo_geometry_from_mask(apo_mask: np.ndarray, style: str) -> dict:
+    primary = apo_geometry_attempt(apo_mask, style)
+    primary["geometry_path"] = primary["apo_method"]
+    if not np.isnan(primary["mt_px"]):
+        return primary
+    if style == "region":
+        fallback = apo_geometry_attempt(apo_mask, "line")
+        if not np.isnan(fallback["mt_px"]):
+            fallback["apo_method"] = f"{primary['apo_method']}+fallback_line"
+            fallback["geometry_path"] = "fallback_line"
+            fallback["mt_fail_reason_primary"] = primary["mt_fail_reason"]
+            return fallback
+    primary["mt_fail_reason_primary"] = primary["mt_fail_reason"]
+    return primary
 
 
 def derive_geometry(fasc_mask: np.ndarray, apo_mask: np.ndarray, apo_style: str) -> dict:
@@ -266,6 +297,15 @@ def derive_geometry(fasc_mask: np.ndarray, apo_mask: np.ndarray, apo_style: str)
         "pa_deg": np.nan,
         "fl_px": np.nan,
         "mt_px": apo["mt_px"],
+        "apo_method": apo.get("apo_method"),
+        "geometry_path": apo.get("geometry_path"),
+        "n_contours": apo.get("n_contours"),
+        "mt_fail_reason": apo.get("mt_fail_reason"),
+        "mt_fail_reason_primary": apo.get("mt_fail_reason_primary"),
+        "apo_cov": float(apo_mask.mean()),
+        "apo_fg_pixels": int(apo_mask.sum()),
+        "fasc_cov": float(fasc_mask.mean()),
+        "fasc_fg_pixels": int(fasc_mask.sum()),
     }
     if fpca is not None:
         out["fl_px"] = fpca["length_px"]
@@ -320,6 +360,15 @@ for path in tqdm(test_paths, desc="infer test"):
             "apo_style": apo_style,
             "fl_px": geo["fl_px"],
             "mt_px": geo["mt_px"],
+            "apo_cov": geo["apo_cov"],
+            "apo_fg_pixels": geo["apo_fg_pixels"],
+            "fasc_cov": geo["fasc_cov"],
+            "n_contours": geo["n_contours"],
+            "geometry_path": geo["geometry_path"],
+            "mt_fail_reason": geo["mt_fail_reason"],
+            "mt_fail_reason_primary": geo.get("mt_fail_reason_primary"),
+            "img_h": h,
+            "img_w": w,
         }
     )
 

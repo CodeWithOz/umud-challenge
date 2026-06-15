@@ -46,7 +46,7 @@ VALID_PCT = 0.20
 BATCH_SIZE = 8
 ARCH = "resnet34"
 IMG_SIZE = 256
-APO_FULL = 1048
+APO_FULL = 1048  # raw competition pairs; prep excludes 4 MT-invalid → 1044
 FULL_EPOCHS = 10
 
 USE_CLASS_WEIGHTS = True

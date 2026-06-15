@@ -1,0 +1,5 @@
+filename,reason,n_contours_geom,mask_style
+image_0212.tif,single_contour_mt_invalid,1,region
+image_0492.tif,single_contour_mt_invalid,1,line
+image_0511.tif,single_contour_mt_invalid,1,line
+image_0560.tif,single_contour_mt_invalid,1,line

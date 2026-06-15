@@ -2,24 +2,21 @@
 
 ## Current focus
 
-_Last updated: 2026-06-15 (weighted full retrain @256 **complete**)._
+_Last updated: 2026-06-15 (MT NaN fixes A1+A2 + apo exclude 4 — **Kaggle run in progress**)._
 
-**Best results:** Weighted @256 full train — fasc val Dice **0.108**, apo val Dice **0.039**. Submission v3: PA/FL NaN **0%**, MT NaN **44.6%** (was 97%/52% with unweighted models). No leaderboard score yet (mm calibration deferred).
+**Best results:** Weighted @256 — fasc val Dice **0.108**, apo **0.039**. Submission v3: PA/FL NaN 0%, **MT NaN 44.6%**.
 
-**Weighted full retrain @256 — results:**
+**Active batch:**
 
-| Track | Kernel | Version | Train time | Val Dice |
-|-------|--------|---------|------------|----------|
-| Fasc | `umud-train-mounted-phase-3` | v14 | 1506s (~25 min), 0.055 s/pair/epoch | **0.108** |
-| Apo | `umud-train-apo-mounted-phase-3` | v5 | 539s (~9 min), 0.051 s/pair/epoch | **0.039** |
-| Eval | `umud-eval-val-dice-phase-3` | v4 | — | see above |
-| Submission | `umud-submission-phase-3` | v3 | 251 rows | PA/FL NaN 0%, MT NaN 44.6% |
+| Item | Change | Status |
+|------|--------|--------|
+| **A2** | Region-path **fallback to raw line** when invert MT fails (`build_submission_nb.py`) | coded |
+| **A1** | `umud-mt-diagnosis-phase-3` — per-image `mt_fail_reason`, contours, geometry path | coded |
+| **Exclude 4** | `research/exclude_apo_mt_invalid.csv` → apo prep 1044 pairs | coded; **re-prep + apo retrain pending** |
 
-**Compare to unweighted T4/AT4:** fasc Dice 0.000 → **0.108**; apo Dice 0.0006 → **0.039**. Class-weighted CE on full data works.
+**Next after Kaggle:** Compare submission v4 MT NaN vs v3 (44.6%); read `mt_diagnosis_summary.json`.
 
-**Next:** mm calibration before first scored Kaggle submit; tune apo/MT (44.6% NaN still high); optional weight/arch iteration in Phase 4.
-
-**Models for inference:** `fasc_baseline.pkl` (train-mounted v14), `apo_baseline.pkl` (train-apo-mounted v5).
+**Models for inference (until apo retrain completes):** fasc v14; apo v5 (v6 after retrain).
 
 ### 512px resize ablation — baseline synthesis
 
