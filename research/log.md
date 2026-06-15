@@ -2,23 +2,30 @@
 
 ## Current focus
 
-_Last updated: 2026-06-15 (512px resize ablation — prep/train/eval wired; Kaggle run pending commit)._
+_Last updated: 2026-06-15 (512px resize ablation **complete** — 512 did not beat 256 on micro-test)._
 
 **Best results:** _(none yet — no scored leaderboard runs)_
 
-**Active experiment — resize ablation (isolated):**
+**512px resize ablation — result:**
 
-| Step | Notebook | Kaggle slug | Config | Status |
-|------|----------|-------------|--------|--------|
-| Prep | `prep-fasc-timing` | `umud-prep-fasc-timing` | `PREP_RUN=5` → 50 pairs @ **512px**, same seed 42 as P1 | **not started** |
-| Train | `train-mounted` | `umud-train-mounted-phase-3` | `TRAIN_RUN=5` → 50×5ep, weighted CE w=150, resnet34, bs=8 | **not started** |
-| Eval | `eval-resize-ablation` | `umud-eval-resize-ablation-phase-3` | val Dice vs 256px verify baseline (Dice 0.008) | **not started** |
+| Step | Kernel | Version | Result |
+|------|--------|---------|--------|
+| Prep P5 | `umud-prep-fasc-timing` | v6 | 50 pairs @512px in 52.6s (0.134 s/pair); dataset `umud-aligned-fasc-timing-50-512px` published |
+| Train T5 | `umud-train-mounted-phase-3` | v13 | 50×5ep weighted, 58.2s (0.233 s/pair/epoch @512) |
+| Eval | `umud-eval-resize-ablation-phase-3` | v1 | **512 val Dice 0.000** vs **256 baseline 0.008** — 512 **worse** |
 
-**Compare against (256px verify, unchanged):** train-mounted v12 — fasc 50×5ep weighted @256 → val Dice **0.008**, pred fg ~0.012% vs GT ~0.30%, `fasc_pca_ok` 50% on 80 test images.
+| Metric | @256 verify (v12) | @512 ablation (T5) |
+|--------|-------------------|---------------------|
+| Val Dice | **0.008** | **0.000** |
+| Val loss | low | **2.13** |
+| Pred fg fraction | ~0.012% | **~0.00014%** (collapsed to background) |
+| GT fg pixels (mean) | ~170 | ~682 (4× as expected) |
 
-**Blocked on:** Git commit + user OK to push Kaggle ablation ladder (prep → train → eval). **Defer** full weighted retrain @256 and any full-dataset 512 prep until ablation result is in.
+**Conclusion:** More absolute structure pixels in GT did **not** translate to better learning at 512px with identical hyperparameters. Model collapsed harder than 256 verify. **Do not** proceed to full-dataset 512 prep. **Next:** weighted full retrain @256 (`TRAIN_RUN=4` fasc + apo AT4) unless user wants to probe 512 further (e.g. lower `w_fg`, more epochs).
 
-**Do not use for inference:** existing `fasc_baseline.pkl` / `apo_baseline.pkl` from unweighted T4/AT4 — predict all-background (fasc) or near-empty (apo).
+**Blocked on:** User decision — proceed with weighted @256 full retrain?
+
+**Do not use for inference:** `fasc_baseline.pkl` from T5 @512 (Dice 0); prior unweighted T4/AT4 models also unusable.
 
 ### 512px resize ablation — baseline synthesis
 
@@ -382,9 +389,9 @@ umud-aligned-fasc-timing-50/
 1. ~~Timing ladders, full prep, unweighted T4/AT4 train~~ **Done** (models exported but **segmentation failed** — see debug dossier).
 2. ~~Eval + submission notebook scaffold~~ **Done** (`eval-val-dice-phase-3`, `submission-phase-3`).
 3. ~~Root-cause debug~~ **Done** (`debug-phase-3`); class-weighted CE coded; **50×5ep verification** only.
-4. **Weighted full retrain** (fasc T4 + apo AT4 @256) — **deferred** until 512px micro-ablation reviewed.
-5. **512px resize ablation** — `PREP_RUN=5` → `TRAIN_RUN=5` → `eval-resize-ablation` on Kaggle.
-6. Re-run eval + submission on chosen resolution after ablation + full train.
+4. **Weighted full retrain** (fasc T4 + apo AT4 @256) — **next** (512 ablation did not justify higher resolution).
+5. ~~**512px resize ablation**~~ **Done** — 512 worse than 256 on 50×5ep; no full 512 prep.
+6. Re-run eval + submission on weighted @256 models.
 7. **mm calibration** before first scored Kaggle submit (still Phase 3).
 
 ### Key inputs from Phase 2
@@ -516,9 +523,9 @@ Historical checklist — all items done or explicitly deferred.
 | 2026-06-15 | submission-phase-3 v2 | — | 251 test tif | comma CSV; 97% PA/FL NaN | — | **complete** (bad models) |
 | 2026-06-15 | debug-phase-3 v1/v2 | — | — | root cause: CE collapse; weighted 50×5ep verify | — | **complete** |
 | 2026-06-15 | train-mounted v12 | resnet34 | fasc **50** × **5ep** weighted | verification only; Dice 0.008 | — | **complete** |
-| _pending_ | train-mounted T4 weighted | resnet34 | fasc 2749 × 10ep | `USE_CLASS_WEIGHTS`, w_fg=150 @256 | — | **deferred** (after 512 ablation) |
-| _pending_ | train-apo-mounted AT4 weighted | resnet34 | apo 1048 × 10ep | `USE_CLASS_WEIGHTS`, w_fg=15 @256 | — | **deferred** (after 512 ablation) |
-| _pending_ | prep P5 + train T5 + eval resize ablation | resnet34 | fasc 50 × 5ep @512 | isolated vs 256 verify; `PREP_RUN=5`, `TRAIN_RUN=5` | — | **not started** |
+| 2026-06-15 | prep P5 + train T5 + eval resize ablation | resnet34 | fasc 50 × 5ep @512 | weighted w=150; val Dice **0.000** vs 256 verify 0.008 | — | **complete** (512 rejected) |
+| _pending_ | train-mounted T4 weighted | resnet34 | fasc 2749 × 10ep | `USE_CLASS_WEIGHTS`, w_fg=150 @256 | — | **not started** |
+| _pending_ | train-apo-mounted AT4 weighted | resnet34 | apo 1048 × 10ep | `USE_CLASS_WEIGHTS`, w_fg=15 @256 | — | **not started** |
 
 ---
 
@@ -539,7 +546,8 @@ Historical checklist — all items done or explicitly deferred.
 | 2026-06-15 | **Unweighted CE unusable** for fasc (~0.3% fg); use **class-weighted CE** (fasc w=150, apo w=15) | — |
 | 2026-06-15 | **Submission CSV:** comma separator; `image_id` = full filename (`IMG_00001.tif`) | — |
 | 2026-06-13 | **Prep notebook → Kaggle dataset → train notebook** (BirdCLEF pattern) | — |
-| 2026-06-13 | **256px resize baked at prep** (NEAREST masks); 384px = optional dataset A/B | — |
+| 2026-06-13 | **256px resize baked at prep** (NEAREST masks); 384px/512px = optional dataset A/B | — |
+| 2026-06-15 | **512px micro-ablation rejected** — val Dice 0 vs 256 verify 0.008; stay @256 for full train | — |
 | 2026-06-10 | Dual-track 1040 not 1048: 8 apo filenames on fasc exclude list | Expected, not a data bug |
 | 2026-06-10 | FL bimodality in px: driven by **800×1200 vs 1080×1640** image sizes | Not multi-fascicle per image |
 | 2026-06-10 | Split geometry into Kaggle + local notebooks; shared builder | — |
@@ -576,6 +584,7 @@ Historical checklist — all items done or explicitly deferred.
 - FL px bimodality tracks **image dimensions** (800×1200 vs 1080×1640), not multiple fascicles per image. (2026-06-10)
 - **Prep dataset pattern (BirdCLEF):** expensive transforms in **prep notebook** → **Kaggle dataset** → train notebook mounts via `dataset_sources`. Reference: [birdclef_2026](https://github.com/CodeWithOz/birdclef_2026) (`generate_spectrogram_batches.py`, `species-*` datasets, `multilabel-234` train). Benchmark **prep** and **train** at N=50→200 before full data. (2026-06-13)
 - **256px at prep:** resize images+masks once when building dataset (not at train). Faster than full-res PNGs + `Resize()` in fastai. New dataset version if higher res needed. (2026-06-13)
+- **512px ablation (P5/T5):** 4× more GT structure pixels did not improve val Dice (0.000 vs 0.008 @256 verify); model collapsed to all-background with same `w_fg=150`. Resolution alone is not the bottleneck — proceed @256. (2026-06-15)
 - Kaggle `enable_gpu: true` defaults to **P100**, which is incompatible with current **fastai/PyTorch**. Use **T4**: `"machine_shape": "NvidiaTeslaT4"` + `kaggle kernels push --accelerator NvidiaTeslaT4`. (2026-06-12)
 - **Training timing baseline (mandatory before long runs):** … v8 (2,749 fasc + 1,048 apo, 10 epochs × 2 models) ran 6h+ without this step. Run 1 (50 fasc, 1ep): **682s**, **16.9 s/pair/epoch** → **~103h** full fasc@10ep. Runs 3–5 skipped after run 2 confirms linear scale. (2026-06-13)
 - **Unweighted CE + sparse fasc masks (~0.3% fg):** model collapses to all-background; val Dice ≈ 0, low loss, submission PA/FL mostly NaN. Fix: **class-weighted CE** (fasc structure weight ~150, apo ~15). Verify on Kaggle before trusting local `.pkl` load. (2026-06-15)
