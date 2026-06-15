@@ -2,30 +2,20 @@
 
 ## Current focus
 
-_Last updated: 2026-06-15 (512px resize ablation **complete** — 512 did not beat 256 on micro-test)._
+_Last updated: 2026-06-15 (weighted full retrain @256 — **in progress**)._
 
 **Best results:** _(none yet — no scored leaderboard runs)_
 
-**512px resize ablation — result:**
+**Active — weighted full retrain @256:**
 
-| Step | Kernel | Version | Result |
-|------|--------|---------|--------|
-| Prep P5 | `umud-prep-fasc-timing` | v6 | 50 pairs @512px in 52.6s (0.134 s/pair); dataset `umud-aligned-fasc-timing-50-512px` published |
-| Train T5 | `umud-train-mounted-phase-3` | v13 | 50×5ep weighted, 58.2s (0.233 s/pair/epoch @512) |
-| Eval | `umud-eval-resize-ablation-phase-3` | v1 | **512 val Dice 0.000** vs **256 baseline 0.008** — 512 **worse** |
+| Track | Notebook | Kaggle slug | Config | Status |
+|-------|----------|-------------|--------|--------|
+| Fasc | `train-mounted` | `umud-train-mounted-phase-3` | `TRAIN_RUN=4` — 2749×10ep, w_fg=150, @256 | **pushing** |
+| Apo | `train-apo-mounted` | `umud-train-apo-mounted-phase-3` | `TRAIN_RUN=4` — 1048×10ep, w_fg=15, @256 | **pushing** |
 
-| Metric | @256 verify (v12) | @512 ablation (T5) |
-|--------|-------------------|---------------------|
-| Val Dice | **0.008** | **0.000** |
-| Val loss | low | **2.13** |
-| Pred fg fraction | ~0.012% | **~0.00014%** (collapsed to background) |
-| GT fg pixels (mean) | ~170 | ~682 (4× as expected) |
+After both complete: `umud-eval-val-dice-phase-3` → `umud-submission-phase-3`.
 
-**Conclusion:** More absolute structure pixels in GT did **not** translate to better learning at 512px with identical hyperparameters. Model collapsed harder than 256 verify. **Do not** proceed to full-dataset 512 prep. **Next:** weighted full retrain @256 (`TRAIN_RUN=4` fasc + apo AT4) unless user wants to probe 512 further (e.g. lower `w_fg`, more epochs).
-
-**Blocked on:** User decision — proceed with weighted @256 full retrain?
-
-**Do not use for inference:** `fasc_baseline.pkl` from T5 @512 (Dice 0); prior unweighted T4/AT4 models also unusable.
+**512 ablation (closed):** 512 val Dice 0.000 vs 256 verify 0.008 — stay @256.
 
 ### 512px resize ablation — baseline synthesis
 

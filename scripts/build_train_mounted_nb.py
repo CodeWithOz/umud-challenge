@@ -42,7 +42,7 @@ cells.append(
     code(
         """# --- Parameters you can change ---
 RANDOM_SEED = 42
-TRAIN_RUN = 5  # 1=50@256×1ep, 2=200@256×1ep, 3=1374@256×5ep, 4=full@256×10ep, 5=50@512×5ep ablation
+TRAIN_RUN = 4  # 1=50@256×1ep, 2=200@256×1ep, 3=1374@256×5ep, 4=full@256×10ep, 5=50@512×5ep ablation
 
 VALID_PCT = 0.20
 BATCH_SIZE = 8
