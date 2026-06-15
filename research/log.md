@@ -2,21 +2,32 @@
 
 ## Current focus
 
-_Last updated: 2026-06-15 (MT NaN fixes A1+A2 + apo exclude 4 — **Kaggle run in progress**)._
+_Last updated: 2026-06-15 (MT NaN batch A1+A2+exclude4 **complete**)._
 
-**Best results:** Weighted @256 — fasc val Dice **0.108**, apo **0.039**. Submission v3: PA/FL NaN 0%, **MT NaN 44.6%**.
+**Best results:** Weighted @256 — fasc val Dice **0.108**, apo **0.039**. Submission **v4**: PA/FL NaN 0%, **MT NaN 43.0%** (v3 44.6%).
 
-**Active batch:**
+**MT NaN batch results:**
 
-| Item | Change | Status |
+| Step | Kernel | Result |
 |------|--------|--------|
-| **A2** | Region-path **fallback to raw line** when invert MT fails (`build_submission_nb.py`) | coded |
-| **A1** | `umud-mt-diagnosis-phase-3` — per-image `mt_fail_reason`, contours, geometry path | coded |
-| **Exclude 4** | `research/exclude_apo_mt_invalid.csv` → apo prep 1044 pairs | coded; **re-prep + apo retrain pending** |
+| Apo re-prep | `umud-prep-apo-timing` v5 | 1044 pairs (excl 4 single-contour) |
+| Apo retrain | `umud-train-apo-mounted-phase-3` v6 | ~11 min |
+| **A1** diagnosis | `umud-mt-diagnosis-phase-3` v2 | `mt_diagnosis_summary.json` — see below |
+| **A2** submission | `umud-submission-phase-3` v4 | MT NaN **43.0%**; **0** `fallback_line` rescues |
 
-**Next after Kaggle:** Compare submission v4 MT NaN vs v3 (44.6%); read `mt_diagnosis_summary.json`.
+**A1 failure breakdown (309 test images, .tif subset 251 in submit):**
 
-**Models for inference (until apo retrain completes):** fasc v14; apo v5 (v6 after retrain).
+| `mt_fail_reason` | Count | Style |
+|------------------|-------|-------|
+| `no_contours` | 92 | **all region** (inverted blob → empty) |
+| `no_x_overlap` | 49 | **all line** (2 contours, edges don't overlap in x) |
+| OK | 168 | line 159, region 9 |
+
+**A2 takeaway:** Region→line fallback **rescued 0 images** — predicted region blobs fail line path too (`no_contours`). Next MT lever: **better apo preds** or **morphology/skeleton** before geometry (not just path swap).
+
+**Exclude 4:** `research/exclude_apo_mt_invalid.csv` — apo train now 1044 pairs.
+
+**Next:** Apo segmentation iteration (loss/arch); morphology pre-geometry for region preds; mm calibration before scored submit.
 
 ### 512px resize ablation — baseline synthesis
 
@@ -390,7 +401,8 @@ umud-aligned-fasc-timing-50/
 | File | Rows | Use |
 |------|------|-----|
 | `train_fasc_clean.csv` | 2,749 | Fascicle segmentation training |
-| `train_apo_all.csv` | 1,048 | Apo segmentation training (+ `mask_style` column) |
+| `exclude_apo_mt_invalid.csv` | 4 | Apo pairs with single-contour GT — no valid MT from mask geometry |
+| `train_apo_all.csv` | 1,044 | Apo segmentation training (+ `mask_style` column; was 1,048) |
 | `exclude_fasc_masks.csv` | 12 | Do not train fasc on these |
 | Geometry code | `scripts/build_geometry_nb.py` | Port `align_mask`, contour geometry for inference |
 
