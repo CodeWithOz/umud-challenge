@@ -2,24 +2,29 @@
 
 ## Current focus
 
-_Last updated: 2026-06-16 (gray55+bbox v3 complete)._
+_Last updated: 2026-06-16 (gray55 train+eval complete)._
 
-**Best results:** Weighted @256 — fasc val Dice **0.108**, apo **0.039**. Submission **v4**: PA/FL NaN 0%, **MT NaN 43.0%**.
+**Gray55 retrain result:** Prep + train succeeded; **MT eval regressed** vs baseline+gray55 infer on .tif subset (251 images).
 
-**Gray55+bbox v3 results (309 test):**
+| Model | Gray55 infer `mt_ok` | Failures |
+|-------|---------------------|----------|
+| **Baseline apo** (old train) | **60.6%** | `single_contour` 80, `no_x_overlap` 19 |
+| **Gray55-trained apo** | **54.6%** | `single_contour` 87, `no_x_overlap` 27 |
 
-| Pipeline | `mt_ok` mean | Key failures |
-|----------|--------------|--------------|
-| Baseline | **0.544** | `no_contours` 92, `no_x_overlap` 49 |
-| **Gray55+bbox clip** | **0.644** (+31 net) | `single_contour` 80, `no_x_overlap` 30 |
-| Stretch+bbox | **0.385** | worse — broke 86 previously OK |
+- Train val Dice **0.963** (misleading — region GT dominates).
+- Net: **+9 fixed, −24 broken**; `single_contour` cohort unchanged at 80 still failing.
+- **Conclusion:** Gray55 training alone does not fix bbox-rectangle preds; need line/region strategy.
+
+**Next:** Line-target letterbox cohort or split models by mask style.
+
+**Gray55+bbox v3 (inference-only, 309 test):**
 
 - `no_contours` **eliminated** (92 → 0); **80/92** became `single_contour` (solid bbox-region pred, cov ≈ bbox area, r=0.998).
 - Of 92 letterbox collapses: gray fixed **10**, shifted **80** to `single_contour`.
 - **Visual QC:** bbox accurate; gray removes outside noise but inside bbox model often predicts filled rectangle not apo lines. Some rescues (e.g. IMG_00200, IMG_00216).
 - **Contrast stretch:** reject for now.
 
-**Next:** Gray55 training prep + retrain — kernels `umud-prep-apo-gray55` → `umud-train-apo-gray55-phase-3` → `umud-apo-gray55-eval-phase-3` (in flight).
+**Gray55 train pipeline:** prep v2 + train v2 + eval v5 complete. See table above.
 
 **Letterbox collapse (92 `no_contours` preds) — root cause identified:**
 
