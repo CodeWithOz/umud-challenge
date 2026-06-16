@@ -17,7 +17,7 @@ wait_kernel() {
       log "$label COMPLETE"
       return 0
     fi
-    if echo "$kstatus" | grep -q 'ERROR\|FAILED'; then
+    if echo "$kstatus" | grep -q 'KernelWorkerStatus.ERROR'; then
       log "$label FAILED: $kstatus"
       return 1
     fi

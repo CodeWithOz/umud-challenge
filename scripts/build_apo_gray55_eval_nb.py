@@ -43,12 +43,25 @@ GRAY_FILL_VALUE = 55
 ROI_THRESH = 5
 ROI_PAD_PX = 10
 
-BASELINE_MODEL = Path(
-    "/kaggle/input/notebooks/ucheozoemena/umud-train-apo-mounted-phase-3/apo_baseline.pkl"
-)
-GRAY55_MODEL = Path(
-    "/kaggle/input/notebooks/ucheozoemena/umud-train-apo-gray55-phase-3/apo_gray55_baseline.pkl"
-)
+
+def resolve_pkl(name: str) -> Path:
+    preferred = [
+        Path(f"/kaggle/input/notebooks/ucheozoemena/umud-train-apo-gray55-phase-3/{name}"),
+        Path(f"/kaggle/input/notebooks/ucheozoemena/umud-train-apo-mounted-phase-3/{name.replace('gray55_', '')}"),
+    ]
+    for p in preferred:
+        if p.exists():
+            return p
+    hits = sorted(Path("/kaggle/input").rglob(name))
+    if hits:
+        return hits[0]
+    raise FileNotFoundError(f"Could not find {name} under /kaggle/input — add train kernel in sidebar")
+
+
+BASELINE_MODEL = resolve_pkl("apo_baseline.pkl")
+GRAY55_MODEL = resolve_pkl("apo_gray55_baseline.pkl")
+print("Baseline model:", BASELINE_MODEL)
+print("Gray55 model:", GRAY55_MODEL)
 
 COMPETITION_DIR = Path(
     "/kaggle/input/competitions/umud-challenge-muscle-architecture-in-ultrasound-data"
