@@ -38,6 +38,7 @@ import pandas as pd
 from tqdm.auto import tqdm
 
 IMG_SIZE = 256
+APO_REGION_THRESHOLD = 0.50
 GRAY_FILL_VALUE = 55
 ROI_THRESH = 5
 ROI_PAD_PX = 10
