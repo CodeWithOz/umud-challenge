@@ -1,4 +1,4 @@
-"""Generate notebooks/no-contour-viz/no-contour-viz-phase-3.ipynb — MT no_contours gallery."""
+"""Generate notebooks/no-contour-viz/no-contour-viz-phase-3.ipynb — apo MT fail vs OK galleries."""
 import json
 import sys
 from pathlib import Path
@@ -17,21 +17,24 @@ def _geometry_source() -> str:
 
 cells: list[dict] = [
     md(
-        """# UMUD — MT `no_contours` Visual QC (Phase 3)
+        """# UMUD — Apo MT Visual QC: Failures vs Successes (Phase 3)
 
-**GPU notebook** — sample predicted aponeurosis masks that fail MT geometry with `no_contours` (region style → inverted blob empty).
+**GPU notebook** — side-by-side galleries of predicted aponeurosis masks:
 
-For each of **20** cases, panels:
+1. **20 `no_contours` failures** — region path → inverted mask empty (MT NaN)
+2. **20 MT-OK successes** — geometry yields finite `mt_px` (no NaN)
+
+Each case uses the same 5-panel layout:
 
 | # | Panel |
 |---|--------|
 | 1 | Raw test image |
 | 2 | Predicted apo mask (native size) |
-| 3 | Inverted mask (region geometry path) |
+| 3 | Inverted mask |
 | 4 | Orange overlay — predicted mask on image |
 | 5 | Orange overlay — inverted mask on image |
 
-Overlays use Phase 0/1 style (`MASK_OVERLAY_ALPHA=0.55`, orange `(255,140,0)`, **no** `cmap="gray"` on RGB)."""
+Overlays: Phase 0/1 style (`MASK_OVERLAY_ALPHA=0.55`, orange `(255,140,0)`, no `cmap="gray"` on RGB)."""
     ),
     md("## Configuration"),
     code(
@@ -39,16 +42,21 @@ Overlays use Phase 0/1 style (`MASK_OVERLAY_ALPHA=0.55`, orange `(255,140,0)`, *
 from pathlib import Path
 
 import matplotlib.pyplot as plt
+import pandas as pd
 
 IMG_SIZE = 256
 APO_REGION_THRESHOLD = 0.50
-N_SHOW = 20
+N_SHOW_FAIL = 20
+N_SHOW_OK = 20
 RANDOM_SEED = 42
 MASK_OVERLAY_ALPHA = 0.55
 APO_OVERLAY_COLOR = (255, 140, 0)
 
-FIG_DIR = Path("/kaggle/working/figures/no_contours")
-FIG_DIR.mkdir(parents=True, exist_ok=True)
+FIG_ROOT = Path("/kaggle/working/figures")
+FIG_FAIL = FIG_ROOT / "no_contours"
+FIG_OK = FIG_ROOT / "mt_ok"
+FIG_FAIL.mkdir(parents=True, exist_ok=True)
+FIG_OK.mkdir(parents=True, exist_ok=True)
 
 APO_MODEL_PATH = Path(
     "/kaggle/input/notebooks/ucheozoemena/umud-train-apo-mounted-phase-3/apo_baseline.pkl"
@@ -78,12 +86,15 @@ cells.extend(
     return rgb.astype(np.uint8)
 
 
-def no_contour_panel(img: np.ndarray, pred_mask: np.ndarray, name: str, idx: int):
+def apo_panel(case: dict, idx: int, group: str, fig_dir: Path):
+    img = case["img"]
+    pred_mask = case["pred_mask"]
     inv_mask = invert_mask(pred_mask)
     cov = float(pred_mask.mean()) * 100
     inv_cov = float(inv_mask.mean()) * 100
     n_fg = int(pred_mask.sum())
     n_inv = int(inv_mask.sum())
+    mt_lbl = f"{case['mt_px']:.1f}px" if not np.isnan(case["mt_px"]) else "NaN"
 
     fig, axes = plt.subplots(1, 5, figsize=(22, 4.5))
     panels = [
@@ -99,12 +110,15 @@ def no_contour_panel(img: np.ndarray, pred_mask: np.ndarray, name: str, idx: int
         ax.axis("off")
 
     plt.suptitle(
-        f"[{idx}] {name}  pred_cov={cov:.3f}% ({n_fg}px)  inv_cov={inv_cov:.3f}% ({n_inv}px)",
-        y=1.03,
-        fontsize=10,
+        f"[{group} {idx}] {case['image_id']}  style={case['apo_style']}  "
+        f"pred_cov={cov:.3f}% ({n_fg}px)  inv_cov={inv_cov:.3f}% ({n_inv}px)  "
+        f"mt={mt_lbl}  fail={case['mt_fail_reason']}",
+        y=1.04,
+        fontsize=9,
     )
     plt.tight_layout()
-    out = FIG_DIR / f"no_contour_{idx:02d}_{name.replace('.tif', '')}.png"
+    stem = case["image_id"].replace(".tif", "")
+    out = fig_dir / f"{group}_{idx:02d}_{stem}.png"
     fig.savefig(out, dpi=120, bbox_inches="tight")
     plt.show()
     plt.close(fig)
@@ -121,9 +135,9 @@ print(f"Test images: {len(test_paths)}")
 """
         ),
         code(
-            """no_contour_cases = []
+            """all_cases = []
 
-for path in tqdm(test_paths, desc="scan test for no_contours"):
+for path in tqdm(test_paths, desc="scan test predictions"):
     img_native = load_gray(path)
     h, w = img_native.shape
     pil = open_rgb_256(img_native)
@@ -131,37 +145,95 @@ for path in tqdm(test_paths, desc="scan test for no_contours"):
     apo_native = resize_mask_to(tensor_to_mask(apo_t), h, w)
     apo_style = tag_apo_style(float(apo_native.mean()))
     apo_geo = apo_geometry_from_mask(apo_native, apo_style)
-    if apo_geo["mt_fail_reason"] != "no_contours":
-        continue
-    no_contour_cases.append(
+    all_cases.append(
         {
             "image_id": path.name,
             "img": img_native,
             "pred_mask": apo_native,
+            "apo_style": apo_style,
             "apo_cov": float(apo_native.mean()),
             "apo_fg_pixels": int(apo_native.sum()),
             "n_contours": apo_geo["n_contours"],
+            "mt_px": apo_geo["mt_px"],
+            "mt_ok": not np.isnan(apo_geo["mt_px"]),
+            "mt_fail_reason": apo_geo["mt_fail_reason"],
+            "geometry_path": apo_geo.get("geometry_path"),
+            "img_h": h,
+            "img_w": w,
         }
     )
 
-print(f"no_contours cases: {len(no_contour_cases)}")
-assert len(no_contour_cases) >= N_SHOW, f"Expected >= {N_SHOW}, got {len(no_contour_cases)}"
+scan_df = pd.DataFrame(
+    [
+        {
+            "image_id": c["image_id"],
+            "apo_style": c["apo_style"],
+            "apo_cov": c["apo_cov"],
+            "apo_fg_pixels": c["apo_fg_pixels"],
+            "mt_ok": c["mt_ok"],
+            "mt_fail_reason": c["mt_fail_reason"],
+            "n_contours": c["n_contours"],
+            "res": f"{c['img_h']}x{c['img_w']}",
+        }
+        for c in all_cases
+    ]
+)
+scan_df.to_csv("/kaggle/working/apo_scan_summary.csv", index=False)
+
+fail_cases = [c for c in all_cases if c["mt_fail_reason"] == "no_contours"]
+ok_cases = [c for c in all_cases if c["mt_ok"]]
+
+print(f"Total: {len(all_cases)}")
+print(f"no_contours failures: {len(fail_cases)}")
+print(f"MT OK: {len(ok_cases)}")
+print(f"MT NaN (all reasons): {(~scan_df.mt_ok).sum()}")
+print()
+print("Failure reasons:")
+print(scan_df.loc[~scan_df.mt_ok, "mt_fail_reason"].value_counts().to_string())
+print()
+print("no_contours pred_cov stats:")
+print(scan_df.loc[scan_df.mt_fail_reason == "no_contours", "apo_cov"].describe().round(4))
+print()
+print("MT OK pred_cov stats:")
+print(scan_df.loc[scan_df.mt_ok, "apo_cov"].describe().round(4))
+print()
+print("MT OK by style:")
+print(scan_df.loc[scan_df.mt_ok, "apo_style"].value_counts().to_string())
+
+assert len(fail_cases) >= N_SHOW_FAIL, f"Need >= {N_SHOW_FAIL} failures, got {len(fail_cases)}"
+assert len(ok_cases) >= N_SHOW_OK, f"Need >= {N_SHOW_OK} MT-OK cases, got {len(ok_cases)}"
 
 rng = random.Random(RANDOM_SEED)
-sample = rng.sample(no_contour_cases, N_SHOW)
-print(f"Showing {N_SHOW} samples (seed={RANDOM_SEED})")
-for row in sample[:5]:
-    print(f"  {row['image_id']} cov={row['apo_cov']:.4f} fg={row['apo_fg_pixels']}")
+fail_sample = rng.sample(fail_cases, N_SHOW_FAIL)
+ok_sample = rng.sample(ok_cases, N_SHOW_OK)
+
+print(f"\\nFail sample (seed={RANDOM_SEED}):")
+for row in fail_sample[:5]:
+    print(f"  {row['image_id']} cov={row['apo_cov']:.4f} res={row['img_h']}x{row['img_w']}")
+print(f"\\nOK sample (seed={RANDOM_SEED}):")
+for row in ok_sample[:5]:
+    print(f"  {row['image_id']} cov={row['apo_cov']:.4f} mt={row['mt_px']:.1f}px style={row['apo_style']}")
 """
         ),
+        md("## Gallery A — `no_contours` failures (MT NaN)"),
         code(
-            """saved = []
-for i, case in enumerate(sample, start=1):
-    out = no_contour_panel(case["img"], case["pred_mask"], case["image_id"], i)
-    saved.append(str(out))
+            """saved_fail = []
+for i, case in enumerate(fail_sample, start=1):
+    out = apo_panel(case, i, "fail", FIG_FAIL)
+    saved_fail.append(str(out))
 
-print(f"Saved {len(saved)} figures under {FIG_DIR}")
-for p in saved:
+print(f"Saved {len(saved_fail)} failure figures under {FIG_FAIL}")
+"""
+        ),
+        md("## Gallery B — MT-OK successes (finite `mt_px`)"),
+        code(
+            """saved_ok = []
+for i, case in enumerate(ok_sample, start=1):
+    out = apo_panel(case, i, "ok", FIG_OK)
+    saved_ok.append(str(out))
+
+print(f"Saved {len(saved_ok)} success figures under {FIG_OK}")
+for p in saved_ok:
     print(p)
 """
         ),
