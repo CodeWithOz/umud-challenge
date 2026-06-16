@@ -211,7 +211,10 @@ learn.export(WORKING / "apo_gray55_baseline.pkl")
 
 # validation Dice snapshot
 val_losses, val_metrics = learn.validate(dl=dls.valid)
-val_dice = float(val_metrics[0]) if val_metrics else float("nan")
+if isinstance(val_metrics, (list, tuple)):
+    val_dice = float(val_metrics[0]) if val_metrics else float("nan")
+else:
+    val_dice = float(val_metrics)
 print(f"Val Dice: {val_dice:.4f}")
 
 timing = pd.DataFrame(
