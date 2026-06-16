@@ -34,7 +34,7 @@ cells: list[dict] = [
     code(
         """# --- Parameters you can change ---
 RANDOM_SEED = 42
-TRAIN_RUN = 4  # 1=gray55-50×1ep, 2=gray55-200×1ep, 3=gray55-524×5ep, 4=gray55-full×10ep
+TRAIN_RUN = 5  # 5=gray55-line micro 50×5ep; 4=gray55-full×10ep; see profiles
 
 VALID_PCT = 0.20
 BATCH_SIZE = 8
@@ -51,27 +51,38 @@ TRAIN_PROFILES = {
         "dataset_slug": "ucheozoemena/umud-aligned-apo-gray55-timing-50",
         "epochs": 1,
         "label": "GAT1 gray55 apo 50×1ep",
+        "export_name": "apo_gray55_baseline.pkl",
     },
     2: {
         "dataset_slug": "ucheozoemena/umud-aligned-apo-gray55-timing-200",
         "epochs": 1,
         "label": "GAT2 gray55 apo 200×1ep",
+        "export_name": "apo_gray55_baseline.pkl",
     },
     3: {
         "dataset_slug": "ucheozoemena/umud-aligned-apo-gray55-timing-524",
         "epochs": FULL_EPOCHS // 2,
         "label": "GAT3 gray55 apo 524×5ep",
+        "export_name": "apo_gray55_baseline.pkl",
     },
     4: {
         "dataset_slug": "ucheozoemena/umud-aligned-apo-gray55-full",
         "epochs": FULL_EPOCHS,
         "label": "GAT4 gray55 apo full 1044×10ep",
+        "export_name": "apo_gray55_baseline.pkl",
+    },
+    5: {
+        "dataset_slug": "ucheozoemena/umud-aligned-apo-gray55-line-timing-50",
+        "epochs": 5,
+        "label": "GAT5 gray55+line apo 50×5ep micro",
+        "export_name": "apo_gray55_line_baseline.pkl",
     },
 }
 
 profile = TRAIN_PROFILES[TRAIN_RUN]
 DATASET_SLUG = profile["dataset_slug"]
 EPOCHS = profile["epochs"]
+EXPORT_NAME = profile["export_name"]
 print(f"TRAIN_RUN={TRAIN_RUN} | {profile['label']} | dataset={DATASET_SLUG} | epochs={EPOCHS}")
 """
     ),
@@ -207,7 +218,7 @@ t1 = time.perf_counter()
 train_sec = t1 - t_train
 print(f"Train wall-clock: {train_sec:.1f}s")
 
-learn.export(WORKING / "apo_gray55_baseline.pkl")
+learn.export(WORKING / EXPORT_NAME)
 
 # validation Dice snapshot
 val_losses, val_metrics = learn.validate(dl=dls.valid)
@@ -267,7 +278,7 @@ def main() -> None:
         "enable_tpu": False,
         "enable_internet": True,
         "keywords": ["gpu"],
-        "dataset_sources": ["ucheozoemena/umud-aligned-apo-gray55-full"],
+        "dataset_sources": ["ucheozoemena/umud-aligned-apo-gray55-line-timing-50"],
         "kernel_sources": [],
         "competition_sources": [],
         "model_sources": [],
