@@ -335,16 +335,17 @@ def show_one(image_id: str):
     axes[9].set_title("pre overlay (inv)", fontsize=10)
     axes[9].axis("off")
 
-    # bbox diagnostic
+    # bbox diagnostic (create a fresh patch per axis)
     y0,y1,x0,x1 = bbox
-    rect = plt.Rectangle((x0,y0), x1-x0, y1-y0, fill=False, edgecolor='cyan', linewidth=2)
     axes[10].imshow(img_native, cmap="gray")
-    axes[10].add_patch(rect)
+    rect1 = plt.Rectangle((x0,y0), x1-x0, y1-y0, fill=False, edgecolor='cyan', linewidth=2)
+    axes[10].add_patch(rect1)
     axes[10].set_title("bbox on raw", fontsize=10)
     axes[10].axis("off")
 
     axes[11].imshow(img_pre, cmap="gray")
-    axes[11].add_patch(rect)
+    rect2 = plt.Rectangle((x0,y0), x1-x0, y1-y0, fill=False, edgecolor='cyan', linewidth=2)
+    axes[11].add_patch(rect2)
     axes[11].set_title("bbox on gray-fill", fontsize=10)
     axes[11].axis("off")
 
