@@ -44,22 +44,24 @@ ROI_THRESH = 5
 ROI_PAD_PX = 10
 
 
-def resolve_pkl(name: str) -> Path:
-    preferred = [
-        Path(f"/kaggle/input/notebooks/ucheozoemena/umud-train-apo-gray55-phase-3/{name}"),
-        Path(f"/kaggle/input/notebooks/ucheozoemena/umud-train-apo-mounted-phase-3/{name.replace('gray55_', '')}"),
-    ]
+def resolve_pkl(preferred: list[Path], filename: str) -> Path:
     for p in preferred:
         if p.exists():
             return p
-    hits = sorted(Path("/kaggle/input").rglob(name))
+    hits = sorted(Path("/kaggle/input").rglob(filename))
     if hits:
         return hits[0]
-    raise FileNotFoundError(f"Could not find {name} under /kaggle/input — add train kernel in sidebar")
+    raise FileNotFoundError(f"Could not find {filename} under /kaggle/input — add train kernel in sidebar")
 
 
-BASELINE_MODEL = resolve_pkl("apo_baseline.pkl")
-GRAY55_MODEL = resolve_pkl("apo_gray55_baseline.pkl")
+BASELINE_MODEL = resolve_pkl(
+    [Path("/kaggle/input/notebooks/ucheozoemena/umud-train-apo-mounted-phase-3/apo_baseline.pkl")],
+    "apo_baseline.pkl",
+)
+GRAY55_MODEL = resolve_pkl(
+    [Path("/kaggle/input/notebooks/ucheozoemena/umud-train-apo-gray55-phase-3/apo_gray55_baseline.pkl")],
+    "apo_gray55_baseline.pkl",
+)
 print("Baseline model:", BASELINE_MODEL)
 print("Gray55 model:", GRAY55_MODEL)
 
