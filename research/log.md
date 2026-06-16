@@ -2,13 +2,24 @@
 
 ## Current focus
 
-_Last updated: 2026-06-16 (gray55+bbox v3 pushed)._
+_Last updated: 2026-06-16 (gray55+bbox v3 complete)._
 
 **Best results:** Weighted @256 — fasc val Dice **0.108**, apo **0.039**. Submission **v4**: PA/FL NaN 0%, **MT NaN 43.0%**.
 
-**Active experiment:** `umud-apo-contrast-fill-v3-phase-3` — RGB(55,55,55) bbox fill + mask clip to bbox + contrast-stretch variant (awaiting run completion).
+**Gray55+bbox v3 results (309 test):**
 
-**Confirmed:** Training masks are **one structure per file** (apo vs fasc separate); model predicting both is a prediction issue, not GT format.
+| Pipeline | `mt_ok` mean | Key failures |
+|----------|--------------|--------------|
+| Baseline | **0.544** | `no_contours` 92, `no_x_overlap` 49 |
+| **Gray55+bbox clip** | **0.644** (+31 net) | `single_contour` 80, `no_x_overlap` 30 |
+| Stretch+bbox | **0.385** | worse — broke 86 previously OK |
+
+- `no_contours` **eliminated** (92 → 0); **80/92** became `single_contour` (solid bbox-region pred, cov ≈ bbox area, r=0.998).
+- Of 92 letterbox collapses: gray fixed **10**, shifted **80** to `single_contour`.
+- **Visual QC:** bbox accurate; gray removes outside noise but inside bbox model often predicts filled rectangle not apo lines. Some rescues (e.g. IMG_00200, IMG_00216).
+- **Contrast stretch:** reject for now.
+
+**Next:** Gray55 training prep + retrain — kernels `umud-prep-apo-gray55` → `umud-train-apo-gray55-phase-3` → `umud-apo-gray55-eval-phase-3` (in flight).
 
 **Letterbox collapse (92 `no_contours` preds) — root cause identified:**
 
@@ -48,11 +59,11 @@ _Last updated: 2026-06-16 (gray55+bbox v3 pushed)._
 - MT-fixed (baseline NaN -> gray finite): **30** total
 - Of baseline `no_contours` (**92**): fixed by gray-fill **4**
 
-**Gray55+bbox v3 (pushed):** fixed **RGB(55,55,55)** outside bbox + zero pred mask outside bbox + contrast-stretch variant. Kernel: `umud-apo-contrast-fill-v3-phase-3`.
+**Gray55+bbox v3 (complete):** kernel `umud-apo-gray55-bbox-pipeline-phase-3-v3`. See Current focus for stats. Outputs in `tmp/kaggle-output/apo-contrast-fill-v3/`.
 
 **Training mask verification (local):** apo and fasc are **separate mask files** — each labels one structure. Apo GT: **574 line** + **474 region** (never both in one file). Line apo barely overlaps fasc (~5% fasc px); region apo encompasses fasc anatomically (~93% fasc px inside) but fasc is not labeled in apo masks.
 
-**Next:** Review v3 results when complete.
+**Next:** Gray55 training prep + retrain experiment.
 
 **Hypothesis:** 256px downsampling from ~800×1200 native images discards too much absolute structure signal for sparse fasc masks (~0.26% fg). 512px should retain ~4× more structure pixels (local analysis on P1 sample: mean **170** fg px @256 vs **682** @512; coverage *fraction* stays ~0.26% at both sizes).
 
