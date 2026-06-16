@@ -18,7 +18,21 @@ _Last updated: 2026-06-16 (letterbox collapse root-cause analysis)._
 
 **Implication:** Training is learning letterbox region masks; geometry breaks when pred saturates to 100%. Fixes: ROI crop before infer, geometry guard (`pred_cov>0.95` → line path or erode), or retrain letterbox with line targets.
 
-**Next:** Apo segmentation iteration (loss/arch + letterbox handling); morphology pre-geometry; mm calibration before scored submit.
+### Apo inference experiments (ROI crop + geometry guard)
+
+**ROI crop (bbox by non-black threshold + paste pred back):**
+- Baseline `mt_ok` mean: **0.5437** (MT NaN ~45.6%)
+- With ROI crop: `mt_ok` mean **0.4822** (MT NaN ~51.8%) — overall worsened
+- **MT-fixed** (baseline NaN → crop finite): **4** total
+- Of baseline `no_contours` (**92**): crop fixed **2** (remaining **90** still NaN)
+- New crop failures shifted mainly to `single_contour` (**143**) and `no_x_overlap` (**17**).
+
+**Geometry guard (high-coverage boundary mask + derive MT from boundary):**
+- `mt_ok` mean unchanged: **0.5437** → **no rescue**
+- MT-fixed: **0**
+- `guard_applied` fraction: **0.301** (guard ran, but didn’t move NaNs).
+
+**Next:** Input preprocessing / contrast normalization for the letterbox cohort (see contrast hypothesis); then re-check `pred_cov` saturation and `mt_fail_reason` breakdown.
 
 ### 512px resize ablation — baseline synthesis
 
