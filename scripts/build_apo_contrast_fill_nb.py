@@ -385,7 +385,7 @@ print("Done. Figures in:", FIG_DIR)
 
 
 def main() -> None:
-    out = Path(__file__).resolve().parents[1] / "notebooks/apo-contrast-fill"
+    out = Path(__file__).resolve().parents[1] / "notebooks/apo-contrast-fill-v2"
     out.mkdir(parents=True, exist_ok=True)
     nb_path = out / "apo-contrast-fill-phase-3.ipynb"
 
@@ -403,8 +403,8 @@ def main() -> None:
     (out / "kernel-metadata.json").write_text(
         json.dumps(
             {
-                "id": "ucheozoemena/umud-apo-contrast-fill-phase-3",
-                "title": "UMUD Apo Contrast Context Fill Phase 3",
+                "id": "ucheozoemena/umud-apo-contrast-fill-v2-phase-3",
+                "title": "UMUD Apo Contrast Context Fill Phase 3 (v2)",
                 "code_file": "apo-contrast-fill-phase-3.ipynb",
                 "language": "python",
                 "kernel_type": "notebook",
