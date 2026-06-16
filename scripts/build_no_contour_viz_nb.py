@@ -117,7 +117,7 @@ def apo_panel(case: dict, idx: int, group: str, fig_dir: Path):
         fontsize=9,
     )
     plt.tight_layout()
-    stem = case["image_id"].replace(".tif", "")
+    stem = Path(case["image_id"]).stem
     out = fig_dir / f"{group}_{idx:02d}_{stem}.png"
     fig.savefig(out, dpi=120, bbox_inches="tight")
     plt.show()

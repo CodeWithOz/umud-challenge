@@ -2,32 +2,23 @@
 
 ## Current focus
 
-_Last updated: 2026-06-15 (MT NaN batch A1+A2+exclude4 **complete**)._
+_Last updated: 2026-06-16 (letterbox collapse root-cause analysis)._
 
-**Best results:** Weighted @256 — fasc val Dice **0.108**, apo **0.039**. Submission **v4**: PA/FL NaN 0%, **MT NaN 43.0%** (v3 44.6%).
+**Best results:** Weighted @256 — fasc val Dice **0.108**, apo **0.039**. Submission **v4**: PA/FL NaN 0%, **MT NaN 43.0%**.
 
-**MT NaN batch results:**
+**Letterbox collapse (92 `no_contours` preds) — root cause identified:**
 
-| Step | Kernel | Result |
-|------|--------|--------|
-| Apo re-prep | `umud-prep-apo-timing` v5 | 1044 pairs (excl 4 single-contour) |
-| Apo retrain | `umud-train-apo-mounted-phase-3` v6 | ~11 min |
-| **A1** diagnosis | `umud-mt-diagnosis-phase-3` v2 | `mt_diagnosis_summary.json` — see below |
-| **A2** submission | `umud-submission-phase-3` v4 | MT NaN **43.0%**; **0** `fallback_line` rescues |
+| Finding | Detail |
+|---------|--------|
+| Not random | 92/92 collapsed test images share **letterbox edge signature** `(T≈26, B≈0, L≈2)` — 800×1200 frames with black bottom + side bars |
+| Not upscale bug | Train letterbox GT masks are **~97% fg @256** after squish resize (same as inference path) |
+| Training target | **474/474** train images with that layout have **region-style** GT (`mask_cov` mean **0.974**, all `cov≥0.5`) |
+| Model behaviour | Predicts **100% fg** on letterbox test (slight overshoot over ~97% GT) → `tag_apo_style` → region → invert → **empty** → `no_contours` |
+| OK test cohort | Different layouts (e.g. edge sig `(66,57,57)` ×80, `(0,0,4)` ×57) → sparse **line** preds (~5–10% cov) → MT OK |
 
-**A1 failure breakdown (309 test images, .tif subset 251 in submit):**
+**Implication:** Training is learning letterbox region masks; geometry breaks when pred saturates to 100%. Fixes: ROI crop before infer, geometry guard (`pred_cov>0.95` → line path or erode), or retrain letterbox with line targets.
 
-| `mt_fail_reason` | Count | Style |
-|------------------|-------|-------|
-| `no_contours` | 92 | **all region** (inverted blob → empty) |
-| `no_x_overlap` | 49 | **all line** (2 contours, edges don't overlap in x) |
-| OK | 168 | line 159, region 9 |
-
-**A2 takeaway:** Region→line fallback **rescued 0 images** — predicted region blobs fail line path too (`no_contours`). Next MT lever: **better apo preds** or **morphology/skeleton** before geometry (not just path swap).
-
-**Exclude 4:** `research/exclude_apo_mt_invalid.csv` — apo train now 1044 pairs.
-
-**Next:** Apo segmentation iteration (loss/arch); morphology pre-geometry for region preds; mm calibration before scored submit.
+**Next:** Apo segmentation iteration (loss/arch + letterbox handling); morphology pre-geometry; mm calibration before scored submit.
 
 ### 512px resize ablation — baseline synthesis
 
