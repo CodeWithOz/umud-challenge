@@ -1,17 +1,4 @@
-"""Generate notebooks/apo-contrast-fill/apo-contrast-fill-phase-3.ipynb — gray context contrast test.
-
-Goal:
-Test whether changing the *image context* (black gutters vs neutral gray) reduces the
-letterbox saturation failure mode (pred_cov -> ~1.0 -> region invert -> no_contours).
-
-Notebook does:
-1) Baseline apo inference on raw test images.
-2) Preprocess images by replacing non-ultrasound background (outside ROI bbox) with gray.
-3) Run apo inference again on the preprocessed images.
-4) Compare MT NaN/failure reasons between baseline and gray-context.
-5) Show side-by-side raw vs gray-context images + predictions for a small gallery.
-"""
-
+"""Generate notebooks/apo-contrast-fill-v3 — gray55 bbox pipeline + contrast stretch variant."""
 import json
 import sys
 from pathlib import Path
@@ -30,22 +17,22 @@ def _geometry_source() -> str:
 
 cells: list[dict] = [
     md(
-        """# UMUD — Apo Contrast Context Fill (Phase 3)
+        """# UMUD — Apo Gray55 Bbox Pipeline (Phase 3 v3)
 
-**GPU notebook** — tests your “contrast/context” hypothesis.
+**GPU notebook** — implements the refined context hypothesis:
 
-We take each test ultrasound image and:
-1. Compute the ultrasound ROI bbox (non-black content).
-2. Replace everything outside that bbox with a neutral **gray** value.
-3. Run apo segmentation + Phase-2 geometry on both:
-   - **Baseline**: raw image
-   - **Gray-fill**: gray-context image
+1. Detect ultrasound ROI bbox (non-black content).
+2. Replace everything **outside** the bbox with fixed gray **RGB (55, 55, 55)** → grayscale 55.
+3. Run apo inference on the preprocessed image.
+4. **Zero predicted mask pixels outside the bbox** before geometry (removes gutter noise).
+5. Compare three pipelines on all test images:
+   - **Baseline** (raw image, raw pred)
+   - **Gray55+bbox** (gray fill + mask clip)
+   - **Gray55+stretch+bbox** (gray fill + percentile contrast stretch inside ROI + mask clip)
 
 Outputs:
 - `/kaggle/working/apo_contrast_fill_compare.csv`
-
-The notebook also displays a small gallery of cases where you can visually inspect:
-Raw image -> Gray-filled image -> Predicted mask(s) + overlays + inverted masks.
+- Gallery figures under `/kaggle/working/figures/apo_contrast_fill/`
 """
     ),
     md("## Configuration"),
@@ -66,21 +53,18 @@ N_GALLERY_FAIL = 10
 N_GALLERY_OK = 6
 RANDOM_SEED = 42
 
-ROI_THRESH = 5        # non-black threshold for bbox
-ROI_PAD_PX = 10       # bbox padding
+ROI_THRESH = 5
+ROI_PAD_PX = 10
+
+# Working-cohort gray from visual inspection (RGB 55,55,55 at full opacity)
+GRAY_FILL_VALUE = 55
+
+# Contrast stretch inside ROI only (percentile clip then linear rescale to 0..255)
+P_LOW = 1
+P_HIGH = 99
 
 MASK_OVERLAY_ALPHA = 0.55
 APO_OVERLAY_COLOR = (255, 140, 0)
-
-# How to compute the neutral gray fill value.
-# We take a dark-pixel percentile from the image, but clamp to a minimum.
-GRAY_DARK_PERCENTILE = 10  # lower percentile => darker gray
-GRAY_MIN_VALUE = 15        # avoid turning gutters into near-black
-
-# Optional contrast stretch inside ROI (OFF by default; enabled only if you want).
-DO_CONTRAST_STRETCH = False
-P_LOW = 1
-P_HIGH = 99
 
 FIG_DIR = Path("/kaggle/working/figures/apo_contrast_fill")
 FIG_DIR.mkdir(parents=True, exist_ok=True)
@@ -112,11 +96,6 @@ cells.extend(
 
 
 def find_roi_bbox(img_gray: np.ndarray, thr: float = ROI_THRESH, pad: int = ROI_PAD_PX):
-    \"\"\"Ultrasound ROI bbox from non-black pixels.
-
-    Uses connected components to suppress small speckle blobs.
-    Returns (y0, y1, x0, x1) in native coordinates.
-    \"\"\"
     import cv2
 
     roi = (img_gray > thr).astype(np.uint8)
@@ -135,49 +114,53 @@ def find_roi_bbox(img_gray: np.ndarray, thr: float = ROI_THRESH, pad: int = ROI_
     return int(y0), int(y1), int(x0), int(x1)
 
 
-def compute_gray_fill_value(img_gray: np.ndarray):
-    \"\"\"Pick a dark-but-not-black gray from the image background.\"\"\"
-    flat = img_gray.reshape(-1)
-    # Ignore exact zeros when possible (pure black borders).
-    nonzero = flat[flat > 0]
-    if len(nonzero) > 1000:
-        dark_base = np.percentile(nonzero, GRAY_DARK_PERCENTILE)
-    else:
-        dark_base = np.percentile(flat, GRAY_DARK_PERCENTILE)
-    return float(max(GRAY_MIN_VALUE, dark_base))
+def clip_mask_to_bbox(mask: np.ndarray, bbox: tuple[int, int, int, int]) -> np.ndarray:
+    y0, y1, x0, x1 = bbox
+    out = np.zeros_like(mask, dtype=np.uint8)
+    out[y0:y1, x0:x1] = mask[y0:y1, x0:x1]
+    return out
 
 
-def maybe_contrast_stretch(img_gray: np.ndarray, y0: int, y1: int, x0: int, x1: int):
-    if not DO_CONTRAST_STRETCH:
-        return img_gray
-
+def contrast_stretch_roi(img_gray: np.ndarray, bbox: tuple[int, int, int, int]) -> np.ndarray:
+    y0, y1, x0, x1 = bbox
     out = img_gray.astype(np.float32).copy()
     roi = out[y0:y1, x0:x1]
     lo = np.percentile(roi, P_LOW)
     hi = np.percentile(roi, P_HIGH)
     if hi <= lo + 1e-6:
         return img_gray
-
-    # Linear rescale ROI only to [0,255], clipping to remove outliers.
     roi_clipped = np.clip(roi, lo, hi)
-    roi_stretched = (roi_clipped - lo) / (hi - lo) * 255.0
-    out[y0:y1, x0:x1] = roi_stretched
+    out[y0:y1, x0:x1] = (roi_clipped - lo) / (hi - lo) * 255.0
     return out.astype(np.uint8)
 
 
-def preprocess_gray_fill(img_native: np.ndarray):
-    \"\"\"Replace outside ROI bbox with a neutral gray, optionally stretch inside ROI.\"\"\"
+def preprocess_gray55(img_native: np.ndarray, do_stretch: bool = False):
+    \"\"\"Gray-fill outside bbox with fixed 55; optional contrast stretch inside ROI.\"\"\"
     h, w = img_native.shape
-    y0, y1, x0, x1 = find_roi_bbox(img_native)
-    gray_val = compute_gray_fill_value(img_native)
+    bbox = find_roi_bbox(img_native)
+    y0, y1, x0, x1 = bbox
 
-    pre = img_native.copy().astype(np.float32)
-    pre_mask = np.ones((h, w), dtype=bool)
-    pre_mask[y0:y1, x0:x1] = False  # True outside ROI
-    pre[pre_mask] = gray_val
-    pre = pre.astype(np.uint8)
-    pre = maybe_contrast_stretch(pre, y0, y1, x0, x1)
-    return pre, (y0, y1, x0, x1), gray_val
+    pre = img_native.copy()
+    outside = np.ones((h, w), dtype=bool)
+    outside[y0:y1, x0:x1] = False
+    pre[outside] = GRAY_FILL_VALUE
+
+    if do_stretch:
+        pre = contrast_stretch_roi(pre, bbox)
+
+    return pre, bbox
+
+
+def infer_apo_on_image(img_gray: np.ndarray, bbox: tuple[int, int, int, int], clip_bbox: bool):
+    h, w = img_gray.shape
+    pil = open_rgb_256(img_gray)
+    _, apo_t, _ = apo_learn.predict(pil)
+    mask = resize_mask_to(tensor_to_mask(apo_t), h, w)
+    if clip_bbox:
+        mask = clip_mask_to_bbox(mask, bbox)
+    style = tag_apo_style(float(mask.mean()))
+    geo = apo_geometry_from_mask(mask, style)
+    return mask, style, geo
 """
         ),
         code(
@@ -192,41 +175,42 @@ print(f"Test images: {len(test_paths)}")
         code(
             """rows = []
 
-for path in tqdm(test_paths, desc="baseline + gray-fill infer"):
+for path in tqdm(test_paths, desc="compare pipelines"):
     img_native = load_gray(path)
     h, w = img_native.shape
 
     # Baseline
-    pil = open_rgb_256(img_native)
-    _, apo_t, _ = apo_learn.predict(pil)
-    apo_native = resize_mask_to(tensor_to_mask(apo_t), h, w)
-    base_cov = float(apo_native.mean())
-    base_style = tag_apo_style(base_cov)
-    base_geo = apo_geometry_from_mask(apo_native, base_style)
+    bbox = find_roi_bbox(img_native)
+    base_mask, base_style, base_geo = infer_apo_on_image(img_native, bbox, clip_bbox=False)
 
-    # Gray-fill preprocessing
-    img_pre, bbox, gray_val = preprocess_gray_fill(img_native)
-    pil_pre = open_rgb_256(img_pre)
-    _, apo_t2, _ = apo_learn.predict(pil_pre)
-    apo_pre_native = resize_mask_to(tensor_to_mask(apo_t2), h, w)
-    pre_cov = float(apo_pre_native.mean())
-    pre_style = tag_apo_style(pre_cov)
-    pre_geo = apo_geometry_from_mask(apo_pre_native, pre_style)
+    # Gray55 + bbox mask clip
+    img_g, bbox_g = preprocess_gray55(img_native, do_stretch=False)
+    g_mask, g_style, g_geo = infer_apo_on_image(img_g, bbox_g, clip_bbox=True)
+
+    # Gray55 + stretch + bbox mask clip
+    img_s, bbox_s = preprocess_gray55(img_native, do_stretch=True)
+    s_mask, s_style, s_geo = infer_apo_on_image(img_s, bbox_s, clip_bbox=True)
 
     rows.append(
         {
             "image_id": path.name,
             "res": f"{h}x{w}",
-            "bbox": f"{bbox[0]}:{bbox[1]}:{bbox[2]}:{bbox[3]}",
-            "gray_val": float(gray_val),
-            "base_pred_cov": base_cov,
-            "pre_pred_cov": pre_cov,
+            "bbox": f"{bbox_g[0]}:{bbox_g[1]}:{bbox_g[2]}:{bbox_g[3]}",
+            "base_pred_cov": float(base_mask.mean()),
+            "gray_pred_cov": float(g_mask.mean()),
+            "stretch_pred_cov": float(s_mask.mean()),
             "base_style": base_style,
-            "pre_style": pre_style,
+            "gray_style": g_style,
+            "stretch_style": s_style,
             "base_mt_ok": bool(not np.isnan(base_geo["mt_px"])),
-            "pre_mt_ok": bool(not np.isnan(pre_geo["mt_px"])),
+            "gray_mt_ok": bool(not np.isnan(g_geo["mt_px"])),
+            "stretch_mt_ok": bool(not np.isnan(s_geo["mt_px"])),
             "base_mt_fail_reason": base_geo["mt_fail_reason"],
-            "pre_mt_fail_reason": pre_geo["mt_fail_reason"],
+            "gray_mt_fail_reason": g_geo["mt_fail_reason"],
+            "stretch_mt_fail_reason": s_geo["mt_fail_reason"],
+            "base_mt_px": float(base_geo["mt_px"]) if not np.isnan(base_geo["mt_px"]) else np.nan,
+            "gray_mt_px": float(g_geo["mt_px"]) if not np.isnan(g_geo["mt_px"]) else np.nan,
+            "stretch_mt_px": float(s_geo["mt_px"]) if not np.isnan(s_geo["mt_px"]) else np.nan,
         }
     )
 
@@ -235,145 +219,115 @@ out_csv = "/kaggle/working/apo_contrast_fill_compare.csv"
 df.to_csv(out_csv, index=False)
 print("Wrote:", out_csv)
 
-print()
-print("=== Overall ===")
-print("base mt_ok rate:", float(df.base_mt_ok.mean()))
-print("pre  mt_ok rate:", float(df.pre_mt_ok.mean()))
+print("\\n=== MT OK rates ===")
+print("baseline:", float(df.base_mt_ok.mean()))
+print("gray55+bbox:", float(df.gray_mt_ok.mean()))
+print("gray55+stretch+bbox:", float(df.stretch_mt_ok.mean()))
 
-print()
-print("=== base fail counts ===")
-print(df.loc[~df.base_mt_ok, "base_mt_fail_reason"].value_counts().to_dict())
+print("\\nbaseline fail:", df.loc[~df.base_mt_ok, "base_mt_fail_reason"].value_counts().to_dict())
+print("gray55+bbox fail:", df.loc[~df.gray_mt_ok, "gray_mt_fail_reason"].value_counts().to_dict())
+print("stretch+bbox fail:", df.loc[~df.stretch_mt_ok, "stretch_mt_fail_reason"].value_counts().to_dict())
 
-print()
-print("=== pre fail counts ===")
-print(df.loc[~df.pre_mt_ok, "pre_mt_fail_reason"].value_counts().to_dict())
-
-fixed = df[(~df.base_mt_ok) & (df.pre_mt_ok)]
-print()
-print("MT-fixed count (baseline NaN -> gray finite):", len(fixed))
+print("\\nMT-fixed vs baseline:")
+print("gray55+bbox:", int(((~df.base_mt_ok) & (df.gray_mt_ok)).sum()))
+print("stretch+bbox:", int(((~df.base_mt_ok) & (df.stretch_mt_ok)).sum()))
+base_no = df[df.base_mt_fail_reason == "no_contours"]
+print("no_contours fixed by gray55+bbox:", int(((~base_no.base_mt_ok) & (base_no.gray_mt_ok)).sum()), "/", len(base_no))
+print("no_contours fixed by stretch+bbox:", int(((~base_no.base_mt_ok) & (base_no.stretch_mt_ok)).sum()), "/", len(base_no))
 """
         ),
         code(
-            """# Gallery selection
-fail_cases = df[df.base_mt_fail_reason == "no_contours"].copy()
+            """fail_cases = df[df.base_mt_fail_reason == "no_contours"].copy()
 ok_cases = df[df.base_mt_ok].copy()
 
-print("no_contours baseline count:", len(fail_cases))
-print("MT OK baseline count:", len(ok_cases))
-
-rng = random.Random(RANDOM_SEED)
 fail_pick = fail_cases.sample(min(N_GALLERY_FAIL, len(fail_cases)), random_state=RANDOM_SEED) if len(fail_cases) else fail_cases
 ok_pick = ok_cases.sample(min(N_GALLERY_OK, len(ok_cases)), random_state=RANDOM_SEED) if len(ok_cases) else ok_cases
+
 
 def show_one(image_id: str):
     path = TEST_DIR / image_id
     img_native = load_gray(path)
-    h, w = img_native.shape
+    bbox = find_roi_bbox(img_native)
 
-    # Baseline pred
-    pil = open_rgb_256(img_native)
-    _, apo_t, _ = apo_learn.predict(pil)
-    apo_native = resize_mask_to(tensor_to_mask(apo_t), h, w)
-    base_cov = float(apo_native.mean())
-    base_style = tag_apo_style(base_cov)
-    base_geo = apo_geometry_from_mask(apo_native, base_style)
+    img_g, _ = preprocess_gray55(img_native, do_stretch=False)
+    img_s, _ = preprocess_gray55(img_native, do_stretch=True)
 
-    # Preprocess pred
-    img_pre, bbox, gray_val = preprocess_gray_fill(img_native)
-    pil_pre = open_rgb_256(img_pre)
-    _, apo_t2, _ = apo_learn.predict(pil_pre)
-    apo_pre_native = resize_mask_to(tensor_to_mask(apo_t2), h, w)
-    pre_cov = float(apo_pre_native.mean())
-    pre_style = tag_apo_style(pre_cov)
-    pre_geo = apo_geometry_from_mask(apo_pre_native, pre_style)
+    base_mask, _, base_geo = infer_apo_on_image(img_native, bbox, clip_bbox=False)
+    g_mask, _, g_geo = infer_apo_on_image(img_g, bbox, clip_bbox=True)
+    s_mask, _, s_geo = infer_apo_on_image(img_s, bbox, clip_bbox=True)
 
-    inv_base = invert_mask(apo_native)
-    inv_pre = invert_mask(apo_pre_native)
+    # noise outside bbox on raw pred
+    outside_noise = int(base_mask.sum() - clip_mask_to_bbox(base_mask, bbox).sum())
 
-    fig, axes = plt.subplots(2, 6, figsize=(32, 8))
-    axes = axes.reshape(-1)
+    fig, axes = plt.subplots(2, 5, figsize=(28, 9))
 
-    # Row 0: raw vs preprocessed + masks/overlays baseline
-    axes[0].imshow(img_native, cmap="gray")
-    axes[0].set_title("raw image", fontsize=10)
-    axes[0].axis("off")
+    # Row 0: images + bbox
+    axes[0, 0].imshow(img_native, cmap="gray")
+    axes[0, 0].set_title("raw", fontsize=9)
+    axes[0, 0].axis("off")
 
-    axes[1].imshow(img_pre, cmap="gray")
-    axes[1].set_title(f"gray-fill image\\ngray_val={gray_val:.1f}", fontsize=10)
-    axes[1].axis("off")
+    axes[0, 1].imshow(img_g, cmap="gray", vmin=0, vmax=255)
+    axes[0, 1].set_title(f"gray55 outside bbox\\nfill={GRAY_FILL_VALUE}", fontsize=9)
+    axes[0, 1].axis("off")
 
-    axes[2].imshow(apo_native, cmap="gray", vmin=0, vmax=1)
-    axes[2].set_title(f"base pred mask\\n{base_style} cov={base_cov*100:.2f}%", fontsize=10)
-    axes[2].axis("off")
+    axes[0, 2].imshow(img_s, cmap="gray", vmin=0, vmax=255)
+    axes[0, 2].set_title("gray55 + stretch", fontsize=9)
+    axes[0, 2].axis("off")
 
-    axes[3].imshow(inv_base, cmap="gray", vmin=0, vmax=1)
-    axes[3].set_title(f"base inverted\\n{base_geo['mt_fail_reason']}", fontsize=10)
-    axes[3].axis("off")
+    for ax, img, title in zip(axes[0, 3:], [img_native, img_g], ["bbox on raw", "bbox on gray55"]):
+        ax.imshow(img, cmap="gray")
+        y0, y1, x0, x1 = bbox
+        ax.add_patch(plt.Rectangle((x0, y0), x1 - x0, y1 - y0, fill=False, edgecolor="cyan", linewidth=2))
+        ax.set_title(title, fontsize=9)
+        ax.axis("off")
 
-    axes[4].imshow(overlay(img_native, apo_native))
-    axes[4].set_title("base overlay (pred)", fontsize=10)
-    axes[4].axis("off")
+    # Row 1: preds
+    axes[1, 0].imshow(base_mask, cmap="gray", vmin=0, vmax=1)
+    axes[1, 0].set_title(f"base pred\\n{base_geo['mt_fail_reason']}", fontsize=9)
+    axes[1, 0].axis("off")
 
-    axes[5].imshow(overlay(img_native, inv_base))
-    axes[5].set_title("base overlay (inv)", fontsize=10)
-    axes[5].axis("off")
+    axes[1, 1].imshow(g_mask, cmap="gray", vmin=0, vmax=1)
+    axes[1, 1].set_title(f"gray55+bbox\\n{g_geo['mt_fail_reason']}", fontsize=9)
+    axes[1, 1].axis("off")
 
-    # Row 1: masks/overlays after gray-fill
-    axes[6].imshow(apo_pre_native, cmap="gray", vmin=0, vmax=1)
-    axes[6].set_title(f"pre pred mask\\n{pre_style} cov={pre_cov*100:.2f}%", fontsize=10)
-    axes[6].axis("off")
+    axes[1, 2].imshow(s_mask, cmap="gray", vmin=0, vmax=1)
+    axes[1, 2].set_title(f"stretch+bbox\\n{s_geo['mt_fail_reason']}", fontsize=9)
+    axes[1, 2].axis("off")
 
-    axes[7].imshow(inv_pre, cmap="gray", vmin=0, vmax=1)
-    axes[7].set_title(f"pre inverted\\n{pre_geo['mt_fail_reason']}", fontsize=10)
-    axes[7].axis("off")
+    axes[1, 3].imshow(overlay(img_native, base_mask))
+    axes[1, 3].set_title(f"base ov\\noutside noise px={outside_noise}", fontsize=9)
+    axes[1, 3].axis("off")
 
-    axes[8].imshow(overlay(img_pre, apo_pre_native))
-    axes[8].set_title("pre overlay (pred)", fontsize=10)
-    axes[8].axis("off")
-
-    axes[9].imshow(overlay(img_pre, inv_pre))
-    axes[9].set_title("pre overlay (inv)", fontsize=10)
-    axes[9].axis("off")
-
-    # bbox diagnostic (create a fresh patch per axis)
-    y0,y1,x0,x1 = bbox
-    axes[10].imshow(img_native, cmap="gray")
-    rect1 = plt.Rectangle((x0,y0), x1-x0, y1-y0, fill=False, edgecolor='cyan', linewidth=2)
-    axes[10].add_patch(rect1)
-    axes[10].set_title("bbox on raw", fontsize=10)
-    axes[10].axis("off")
-
-    axes[11].imshow(img_pre, cmap="gray")
-    rect2 = plt.Rectangle((x0,y0), x1-x0, y1-y0, fill=False, edgecolor='cyan', linewidth=2)
-    axes[11].add_patch(rect2)
-    axes[11].set_title("bbox on gray-fill", fontsize=10)
-    axes[11].axis("off")
+    axes[1, 4].imshow(overlay(img_g, g_mask))
+    axes[1, 4].set_title("gray55 ov", fontsize=9)
+    axes[1, 4].axis("off")
 
     plt.suptitle(
-        f"{image_id} | base mt_ok={base_geo['mt_px'] if not np.isnan(base_geo['mt_px']) else 'NaN'} "
-        f"| pre mt_ok={pre_geo['mt_px'] if not np.isnan(pre_geo['mt_px']) else 'NaN'}",
-        y=0.98,
-        fontsize=12,
+        f"{image_id} | base mt={base_geo['mt_px'] if not np.isnan(base_geo['mt_px']) else 'NaN'} "
+        f"| gray mt={g_geo['mt_px'] if not np.isnan(g_geo['mt_px']) else 'NaN'} "
+        f"| stretch mt={s_geo['mt_px'] if not np.isnan(s_geo['mt_px']) else 'NaN'}",
+        y=1.02,
+        fontsize=11,
     )
     plt.tight_layout()
     return fig
 
 
-print("\\n=== Gallery: baseline no_contours (fail) ===")
+print("\\n=== Gallery: baseline no_contours ===")
 for i, image_id in enumerate(fail_pick.image_id.tolist(), start=1):
     print(f"[fail {i}] {image_id}")
     fig = show_one(image_id)
-    fig_path = FIG_DIR / f"gallery_fail_{i:02d}_{image_id.replace('.tif','')}.png"
-    fig.savefig(fig_path, dpi=120, bbox_inches='tight')
+    out = FIG_DIR / f"gallery_fail_{i:02d}_{Path(image_id).stem}.png"
+    fig.savefig(out, dpi=120, bbox_inches="tight")
     plt.show()
     plt.close(fig)
 
-print("\\n=== Gallery: baseline MT OK (success) ===")
+print("\\n=== Gallery: baseline MT OK ===")
 for i, image_id in enumerate(ok_pick.image_id.tolist(), start=1):
     print(f"[ok {i}] {image_id}")
     fig = show_one(image_id)
-    fig_path = FIG_DIR / f"gallery_ok_{i:02d}_{image_id.replace('.tif','')}.png"
-    fig.savefig(fig_path, dpi=120, bbox_inches='tight')
+    out = FIG_DIR / f"gallery_ok_{i:02d}_{Path(image_id).stem}.png"
+    fig.savefig(out, dpi=120, bbox_inches="tight")
     plt.show()
     plt.close(fig)
 
@@ -385,7 +339,7 @@ print("Done. Figures in:", FIG_DIR)
 
 
 def main() -> None:
-    out = Path(__file__).resolve().parents[1] / "notebooks/apo-contrast-fill-v2"
+    out = Path(__file__).resolve().parents[1] / "notebooks/apo-contrast-fill-v3"
     out.mkdir(parents=True, exist_ok=True)
     nb_path = out / "apo-contrast-fill-phase-3.ipynb"
 
@@ -403,8 +357,8 @@ def main() -> None:
     (out / "kernel-metadata.json").write_text(
         json.dumps(
             {
-                "id": "ucheozoemena/umud-apo-contrast-fill-v2-phase-3",
-                "title": "UMUD Apo Contrast Context Fill Phase 3 (v2)",
+                "id": "ucheozoemena/umud-apo-contrast-fill-v3-phase-3",
+                "title": "UMUD Apo Gray55 Bbox Pipeline Phase 3 v3",
                 "code_file": "apo-contrast-fill-phase-3.ipynb",
                 "language": "python",
                 "kernel_type": "notebook",
@@ -428,4 +382,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

@@ -2,9 +2,13 @@
 
 ## Current focus
 
-_Last updated: 2026-06-16 (letterbox collapse root-cause analysis)._
+_Last updated: 2026-06-16 (gray55+bbox v3 pushed)._
 
 **Best results:** Weighted @256 — fasc val Dice **0.108**, apo **0.039**. Submission **v4**: PA/FL NaN 0%, **MT NaN 43.0%**.
+
+**Active experiment:** `umud-apo-contrast-fill-v3-phase-3` — RGB(55,55,55) bbox fill + mask clip to bbox + contrast-stretch variant (awaiting run completion).
+
+**Confirmed:** Training masks are **one structure per file** (apo vs fasc separate); model predicting both is a prediction issue, not GT format.
 
 **Letterbox collapse (92 `no_contours` preds) — root cause identified:**
 
@@ -18,7 +22,7 @@ _Last updated: 2026-06-16 (letterbox collapse root-cause analysis)._
 
 **Implication:** Training is learning letterbox region masks; geometry breaks when pred saturates to 100%. Fixes: ROI crop before infer, geometry guard (`pred_cov>0.95` → line path or erode), or retrain letterbox with line targets.
 
-### Apo inference experiments (ROI crop + geometry guard)
+### Apo inference experiments (ROI crop + geometry guard + gray-context fill)
 
 **ROI crop (bbox by non-black threshold + paste pred back):**
 - Baseline `mt_ok` mean: **0.5437** (MT NaN ~45.6%)
@@ -32,9 +36,23 @@ _Last updated: 2026-06-16 (letterbox collapse root-cause analysis)._
 - MT-fixed: **0**
 - `guard_applied` fraction: **0.301** (guard ran, but didn’t move NaNs).
 
-**Next:** Input preprocessing / contrast normalization for the letterbox cohort (see contrast hypothesis); then re-check `pred_cov` saturation and `mt_fail_reason` breakdown.
+**Next:** Input preprocessing / contrast normalization for the letterbox cohort (contrast hypothesis).
 
-### 512px resize ablation — baseline synthesis
+**Gray-context fill (contrast/context hypothesis) — kernel v2 (exported):**
+- Baseline `mt_ok` mean: **0.5437**
+- With gray-fill: `mt_ok` mean **0.6278** (better)
+- Fail counts:
+  - `no_contours`: **92 → 84**
+  - `no_x_overlap`: **49 → 29**
+  - `single_contour`: **0 → 2**
+- MT-fixed (baseline NaN -> gray finite): **30** total
+- Of baseline `no_contours` (**92**): fixed by gray-fill **4**
+
+**Gray55+bbox v3 (pushed):** fixed **RGB(55,55,55)** outside bbox + zero pred mask outside bbox + contrast-stretch variant. Kernel: `umud-apo-contrast-fill-v3-phase-3`.
+
+**Training mask verification (local):** apo and fasc are **separate mask files** — each labels one structure. Apo GT: **574 line** + **474 region** (never both in one file). Line apo barely overlaps fasc (~5% fasc px); region apo encompasses fasc anatomically (~93% fasc px inside) but fasc is not labeled in apo masks.
+
+**Next:** Review v3 results when complete.
 
 **Hypothesis:** 256px downsampling from ~800×1200 native images discards too much absolute structure signal for sparse fasc masks (~0.26% fg). 512px should retain ~4× more structure pixels (local analysis on P1 sample: mean **170** fg px @256 vs **682** @512; coverage *fraction* stays ~0.26% at both sizes).
 
