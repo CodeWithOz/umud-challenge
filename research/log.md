@@ -15,7 +15,7 @@ _Last updated: 2026-06-16 (gray55 train+eval complete)._
 - Net: **+9 fixed, −24 broken**; `single_contour` cohort unchanged at 80 still failing.
 - **Conclusion:** Gray55 training alone does not fix bbox-rectangle preds; need line/region strategy.
 
-**Next:** Line-target letterbox cohort or split models by mask style.
+**Next:** Gray55+line conversion micro-test in flight (`umud-prep-apo-gray55-line` → train GAT5 → `umud-apo-gray55-line-eval`).
 
 **Gray55+bbox v3 (inference-only, 309 test):**
 
