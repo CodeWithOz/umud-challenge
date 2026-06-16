@@ -278,6 +278,11 @@ print(f"Wrote {len(targets)} gray55 pairs | QC samples in {QC_OUT}")
     ),
     code(
         """import zipfile
+import subprocess
+import sys
+
+# Kaggle notebook ships kaggle 2.0.0; create API needs >=2.0.2 for new datasets.
+subprocess.run([sys.executable, "-m", "pip", "install", "-q", "kaggle==2.0.2"], check=True)
 
 ZIP_STAGING = Path("/kaggle/working/upload_staging")
 ZIP_STAGING.mkdir(parents=True, exist_ok=True)
@@ -332,6 +337,18 @@ if not upload_ok(result):
     print("version failed — trying create ...")
     result = subprocess.run(
         ["kaggle", "datasets", "create", "-p", str(ZIP_STAGING)],
+        capture_output=True,
+        text=True,
+    )
+    print(result.stdout)
+    if result.stderr:
+        print("STDERR:", result.stderr)
+
+# Dataset may exist from a partial upload; retry version once.
+if not upload_ok(result):
+    print("create failed or inconclusive — retrying version ...")
+    result = subprocess.run(
+        ["kaggle", "datasets", "version", "-p", str(ZIP_STAGING), "-m", VERSION_MSG],
         capture_output=True,
         text=True,
     )
