@@ -50,6 +50,7 @@ import matplotlib.pyplot as plt
 
 IMG_SIZE = 256
 PRED_COV_GUARD_THRESH = 0.95
+APO_REGION_THRESHOLD = 0.50
 
 ERODE_KERNEL = 5
 N_GALLERY = 8

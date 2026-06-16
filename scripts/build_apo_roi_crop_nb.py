@@ -51,6 +51,7 @@ import matplotlib.pyplot as plt
 IMG_SIZE = 256
 ROI_THRESH = 5  # non-black threshold for bbox
 ROI_PAD_PX = 10
+APO_REGION_THRESHOLD = 0.50
 
 N_GALLERY = 8
 RANDOM_SEED = 42
