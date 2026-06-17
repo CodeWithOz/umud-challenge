@@ -58,6 +58,8 @@ Weighted @256 fasc Dice **0.108**, apo **0.039**. Submission **v4**: PA/FL NaN *
 
 **Tradeoff observed:** line-target training eliminates `single_contour` but increases `no_x_overlap` (19→59 in micro) — fragmented/offset line preds. Net still strongly positive.
 
+**Visual QC (2026-06-17, kernel v1, 309 test):** 62 `no_x_overlap` cases — all `overlap_px=0`, gap mean **175px** (median 174). All `line` style, pred cov ~6%, **10–18 contours** typical. Panels confirm real horizontal misalignment: sup/deep fitted edges sit on disjoint x-spans (not a geometry bug). Example `IMG_00001`: sup_x=[785,963], deep_x=[460,532], gap=252px.
+
 ### Key kernels & code paths
 
 | Step | Kernel slug | Builder | Notes |
@@ -65,7 +67,7 @@ Weighted @256 fasc Dice **0.108**, apo **0.039**. Submission **v4**: PA/FL NaN *
 | Prep gray55+line | `umud-prep-apo-gray55-line` | `scripts/build_prep_apo_gray55_line_nb.py` | `PREP_RUN=1` micro, `4` full |
 | Train | `umud-train-apo-gray55-phase-3` | `scripts/build_train_apo_gray55_nb.py` | `TRAIN_RUN=5` micro → `apo_gray55_line_baseline.pkl` |
 | Eval | `umud-apo-gray55-line-eval-phase-3` | `scripts/build_apo_gray55_line_eval_nb.py` | Baseline vs line model, gray55 infer |
-| **no_x_overlap QC** | `umud-no-x-overlap-viz-phase-3` | `scripts/build_no_x_overlap_viz_nb.py` | 6-panel gallery: raw, gray55, mask, overlay, edge overlap, x-range bars |
+| **no_x_overlap QC** | `umud-no-x-overlap-viz-phase-3` | `scripts/build_no_x_overlap_viz_nb.py` | 6-panel gallery; run v1 complete → `tmp/kaggle-output/no-x-overlap-viz/` (62 figs) |
 | Infer ablation | `umud-apo-gray55-bbox-pipeline-phase-3-v3` | `scripts/build_apo_contrast_fill_nb.py` | v3 gray55+bbox compare |
 
 Datasets: `umud-aligned-apo-gray55-line-timing-50` (micro), `umud-aligned-apo-gray55-line-full` (pending).
