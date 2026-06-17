@@ -2,78 +2,61 @@
 
 ## Current focus
 
-_Last updated: 2026-06-17 (pre-compaction snapshot — full pipeline + calibration v3 complete)._
+_Last updated: 2026-06-17 — **Phase 3 complete.** Phase 4 starts next session._
 
-### Leaderboard
+### Phase 3 — closed
 
-| Submit | Model | `MM_PER_PIXEL` | Public score | Notes |
-|--------|-------|----------------|--------------|-------|
-| **v7** (user submit) | micro gray55+line 50×5ep | **1.0** | **48.18203** | Lower is better; FL/MT unit error dominates |
-| v7 calibrated | same | **~0.098** (planned) | — | **Next after compaction** — compare to 48.18 |
-| v8 | full gray55+line 1044×10ep | 1.0 | — | **Do not submit** — 19.4% MT NaN regression |
+**Exit criteria met:** learned segment-then-measure baseline on Kaggle GPU, submission notebook (309 rows, 0% NaN on production stack), pixel→mm calibration applied, **scored leaderboard submit**.
 
-**UMUD score** (`paulritsche/umud-score`): weighted normalized MAE; tolerances PA **6°**, FL **12 mm**, MT **3 mm**. Score ≈48 with `MM_PER_PIXEL=1` because FL/MT are pixels reported as mm (~846 / ~271).
+| Milestone | Status |
+|-----------|--------|
+| Fasc + apo weighted full train @256 | Done (fasc Dice 0.108, apo 0.039 baseline; fasc v14 in submission) |
+| Gray55+line apo path (region→line GT, gray55 infer) | Done — **micro model is production** |
+| Submission pipeline (horiz_parallel, PNG export, debug CSV) | Done — `build_submission_nb.py` |
+| Full gray55+line train (1044×10ep) | Done — **regressed** vs micro; documented, not production |
+| Calibration sprint + uniform `MM_PER_PIXEL` | Done — 0.098 first try (refinement → Phase 4) |
+| Leaderboard baseline | Done — see scores below |
 
-### Best submission file today: v7 (micro)
+### Leaderboard (production)
 
-[`umud-submission-phase-3` v7/v8](https://www.kaggle.com/code/ucheozoemena/umud-submission-phase-3) — outputs: `tmp/kaggle-output/submission-v7/`.
+| Submit | Model | `MM_PER_PIXEL` | Public score | Role |
+|--------|-------|----------------|--------------|------|
+| v7 | micro gray55+line 50×5ep | 1.0 | 48.18203 | Uncalibrated baseline (unit error) |
+| **v9** | micro gray55+line 50×5ep | **0.098** | **2.35170** | **Phase 3 production submit** |
+| v8 | full gray55+line 1044×10ep | 1.0 | — | Ablation only — 19.4% MT NaN; do not submit |
 
-| Metric | v4 | v7 | **v8 (full model)** |
-|--------|-----|-----|---------------------|
-| Rows in CSV | 251 | **309** | 309 |
-| PA/FL NaN | 0/0/43% MT | **0/0/0%** | 0/0/**19.4% MT** |
-| `mt_fail_reason` | — | all **ok** | ok 249, `no_contours` **37**, `single_contour` **13**, `no_x_overlap` **10** |
+**Production file:** `tmp/kaggle-output/submission-v9-calibrated/submission.csv` — 309 rows, 0% NaN; FL median 82.9 mm, MT median 27.0 mm.
 
-**Stack (v7/v8):** fasc v14 + gray55 bbox apo infer + mask clip + **horiz_parallel** contour picker (`build_submission_nb.py`). Apo checkpoint: `apo_gray55_line_baseline.pkl` (micro in v7, full in v8).
+**Kernels:** `umud-submission-phase-3` v9, `umud-train-apo-gray55-phase-3` (TRAIN_RUN=5 micro), `umud-train-mounted-phase-3` (fasc full).
 
-**v6→v7 fix:** export filtered to `.tif` only (251 rows); v7 writes all 309 (251 `.tif` + 58 `.png`).
+### v8 full-model regression (documented — Phase 4 topic)
 
-### Full gray55+line pipeline (2026-06-17) — complete
+User QC on 60 MT-fail overlays (`tmp/kaggle-output/v8-mt-fail-viz/`) confirms same failure modes as earlier letterbox work, but on **sparse/empty preds** from the full model:
 
-| Step | Kernel | Config | Result |
-|------|--------|--------|--------|
-| Prep | `umud-prep-apo-gray55-line` v2 | `PREP_RUN=4` | **1044 pairs**, 473 region→line, **111s**; dataset `umud-aligned-apo-gray55-line-full` (~2089 files) |
-| Train | `umud-train-apo-gray55-phase-3` v4+ | `TRAIN_RUN=6` | **1044×10ep**, ~22 min → `apo_gray55_line_baseline.pkl` |
-| Submission | `umud-submission-phase-3` v8 | full model | **Regression** — see table above |
+| `mt_fail_reason` | n | Visual pattern (user QC) |
+|------------------|---|--------------------------|
+| `no_contours` | 37 | Mask **completely empty** |
+| `single_contour` | 13 | Mask **almost empty** — tiny fragment only |
+| `no_x_overlap` | 10 | Two tiny fragments, **far apart** — no x-overlap |
 
-**TRAIN_RUN=6** added in `build_train_apo_gray55_nb.py` (profile 4 was old region-GT gray55-full — do not use).
+**Implication (Phase 4, not blocking closure):** scaling 50→1044 apo pairs + 10ep did not improve test geometry; model collapsed toward background on many 800×1200 letterbox cases. Micro (50×5ep) remains production. Hypotheses for Phase 4: class imbalance / CE weighting at scale, val split not stratified by resolution, line-target + long train overfitting, letterbox cohort underrepresented in effective learning signal.
 
-**Ops note:** `monitor_gray55_line_full.sh` must not download full prep output (2000+ PNGs). Fixed to grep-filter timing/log/pkl only. Original monitor crashed on `ush`/`rg` after train completed; backup shell completed train→v8.
+### Phase 4 handoff (next session)
 
-### Calibration v3 — complete (`umud-calibration-phase-3`)
+**Goal:** improve score beyond **2.35** via deliberate iteration.
 
-Outputs: `tmp/kaggle-output/calibration-sprint/` (`calibration_summary.json`, `calibration_train_geometry.csv`, `calibration_tiff_tags.csv`). Builder: `scripts/build_calibration_nb.py`; notes: `research/calibration_sprint.md`.
+| Avenue | Notes |
+|--------|-------|
+| mm calibration refinement | Per-resolution depth scale (~0.20 on 800×1200 test); separate FL/MT scales; validate vs score |
+| Apo model at scale | Why full train regressed; timing ladder 200→524→full; longer train vs connectivity postprocess |
+| Fasc segmentation | Val Dice 0.108 — PA/FL may improve with better fasc masks |
+| PA geometry | Prototype skews low vs ref 5–45° |
+| Val split | Stratify by image size (800×1200 vs 1080×1640) |
+| Augmentation / architecture | Standard Phase 4 iteration |
 
-| Finding | Detail |
-|---------|--------|
-| Train mm labels in bundle | **None** — masks only |
-| TIFF spacing tags | **0 / 1048** |
-| Train GT geometry (1048 pairs, submission geometry) | **1044 ok**, 4 `single_contour` |
-| Ref-range heuristic (FL mid=115 mm, MT mid=30 mm) | **0.093 mm/px** (FL), **0.103 mm/px** (MT) |
-| **Recommended first calibrated constant** | **`MM_PER_PIXEL ≈ 0.098`** (avg of FL/MT heuristics) → v7 medians: FL ~**83 mm**, MT ~**27 mm** |
-| Depth-ruler heuristic | Detected on **100%** of train — but **resolution-dependent** (do not use global median) |
+**Do not retry (Phase 3 ruled out):** unweighted CE, gray55 train without line conversion, contrast stretch, ROI crop, geometry guard, 512px resize, v8 full model for submit.
 
-**Depth scale by train resolution cohort:**
-
-| Cohort | Train n | Depth mm/px (median) | Test n (v7) |
-|--------|---------|----------------------|-------------|
-| 500×760 | 45 | 0.17 | rare |
-| **800×1200** | 452 | **0.20** | **239** (77% — all 58 `.png` + 181 `.tif`) |
-| 1080×1640 | 551 | 0.08 | rare |
-
-**Implication:** global depth median **0.08** is wrong for test (pulled by 1080×1640 train majority). Per-cohort depth (~0.20 on 800×1200) gives FL ~177 mm / MT ~57 mm on test — MT above ref max (50 mm). **Defer per-cohort scaling** until after uniform **~0.098** calibrated submit.
-
-### Horiz+parallel geometry (wired in submission)
-
-Ablation on 62 legacy `no_x_overlap` cases: **62/62 mt_ok** with xspan_pair; horiz_parallel changed **2/12 user-flagged**, **0/50 user-good** regressions. Wired into `pick_superficial_deep` in `build_submission_nb.py`.
-
-### Blocked until post-compaction (user-approved queue)
-
-1. **v8 MT-fail visual QC** — overlay gallery for **60 images** with MT NaN (`no_contours` 37, `single_contour` 13, `no_x_overlap` 10); same style as `umud-no-x-overlap-viz-phase-3`.
-2. **Calibrated v7 submit** — wire `MM_PER_PIXEL=0.098`, rerun submission (micro model), user leaderboard submit, compare to **48.18**.
-3. **v8 regression diagnosis** — after QC, decide: revert to micro apo for submit vs fix full model (longer train / connectivity postprocess / etc.).
-4. **Per-cohort mm scaling** — only if uniform calibrated score + QC justify complexity.
-5. Phase 4 — after Phase 3 wrap (calibrated leaderboard + v8 understood).
+**Key paths:** `research/log.md`, `scripts/build_submission_nb.py`, `tmp/kaggle-output/submission-v9-calibrated/`, `tmp/kaggle-output/v8-mt-fail-viz/`, `tmp/kaggle-output/calibration-sprint/`.
 
 ### Standard inference preprocessing (unchanged)
 
@@ -153,7 +136,8 @@ Outputs: `tmp/kaggle-output/contour-picker-ablation/`. **Superseded by horiz_par
 | **no_x_overlap QC** | `umud-no-x-overlap-viz-phase-3` | `scripts/build_no_x_overlap_viz_nb.py` | 6-panel gallery; run v1 complete → `tmp/kaggle-output/no-x-overlap-viz/` (62 figs) |
 | **Contour picker ablation** | `umud-apo-contour-picker-ablation-phase-3` | `scripts/build_apo_contour_picker_ablation_nb.py` | xspan_pair **100% mt_ok** vs legacy 79.9% |
 | **Horiz+parallel ablation** | `umud-apo-horiz-parallel-ablation-phase-3` | `scripts/build_apo_horiz_parallel_ablation_nb.py` | 62 cohort: horiz changes 2/12 flagged, **0/50 user-good** |
-| **Calibration** | `umud-calibration-phase-3` | `scripts/build_calibration_nb.py` | v3 complete → `tmp/kaggle-output/calibration-sprint/` |
+| **Calibration** | `umud-calibration-phase-3` | `scripts/build_calibration_nb.py` | v3 → `tmp/kaggle-output/calibration-sprint/` |
+| **v8 MT-fail QC** | `umud-v8-mt-fail-viz-phase-3` | `scripts/build_v8_mt_fail_viz_nb.py` | 60 figs → `tmp/kaggle-output/v8-mt-fail-viz/` |
 | Infer ablation | `umud-apo-gray55-bbox-pipeline-phase-3-v3` | `scripts/build_apo_contrast_fill_nb.py` | v3 gray55+bbox compare |
 
 Datasets: `umud-aligned-apo-gray55-line-timing-50` (micro), `umud-aligned-apo-gray55-line-full` (**1044 pairs**, prep v2).
@@ -162,12 +146,7 @@ Outputs: `tmp/kaggle-output/submission-v7/` (best geometry), `submission-v8-full
 
 ### New session handoff
 
-> **Post-compaction queue (do not start until user signals compaction done):**
-> 1. Build + run **v8 MT-fail overlay QC** notebook for 60 NaN images.
-> 2. Wire **`MM_PER_PIXEL=0.098`** → rerun submission with **micro** apo (v7 stack) → calibrated leaderboard submit vs 48.18.
-> 3. Diagnose v8 full-model regression from QC; decide micro vs full for production.
->
-> **Do not submit v8** to leaderboard until regression understood. **Do not use** global depth median 0.08 for calibration.
+> **Phase 4 next session:** Read **Current focus** (Phase 4 handoff). Production stack = fasc full + **micro** gray55+line apo + horiz_parallel + `MM_PER_PIXEL=0.098`. Score to beat: **2.35170**.
 
 **Do not retry:** gray55 train without line conversion, contrast stretch, ROI crop, geometry guard, 512px resize, `TRAIN_RUN=4` (region GT gray55-full).
 
@@ -244,8 +223,8 @@ High-level plan for the full pipeline. A new session should read this first for 
 | **0 — Inventory** | Know what files exist and whether they pair correctly | Bad pairing or corrupt files invalidate everything downstream | File counts, image/mask pairing, corrupt-file scan, apo vs fasc overlap, submission template check | **Done** |
 | **1 — Visual QC** | Judge mask quality and alignment before modeling | Labels are manual masks; sparse fascicles and shape mismatch are common | Overlay galleries, coverage histograms, alignment lab (stretch/center/scale), exclude empty/near-empty fasc masks | **Done** |
 | **2 — Geometry & calibration** | Turn aligned masks into PA/FL/MT; validate plausibility | Competition targets are numeric geometry, not masks; mm values need pixel scale | Stretch-align masks; implement geometry rules; hunt pixel→mm; apo region vs line tagging; export clean manifests; histograms vs physiological ranges | **Done** (calibration deferred) |
-| **3 — Baseline model** | First learned pipeline (segment-then-measure) | Establish a score on the leaderboard; test whether masks support learning | fastai U-Net on clean subsets (GPU); stretch-aligned pairs; dual models (fasc + apo); geometry at inference; val split | **Next** |
-| **4 — Iterate & submit** | Improve score; Kaggle submission flow | Competition metric is UMUD Score (normalized MAE; lower is better) | Augmentation, architecture tweaks, apo+fasc model design, test inference, `sample_submission.csv`, kaggle-run workflow | Not started |
+| **3 — Baseline model** | First learned pipeline (segment-then-measure) | Establish a score on the leaderboard; test whether masks support learning | fastai U-Net on clean subsets (GPU); stretch-aligned pairs; dual models (fasc + apo); geometry at inference; val split; mm calibration | **Done** (v9 score **2.35**) |
+| **4 — Iterate & submit** | Improve score; Kaggle submission flow | Competition metric is UMUD Score (normalized MAE; lower is better) | Augmentation, architecture tweaks, apo+fasc model design, test inference, calibration refinement, kaggle-run workflow | **Next** |
 | **5 — Reproducibility (if aiming for prizes)** | Top-3 require open-source, FAIR, reproducible code | Competition rules mandate public repo with license, docs, `requirements.txt` | OSI license, runnable notebook/script, documented inference | Not started |
 
 **Approach:** Data quality before modeling (Phases 0–1). Geometry and calibration before training (Phase 2). Segment-then-measure, not classification. **Stretch** alignment when image and mask shapes differ.
@@ -538,15 +517,15 @@ umud-aligned-fasc-timing-50/
 
 (Full dataset: separate `umud-aligned-fasc-full` / `umud-aligned-apo-full` only after ladder extrapolation says feasible.)
 
-### Phase 3 work items (remaining)
+### Phase 3 work items — all complete or deferred to Phase 4
 
-1. ~~Timing ladders, full prep, unweighted T4/AT4 train~~ **Done** (models exported but **segmentation failed** — see debug dossier).
-2. ~~Eval + submission notebook scaffold~~ **Done** (`eval-val-dice-phase-3`, `submission-phase-3`).
-3. ~~Root-cause debug~~ **Done** (`debug-phase-3`); class-weighted CE coded; **50×5ep verification** only.
-4. ~~**Weighted full retrain** (fasc T4 + apo AT4 @256)~~ **Done** — fasc Dice 0.108, apo 0.039.
-5. ~~Re-run eval + submission on weighted @256 models~~ **Done** (eval v4, submission v3).
-6. **mm calibration** before first scored Kaggle submit (still Phase 3).
-7. Reduce MT NaN rate (44.6%) — apo segmentation / geometry iteration (Phase 4).
+1. ~~Timing ladders, full prep, unweighted T4/AT4 train~~ **Done**
+2. ~~Eval + submission notebook scaffold~~ **Done**
+3. ~~Root-cause debug + class-weighted CE~~ **Done**
+4. ~~Weighted full retrain (fasc T4 + apo AT4 @256)~~ **Done**
+5. ~~Re-run eval + submission on weighted models~~ **Done**
+6. ~~**mm calibration** before scored leaderboard submit~~ **Done** (v9, `MM_PER_PIXEL=0.098`, score **2.35170**)
+7. ~~Reduce MT NaN / apo geometry~~ **Done for production** (v9 micro: 0% NaN). Further apo iteration → **Phase 4** (incl. full-model regression at scale).
 
 ### Key inputs from Phase 2
 
@@ -692,6 +671,8 @@ Historical checklist — all items done or explicitly deferred.
 | 2026-06-17 | train gray55+line full | resnet34 | TRAIN_RUN=6 1044×10ep | ~22 min; replaces micro checkpoint path | — | **complete** |
 | 2026-06-17 | submission v8 | full gray55+line | 309 test | **MT NaN 19.4%** — 37 no_contours, 13 single, 10 no_x_overlap | — | **complete** (regressed vs v7) |
 | 2026-06-17 | calibration-phase-3 v3 | — | 1048 train GT geom | depth scale resolution-dependent; **MM≈0.098** recommended uniform | — | **complete** |
+| 2026-06-17 | v8-mt-fail-viz v3 | full gray55+line | 60 MT NaN cases | 37 no_contours, 13 single, 10 no_x_overlap overlays | — | **complete** |
+| 2026-06-17 | submission v9 calibrated | micro gray55+line | 309 test | MM=0.098; 0% NaN; leaderboard **2.35170** | **2.35** | **complete** — Phase 3 production |
 
 ---
 
@@ -724,7 +705,7 @@ Historical checklist — all items done or explicitly deferred.
 | 2026-06-17 | **horiz_parallel** contour picker in submission (xspan fallback) | User QC: 0/50 good regressions on 62 cohort |
 | 2026-06-17 | Submission export: **all 309** image_ids (not `.tif`-only) | v6 had 251-row bug |
 | 2026-06-17 | **First calibrated submit:** uniform `MM_PER_PIXEL≈0.098` on **v7 micro** before per-cohort depth scaling | Depth global median 0.08 rejected for test |
-| 2026-06-17 | **Do not leaderboard-submit v8** until 60 MT-fail images QC'd | Full model regressed vs micro |
+| 2026-06-17 | **Phase 3 closed** — production = v9 micro + MM=0.098 | Full apo train regressed; iterate in Phase 4 | — |
 
 ---
 
