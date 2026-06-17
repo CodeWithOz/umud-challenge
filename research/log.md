@@ -8,7 +8,9 @@ _Last updated: 2026-06-17 (leaderboard baseline **48.18**; full gray55+line pipe
 
 **Public score: 48.18203** (lower is better — error metric). Submission v7: 309 rows, `MM_PER_PIXEL=1.0` placeholder, micro gray55+line apo (50×5ep) + horiz_parallel geometry, MT NaN 0%.
 
-**Still open for Phase 3 wrap:** pixel→mm calibration (`MM_PER_PIXEL` hunt) before Phase 4.
+**Still open for Phase 3 wrap:** pixel→mm calibration — **sprint active** (`research/calibration_sprint.md`, `umud-calibration-phase-3`).
+
+**Calibration sprint (2026-06-17):** Score 48.18 is dominated by FL/MT unit error (`MM_PER_PIXEL=1` → ~846 "mm"). No train mm labels in bundle; TIFF tags empty. Heuristic uniform scale **~0.10–0.12 mm/px** from ref ranges + GT pixel geometry. Kaggle calibration kernel running on full train dual-track.
 
 ### Active: full gray55+line pipeline
 
