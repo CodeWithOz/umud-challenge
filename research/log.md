@@ -58,7 +58,16 @@ Weighted @256 fasc Dice **0.108**, apo **0.039**. Submission **v4**: PA/FL NaN *
 
 **Tradeoff observed:** line-target training eliminates `single_contour` but increases `no_x_overlap` (19→59 in micro) — fragmented/offset line preds. Net still strongly positive.
 
-**Visual QC (2026-06-17, kernel v1, 309 test):** 62 `no_x_overlap` cases — all `overlap_px=0`, gap mean **175px** (median 174). All `line` style, pred cov ~6%, **10–18 contours** typical. Panels confirm real horizontal misalignment: sup/deep fitted edges sit on disjoint x-spans (not a geometry bug). Example `IMG_00001`: sup_x=[785,963], deep_x=[460,532], gap=252px.
+**Visual QC (2026-06-17, kernel v1, 309 test):** 62 `no_x_overlap` cases — contour **selection** wrong (top→bottom picks fascicle fragments); mask often contains both apo bands. User confirmed via gallery.
+
+**Contour picker ablation (2026-06-17, v1):** `xspan_pair` (top-K by x-span, max x-overlap pair) vs legacy on gray55+line preds:
+
+| Picker | `mt_ok` (309) | `no_x_overlap` | Notes |
+|--------|---------------|----------------|-------|
+| legacy | **79.9%** | 62 | current submission |
+| **xspan_pair** | **100%** | **0** | **62/62 rescued**, 0 broken |
+
+Outputs: `tmp/kaggle-output/contour-picker-ablation/`. **Next:** wire `xspan_pair` into `build_submission_nb.py` + re-eval MT plausibility.
 
 ### Key kernels & code paths
 
@@ -68,7 +77,7 @@ Weighted @256 fasc Dice **0.108**, apo **0.039**. Submission **v4**: PA/FL NaN *
 | Train | `umud-train-apo-gray55-phase-3` | `scripts/build_train_apo_gray55_nb.py` | `TRAIN_RUN=5` micro → `apo_gray55_line_baseline.pkl` |
 | Eval | `umud-apo-gray55-line-eval-phase-3` | `scripts/build_apo_gray55_line_eval_nb.py` | Baseline vs line model, gray55 infer |
 | **no_x_overlap QC** | `umud-no-x-overlap-viz-phase-3` | `scripts/build_no_x_overlap_viz_nb.py` | 6-panel gallery; run v1 complete → `tmp/kaggle-output/no-x-overlap-viz/` (62 figs) |
-| **Contour picker ablation** | `umud-apo-contour-picker-ablation-phase-3` | `scripts/build_apo_contour_picker_ablation_nb.py` | legacy top→bottom vs xspan_pair max-overlap |
+| **Contour picker ablation** | `umud-apo-contour-picker-ablation-phase-3` | `scripts/build_apo_contour_picker_ablation_nb.py` | xspan_pair **100% mt_ok** vs legacy 79.9% |
 | Infer ablation | `umud-apo-gray55-bbox-pipeline-phase-3-v3` | `scripts/build_apo_contrast_fill_nb.py` | v3 gray55+bbox compare |
 
 Datasets: `umud-aligned-apo-gray55-line-timing-50` (micro), `umud-aligned-apo-gray55-line-full` (pending).
