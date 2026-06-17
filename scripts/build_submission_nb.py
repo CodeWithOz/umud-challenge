@@ -552,8 +552,7 @@ cells.append(
     return pd.read_csv(path, sep=None, engine="python")
 
 
-tif_pred = pred_df[pred_df["image_id"].str.lower().str.endswith((".tif", ".tiff"))].copy()
-pred_lookup = tif_pred.set_index("image_id")
+pred_lookup = pred_df.set_index("image_id")
 
 if SAMPLE_SUBMISSION.exists():
     template = read_sample_submission(SAMPLE_SUBMISSION)
@@ -561,18 +560,18 @@ if SAMPLE_SUBMISSION.exists():
     missing = [i for i in template_ids if i not in pred_lookup.index]
     if missing:
         print(f"Warning: {len(missing)} template ids missing predictions (first 5): {missing[:5]}")
-    if len(template_ids) >= max(10, len(tif_pred) // 2):
+    if len(template_ids) >= max(10, len(pred_df) // 2):
         submit = template[["image_id"]].copy()
         for col in ["pa_deg", "fl_mm", "mt_mm"]:
             submit[col] = submit["image_id"].map(pred_lookup[col])
     else:
         print(
             f"Template has only {len(template_ids)} rows; "
-            f"writing {len(tif_pred)} .tif predictions instead"
+            f"writing {len(pred_df)} predictions instead"
         )
-        submit = tif_pred[["image_id", "pa_deg", "fl_mm", "mt_mm"]].sort_values("image_id")
+        submit = pred_df[["image_id", "pa_deg", "fl_mm", "mt_mm"]].sort_values("image_id")
 else:
-    submit = tif_pred[["image_id", "pa_deg", "fl_mm", "mt_mm"]].sort_values("image_id")
+    submit = pred_df[["image_id", "pa_deg", "fl_mm", "mt_mm"]].sort_values("image_id")
 
 out_path = Path("/kaggle/working/submission.csv")
 submit.to_csv(out_path, index=False)

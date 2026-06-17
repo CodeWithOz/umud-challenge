@@ -10,15 +10,14 @@ Weighted @256 fasc Dice **0.108**, apo **0.039**. No new leaderboard score yet (
 
 ### Submission v5 results (gray55+line + horiz_parallel)
 
-Kernel [`umud-submission-phase-3`](https://www.kaggle.com/code/ucheozoemena/umud-submission-phase-3) **v6** — 251 `.tif` test rows:
+Kernel [`umud-submission-phase-3`](https://www.kaggle.com/code/ucheozoemena/umud-submission-phase-3) **v6** — **bug:** `submission.csv` wrote only 251 `.tif` rows (PNG 252–309 dropped at export). **v7 fix:** include all 309 test images.
 
-| Metric | v4 | **v5** |
-|--------|-----|--------|
-| PA NaN | 0% | **0%** |
-| FL NaN | 0% | **0%** |
-| **MT NaN** | **43.0%** | **0%** |
+| Metric | v4 (251 tif only) | **v5/v6 debug (309)** | **v7 target** |
+|--------|-------------------|----------------------|---------------|
+| Rows in submission.csv | 251 | 251 (bug) | **309** |
+| PA/FL/MT NaN | 0/0/43% tif | **0/0/0%** all 309 in debug | confirm |
 
-- All 251: `apo_style=line`, `geometry_path=raw_line`, `mt_fail_reason=ok`
+- All 309 in debug: `mt_fail_reason=ok` (251 `.tif` + 58 `.png`); stack unchanged
 - Stack: gray55+line micro apo (50×5ep) + gray55 bbox infer + **horiz_parallel** picker + fasc v14
 
 **Note:** v5 first push failed (apo model not mounted); v6 added `resolve_pkl` fallback.
@@ -671,7 +670,7 @@ Historical checklist — all items done or explicitly deferred.
 ### Domain facts
 
 - Task: predict muscle architecture from B-mode ultrasound — pennation angle (`pa_deg`), fascicle length (`fl_mm`), and muscle thickness (`mt_mm`) per test `image_id`. (Confirmed: 2026-06-04)
-- Training data: paired TIFF images and masks — apo 1,048 pairs, fasc 2,761 pairs. Test: 251 `.tif` in `test_images_v2/test_set_v2/`. (Confirmed: 2026-06-04)
+- Test: **309** images in `test_images_v2/test_set_v2/` — IMG_00001–00251 `.tif`, IMG_00252–00309 `.png`. (Confirmed: 2026-06-17)
 - Labels are **masks**, not numeric CSVs. Targets come from **geometry** on structures (or end-to-end prediction without masks).
 - Manual annotation: 2 raters, averaged; disagreement thresholds >10 mm FL, >4° PA, >1 mm MT trigger re-review (competition Data tab).
 - Images often look like **ultrasound machine screenshots** (padding around scan). Masks may be at native scan resolution → shape mismatch ~60–70% of sample.
