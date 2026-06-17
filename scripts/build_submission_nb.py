@@ -26,14 +26,14 @@ cells: list[dict] = []
 
 cells.append(
     md(
-        """# UMUD — Submission (Phase 3 Baseline)
+        """# UMUD — Submission (Phase 3 v5)
 
 **GPU notebook** — segment-then-measure pipeline for test images:
 
-1. Load **fasc** + **apo** fastai learners (train kernel outputs)
-2. Predict masks on each test `.tif` (256px inference, upscale masks to native size)
-3. Derive **PA / FL / MT** via Phase 2 geometry (pixels)
-4. Apply **`MM_PER_PIXEL`** to convert FL/MT to mm (set before first scored submit)
+1. Load **fasc** + **gray55+line apo** fastai learners
+2. Apo inference: gray55 outside ROI bbox + mask clip; fasc on raw image
+3. Derive **PA / FL / MT** via horizontality+parallelism contour pairing
+4. Apply **`MM_PER_PIXEL`** to convert FL/MT to mm
 5. Write `submission.csv` (comma-separated)
 
 > Edit *Configuration*, then re-run from there downward."""
@@ -48,6 +48,11 @@ cells.append(
 
 IMG_SIZE = 256
 APO_REGION_THRESHOLD = 0.50
+GRAY_FILL_VALUE = 55
+ROI_THRESH = 5
+ROI_PAD_PX = 10
+TOP_K_CANDIDATES = 8
+MIN_SEP_PX = 15
 
 # Pixel → mm scale (Option C). Replace before first leaderboard submit.
 MM_PER_PIXEL = 1.0  # placeholder — hunt calibration in Phase 3 work item 5
@@ -56,7 +61,7 @@ FASC_MODEL_PATH = Path(
     "/kaggle/input/notebooks/ucheozoemena/umud-train-mounted-phase-3/fasc_baseline.pkl"
 )
 APO_MODEL_PATH = Path(
-    "/kaggle/input/notebooks/ucheozoemena/umud-train-apo-mounted-phase-3/apo_baseline.pkl"
+    "/kaggle/input/notebooks/ucheozoemena/umud-train-apo-gray55-phase-3/apo_gray55_line_baseline.pkl"
 )
 
 COMPETITION_DIR = Path(
@@ -154,20 +159,157 @@ def find_apo_contours(mask: np.ndarray, min_area_frac: float = 0.0003) -> list[n
     return big
 
 
-def pick_superficial_deep(contours: list[np.ndarray], min_sep_px: int = 15):
+def find_roi_bbox(img_gray: np.ndarray, thr: float = ROI_THRESH, pad: int = ROI_PAD_PX):
+    roi = (img_gray > thr).astype(np.uint8)
+    if roi.sum() == 0:
+        h, w = img_gray.shape
+        return 0, h, 0, w
+    num, labels, stats, _ = cv2.connectedComponentsWithStats(roi, connectivity=8)
+    best = max(range(1, num), key=lambda i: stats[i, cv2.CC_STAT_AREA])
+    x, y, w, h = stats[best, :4]
+    y0 = max(0, y - pad)
+    y1 = min(img_gray.shape[0], y + h + pad)
+    x0 = max(0, x - pad)
+    x1 = min(img_gray.shape[1], x + w + pad)
+    return int(y0), int(y1), int(x0), int(x1)
+
+
+def preprocess_gray55(img_native: np.ndarray):
+    bbox = find_roi_bbox(img_native)
+    y0, y1, x0, x1 = bbox
+    pre = img_native.copy()
+    outside = np.ones(img_native.shape, dtype=bool)
+    outside[y0:y1, x0:x1] = False
+    pre[outside] = GRAY_FILL_VALUE
+    return pre, bbox
+
+
+def clip_mask_to_bbox(mask: np.ndarray, bbox: tuple[int, int, int, int]) -> np.ndarray:
+    y0, y1, x0, x1 = bbox
+    out = np.zeros_like(mask, dtype=np.uint8)
+    out[y0:y1, x0:x1] = mask[y0:y1, x0:x1]
+    return out
+
+
+def contour_feats(c: np.ndarray) -> dict:
+    x, y, w, h = cv2.boundingRect(c)
+    pts = c.reshape(-1, 2)
+    x_span = float(pts[:, 0].max() - pts[:, 0].min())
+    area = float(cv2.contourArea(c))
+    return {"area": area, "x_span": x_span, "y_top": y, "y_bot": y + h, "w": w, "h": h}
+
+
+def x_overlap_from_contours(sup_c: np.ndarray, deep_c: np.ndarray) -> float:
+    sup_x, _ = edge_polyline(sup_c, which="bottom")
+    deep_x, _ = edge_polyline(deep_c, which="top")
+    if len(sup_x) == 0 or len(deep_x) == 0:
+        return 0.0
+    return max(0.0, min(float(sup_x.max()), float(deep_x.max())) - max(float(sup_x.min()), float(deep_x.min())))
+
+
+def edge_angle_from_horizontal(contour: np.ndarray, which: str):
+    xs, ys = edge_polyline(contour, which=which)
+    if len(xs) < 2:
+        return None
+    line = fit_line(xs, ys)
+    if line is None:
+        return None
+    ang = abs(float(np.degrees(np.arctan(line[1])))) % 180.0
+    return float(min(ang, 180.0 - ang))
+
+
+def horizontality_factor(angle_deg) -> float:
+    if angle_deg is None:
+        return 0.0
+    return float(np.cos(np.radians(angle_deg)) ** 2)
+
+
+def parallelism_factor(sup_ang, deep_ang) -> float:
+    if sup_ang is None or deep_ang is None:
+        return 0.0
+    d = abs(sup_ang - deep_ang) % 180.0
+    d = min(d, 180.0 - d)
+    return float(np.cos(np.radians(d)) ** 2)
+
+
+def pick_best_pair_xspan(contours: list[np.ndarray], min_sep_px: int = MIN_SEP_PX, top_k: int = TOP_K_CANDIDATES):
     if len(contours) < 2:
-        return None, None, len(contours)
-    sup = contours[0]
-    _, y0, _, _ = cv2.boundingRect(sup)
-    deep = None
-    for c in contours[1:]:
-        _, y1, _, _ = cv2.boundingRect(c)
-        if y1 >= y0 + min_sep_px:
-            deep = c
-            break
-    if deep is None:
-        deep = contours[min(2, len(contours) - 1)]
-    return sup, deep, len(contours)
+        return None, None
+    ranked = sorted(contours, key=lambda c: contour_feats(c)["x_span"], reverse=True)
+    candidates = ranked[: min(top_k, len(ranked))]
+    best_pair = None
+    best_overlap = -1.0
+    for i, ci in enumerate(candidates):
+        for cj in candidates[i + 1 :]:
+            fi, fj = contour_feats(ci), contour_feats(cj)
+            if fi["y_top"] <= fj["y_top"]:
+                sup_c, deep_c = ci, cj
+                fs, fd = fi, fj
+            else:
+                sup_c, deep_c = cj, ci
+                fs, fd = fj, fi
+            if fd["y_top"] < fs["y_top"] + min_sep_px:
+                continue
+            overlap = x_overlap_from_contours(sup_c, deep_c)
+            if overlap > best_overlap:
+                best_overlap = overlap
+                best_pair = (sup_c, deep_c)
+    if best_pair is not None:
+        return best_pair
+    if len(candidates) >= 2:
+        top2 = candidates[:2]
+        top2.sort(key=lambda c: contour_feats(c)["y_top"])
+        return top2[0], top2[1]
+    return None, None
+
+
+def pick_horiz_parallel(contours: list[np.ndarray], min_sep_px: int = MIN_SEP_PX, top_k: int = TOP_K_CANDIDATES):
+    if len(contours) < 2:
+        return None, None
+    ranked = sorted(
+        contours,
+        key=lambda c: max(
+            contour_feats(c)["x_span"] * horizontality_factor(edge_angle_from_horizontal(c, "bottom")),
+            contour_feats(c)["x_span"] * horizontality_factor(edge_angle_from_horizontal(c, "top")),
+        ),
+        reverse=True,
+    )
+    candidates = ranked[: min(top_k, len(ranked))]
+    best_pair = None
+    best_score = -1.0
+    for i, ci in enumerate(candidates):
+        for cj in candidates[i + 1 :]:
+            fi, fj = contour_feats(ci), contour_feats(cj)
+            if fi["y_top"] <= fj["y_top"]:
+                sup_c, deep_c = ci, cj
+                fs, fd = fi, fj
+            else:
+                sup_c, deep_c = cj, ci
+                fs, fd = fj, fi
+            if fd["y_top"] < fs["y_top"] + min_sep_px:
+                continue
+            overlap = x_overlap_from_contours(sup_c, deep_c)
+            if overlap <= 0:
+                continue
+            sup_ang = edge_angle_from_horizontal(sup_c, "bottom")
+            deep_ang = edge_angle_from_horizontal(deep_c, "top")
+            score = (
+                overlap
+                * horizontality_factor(sup_ang)
+                * horizontality_factor(deep_ang)
+                * parallelism_factor(sup_ang, deep_ang)
+            )
+            if score > best_score:
+                best_score = score
+                best_pair = (sup_c, deep_c)
+    if best_pair is not None:
+        return best_pair
+    return pick_best_pair_xspan(contours, min_sep_px=min_sep_px, top_k=top_k)
+
+
+def pick_superficial_deep(contours: list[np.ndarray], min_sep_px: int = 15):
+    sup_c, deep_c = pick_horiz_parallel(contours, min_sep_px=min_sep_px, top_k=TOP_K_CANDIDATES)
+    return sup_c, deep_c, len(contours)
 
 
 def edge_polyline(contour: np.ndarray, which: str = "bottom", n_bins: int = 60):
@@ -337,12 +479,15 @@ cells.append(
 for path in tqdm(test_paths, desc="infer test"):
     img_native = load_gray(path)
     h, w = img_native.shape
-    pil = open_rgb_256(img_native)
+    img_gray55, bbox = preprocess_gray55(img_native)
 
-    _, fasc_t, _ = fasc_learn.predict(pil)
-    _, apo_t, _ = apo_learn.predict(pil)
+    pil_fasc = open_rgb_256(img_native)
+    pil_apo = open_rgb_256(img_gray55)
+
+    _, fasc_t, _ = fasc_learn.predict(pil_fasc)
+    _, apo_t, _ = apo_learn.predict(pil_apo)
     fasc_native = resize_mask_to(tensor_to_mask(fasc_t), h, w)
-    apo_native = resize_mask_to(tensor_to_mask(apo_t), h, w)
+    apo_native = clip_mask_to_bbox(resize_mask_to(tensor_to_mask(apo_t), h, w), bbox)
 
     apo_style = tag_apo_style(float(apo_native.mean()))
     geo = derive_geometry(fasc_native, apo_native, apo_style)

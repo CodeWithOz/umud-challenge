@@ -2,13 +2,36 @@
 
 ## Current focus
 
-_Last updated: 2026-06-16 (gray55+line micro complete — ready for full scale)._
+_Last updated: 2026-06-17 (submission v5 wired — gray55+line + horiz_parallel)._
 
-### Best scored submission (unchanged)
+### Best scored submission (unchanged on leaderboard)
 
 Weighted @256 fasc Dice **0.108**, apo **0.039**. Submission **v4**: PA/FL NaN **0%**, **MT NaN 43.0%** (251 `.tif` test).
 
-### Priority: scale gray55+line apo train
+### Active: submission v5 (gray55+line + horiz_parallel)
+
+Wired into `build_submission_nb.py`:
+- Apo model: `apo_gray55_line_baseline.pkl` (micro, 50 pairs × 5ep)
+- Infer: gray55 outside bbox + mask clip
+- Geometry: **horiz_parallel** picker (xspan fallback)
+
+Local eval expectation on 309 test: **100% MT OK** geometry (xspan_pair baseline); horiz_parallel changes 2/12 user-flagged picks, 0/50 user-good regressions.
+
+**Pending:** push `umud-submission-phase-3` → download `submission_debug.csv` → compare NaN rates vs v4.
+
+### Next after positive v5: full-scale gray55+line train
+
+**This is the training run you were remembering** — not another tangent:
+
+| Step | Action |
+|------|--------|
+| Prep | `PREP_RUN=4` → `umud-prep-apo-gray55-line` (1044 apo pairs, region→line GT) |
+| Train | `TRAIN_RUN` full-line profile, **10ep** → `apo_gray55_line_baseline.pkl` on full data |
+| Eval | Re-run submission v5 stack on 251 `.tif`; expect better masks on faint-sup clusters (029–033, 042–046) that geometry-only fixes cannot rescue |
+
+Micro model (current v5) proved the pipeline; full train targets **mask quality**, not picker logic.
+
+### Priority (superseded handoff)
 
 **Micro proved the approach** (50 pairs, 5ep, gray55 infer + bbox mask clip):
 
