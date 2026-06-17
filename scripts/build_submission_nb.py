@@ -26,15 +26,15 @@ cells: list[dict] = []
 
 cells.append(
     md(
-        """# UMUD — Submission (Phase 3 v5)
+        """# UMUD — Submission (Phase 3 v9 calibrated)
 
 **GPU notebook** — segment-then-measure pipeline for test images:
 
-1. Load **fasc** + **gray55+line apo** fastai learners
+1. Load **fasc** + **gray55+line apo** fastai learners (micro model — TRAIN_RUN=5)
 2. Apo inference: gray55 outside ROI bbox + mask clip; fasc on raw image
 3. Derive **PA / FL / MT** via horizontality+parallelism contour pairing
-4. Apply **`MM_PER_PIXEL`** to convert FL/MT to mm
-5. Write `submission.csv` (comma-separated)
+4. Apply **`MM_PER_PIXEL`** to convert FL/MT to mm (calibration v3: **0.098**)
+5. Write `submission.csv` (comma-separated, 309 rows)
 
 > Edit *Configuration*, then re-run from there downward."""
     )
@@ -54,8 +54,9 @@ ROI_PAD_PX = 10
 TOP_K_CANDIDATES = 8
 MIN_SEP_PX = 15
 
-# Pixel → mm scale (Option C). Replace before first leaderboard submit.
-MM_PER_PIXEL = 1.0  # placeholder — hunt calibration in Phase 3 work item 5
+# Pixel → mm scale (calibration v3: ref-range midpoint vs GT/pred geometry).
+# Uniform first try — defer per-resolution cohort scaling until after this submit.
+MM_PER_PIXEL = 0.098
 
 
 def resolve_pkl(preferred: list[Path], filename: str) -> Path:

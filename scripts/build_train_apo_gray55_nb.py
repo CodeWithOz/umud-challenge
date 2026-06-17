@@ -34,7 +34,7 @@ cells: list[dict] = [
     code(
         """# --- Parameters you can change ---
 RANDOM_SEED = 42
-TRAIN_RUN = 6  # 5=gray55-line micro 50×5ep; 6=gray55-line full 1044×10ep; see profiles
+TRAIN_RUN = 5  # 5=gray55-line micro 50×5ep; 6=gray55-line full 1044×10ep; see profiles
 
 VALID_PCT = 0.20
 BATCH_SIZE = 8

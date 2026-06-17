@@ -2,42 +2,85 @@
 
 ## Current focus
 
-_Last updated: 2026-06-17 (leaderboard baseline **48.18**; full gray55+line pipeline **in progress**)._
+_Last updated: 2026-06-17 (pre-compaction snapshot — full pipeline + calibration v3 complete)._
 
-### Leaderboard baseline (v7, micro apo model)
+### Leaderboard
 
-**Public score: 48.18203** (lower is better — error metric). Submission v7: 309 rows, `MM_PER_PIXEL=1.0` placeholder, micro gray55+line apo (50×5ep) + horiz_parallel geometry, MT NaN 0%.
+| Submit | Model | `MM_PER_PIXEL` | Public score | Notes |
+|--------|-------|----------------|--------------|-------|
+| **v7** (user submit) | micro gray55+line 50×5ep | **1.0** | **48.18203** | Lower is better; FL/MT unit error dominates |
+| v7 calibrated | same | **~0.098** (planned) | — | **Next after compaction** — compare to 48.18 |
+| v8 | full gray55+line 1044×10ep | 1.0 | — | **Do not submit** — 19.4% MT NaN regression |
 
-**Still open for Phase 3 wrap:** pixel→mm calibration — **sprint active** (`research/calibration_sprint.md`, `umud-calibration-phase-3`).
+**UMUD score** (`paulritsche/umud-score`): weighted normalized MAE; tolerances PA **6°**, FL **12 mm**, MT **3 mm**. Score ≈48 with `MM_PER_PIXEL=1` because FL/MT are pixels reported as mm (~846 / ~271).
 
-**Calibration sprint (2026-06-17):** Score 48.18 is dominated by FL/MT unit error (`MM_PER_PIXEL=1` → ~846 "mm"). No train mm labels in bundle; TIFF tags empty. Heuristic uniform scale **~0.10–0.12 mm/px** from ref ranges + GT pixel geometry. Kaggle calibration kernel running on full train dual-track.
+### Best submission file today: v7 (micro)
 
-### Active: full gray55+line pipeline
+[`umud-submission-phase-3` v7/v8](https://www.kaggle.com/code/ucheozoemena/umud-submission-phase-3) — outputs: `tmp/kaggle-output/submission-v7/`.
 
-| Step | Kernel | Config | Status |
+| Metric | v4 | v7 | **v8 (full model)** |
+|--------|-----|-----|---------------------|
+| Rows in CSV | 251 | **309** | 309 |
+| PA/FL NaN | 0/0/43% MT | **0/0/0%** | 0/0/**19.4% MT** |
+| `mt_fail_reason` | — | all **ok** | ok 249, `no_contours` **37**, `single_contour` **13**, `no_x_overlap` **10** |
+
+**Stack (v7/v8):** fasc v14 + gray55 bbox apo infer + mask clip + **horiz_parallel** contour picker (`build_submission_nb.py`). Apo checkpoint: `apo_gray55_line_baseline.pkl` (micro in v7, full in v8).
+
+**v6→v7 fix:** export filtered to `.tif` only (251 rows); v7 writes all 309 (251 `.tif` + 58 `.png`).
+
+### Full gray55+line pipeline (2026-06-17) — complete
+
+| Step | Kernel | Config | Result |
 |------|--------|--------|--------|
-| Prep | `umud-prep-apo-gray55-line` | `PREP_RUN=4` → 1044 pairs, `umud-aligned-apo-gray55-line-full` | **pushing** |
-| Train | `umud-train-apo-gray55-phase-3` | `TRAIN_RUN=6` → 1044×10ep → `apo_gray55_line_baseline.pkl` | pending |
-| Submission | `umud-submission-phase-3` | same v7 stack, full model | pending |
+| Prep | `umud-prep-apo-gray55-line` v2 | `PREP_RUN=4` | **1044 pairs**, 473 region→line, **111s**; dataset `umud-aligned-apo-gray55-line-full` (~2089 files) |
+| Train | `umud-train-apo-gray55-phase-3` v4+ | `TRAIN_RUN=6` | **1044×10ep**, ~22 min → `apo_gray55_line_baseline.pkl` |
+| Submission | `umud-submission-phase-3` v8 | full model | **Regression** — see table above |
 
-Monitor: `scripts/monitor_gray55_line_full.sh`
+**TRAIN_RUN=6** added in `build_train_apo_gray55_nb.py` (profile 4 was old region-GT gray55-full — do not use).
 
-### Submission v7 (micro model — current best file)
+**Ops note:** `monitor_gray55_line_full.sh` must not download full prep output (2000+ PNGs). Fixed to grep-filter timing/log/pkl only. Original monitor crashed on `ush`/`rg` after train completed; backup shell completed train→v8.
 
-Kernel [`umud-submission-phase-3`](https://www.kaggle.com/code/ucheozoemena/umud-submission-phase-3) **v7** — **309 rows** (251 `.tif` + 58 `.png`).
+### Calibration v3 — complete (`umud-calibration-phase-3`)
 
-| Metric | v4 | **v7** |
-|--------|-----|--------|
-| Rows | 251 | **309** |
-| PA/FL/MT NaN | 0/0/43% | **0/0/0%** |
+Outputs: `tmp/kaggle-output/calibration-sprint/` (`calibration_summary.json`, `calibration_train_geometry.csv`, `calibration_tiff_tags.csv`). Builder: `scripts/build_calibration_nb.py`; notes: `research/calibration_sprint.md`.
 
-Stack: gray55+line micro apo + gray55 bbox infer + **horiz_parallel** picker + fasc v14.
+| Finding | Detail |
+|---------|--------|
+| Train mm labels in bundle | **None** — masks only |
+| TIFF spacing tags | **0 / 1048** |
+| Train GT geometry (1048 pairs, submission geometry) | **1044 ok**, 4 `single_contour` |
+| Ref-range heuristic (FL mid=115 mm, MT mid=30 mm) | **0.093 mm/px** (FL), **0.103 mm/px** (MT) |
+| **Recommended first calibrated constant** | **`MM_PER_PIXEL ≈ 0.098`** (avg of FL/MT heuristics) → v7 medians: FL ~**83 mm**, MT ~**27 mm** |
+| Depth-ruler heuristic | Detected on **100%** of train — but **resolution-dependent** (do not use global median) |
 
-### Next after full train
+**Depth scale by train resolution cohort:**
 
-1. Resubmit v8 CSV (still `MM_PER_PIXEL=1.0` until calibration)
-2. **Calibration work item** — estimate `MM_PER_PIXEL` from train metadata / known anatomy / val labels → update submission → final Phase 3 leaderboard submit
-3. Phase 4
+| Cohort | Train n | Depth mm/px (median) | Test n (v7) |
+|--------|---------|----------------------|-------------|
+| 500×760 | 45 | 0.17 | rare |
+| **800×1200** | 452 | **0.20** | **239** (77% — all 58 `.png` + 181 `.tif`) |
+| 1080×1640 | 551 | 0.08 | rare |
+
+**Implication:** global depth median **0.08** is wrong for test (pulled by 1080×1640 train majority). Per-cohort depth (~0.20 on 800×1200) gives FL ~177 mm / MT ~57 mm on test — MT above ref max (50 mm). **Defer per-cohort scaling** until after uniform **~0.098** calibrated submit.
+
+### Horiz+parallel geometry (wired in submission)
+
+Ablation on 62 legacy `no_x_overlap` cases: **62/62 mt_ok** with xspan_pair; horiz_parallel changed **2/12 user-flagged**, **0/50 user-good** regressions. Wired into `pick_superficial_deep` in `build_submission_nb.py`.
+
+### Blocked until post-compaction (user-approved queue)
+
+1. **v8 MT-fail visual QC** — overlay gallery for **60 images** with MT NaN (`no_contours` 37, `single_contour` 13, `no_x_overlap` 10); same style as `umud-no-x-overlap-viz-phase-3`.
+2. **Calibrated v7 submit** — wire `MM_PER_PIXEL=0.098`, rerun submission (micro model), user leaderboard submit, compare to **48.18**.
+3. **v8 regression diagnosis** — after QC, decide: revert to micro apo for submit vs fix full model (longer train / connectivity postprocess / etc.).
+4. **Per-cohort mm scaling** — only if uniform calibrated score + QC justify complexity.
+5. Phase 4 — after Phase 3 wrap (calibrated leaderboard + v8 understood).
+
+### Standard inference preprocessing (unchanged)
+
+1. ROI bbox (non-black threshold) → gray55 outside bbox.
+2. Apo U-Net on gray55; fasc on raw image.
+3. Clip apo mask to bbox.
+4. **horiz_parallel** contour pairing → PA/FL/MT in px → × `MM_PER_PIXEL` for FL/MT mm.
 
 ### Priority (superseded handoff)
 
@@ -50,7 +93,7 @@ Stack: gray55+line micro apo + gray55 bbox infer + **horiz_parallel** picker + f
 
 - Net **+70 fixed, −30 broken** (+40 MT OK images).
 - Prep: 50 pairs, **24/50** region→line converted; train val Dice **0.518** (5ep).
-- **Pending user approval:** full prep `PREP_RUN=4` (1044) + train `TRAIN_RUN` full-line profile (10ep) → submission integration.
+- **Pending user approval:** ~~full prep `PREP_RUN=4` (1044) + train `TRAIN_RUN` full-line profile (10ep)~~ → **done 2026-06-17**; v8 regressed — micro v7 remains best geometry file.
 
 **Standard inference preprocessing (keep regardless of model):**
 1. Detect ROI bbox (non-black threshold).
@@ -98,29 +141,35 @@ Stack: gray55+line micro apo + gray55 bbox infer + **horiz_parallel** picker + f
 | legacy | **79.9%** | 62 | current submission |
 | **xspan_pair** | **100%** | **0** | **62/62 rescued**, 0 broken |
 
-Outputs: `tmp/kaggle-output/contour-picker-ablation/`. **Next:** wire `xspan_pair` into `build_submission_nb.py` + re-eval MT plausibility.
+Outputs: `tmp/kaggle-output/contour-picker-ablation/`. **Superseded by horiz_parallel** in submission (2026-06-17).
 
 ### Key kernels & code paths
 
 | Step | Kernel slug | Builder | Notes |
 |------|-------------|---------|-------|
 | Prep gray55+line | `umud-prep-apo-gray55-line` | `scripts/build_prep_apo_gray55_line_nb.py` | `PREP_RUN=1` micro, `4` full |
-| Train | `umud-train-apo-gray55-phase-3` | `scripts/build_train_apo_gray55_nb.py` | `TRAIN_RUN=5` micro → `apo_gray55_line_baseline.pkl` |
+| Train | `umud-train-apo-gray55-phase-3` | `scripts/build_train_apo_gray55_nb.py` | `TRAIN_RUN=5` micro, **`6` full line 1044×10ep** |
 | Eval | `umud-apo-gray55-line-eval-phase-3` | `scripts/build_apo_gray55_line_eval_nb.py` | Baseline vs line model, gray55 infer |
 | **no_x_overlap QC** | `umud-no-x-overlap-viz-phase-3` | `scripts/build_no_x_overlap_viz_nb.py` | 6-panel gallery; run v1 complete → `tmp/kaggle-output/no-x-overlap-viz/` (62 figs) |
 | **Contour picker ablation** | `umud-apo-contour-picker-ablation-phase-3` | `scripts/build_apo_contour_picker_ablation_nb.py` | xspan_pair **100% mt_ok** vs legacy 79.9% |
 | **Horiz+parallel ablation** | `umud-apo-horiz-parallel-ablation-phase-3` | `scripts/build_apo_horiz_parallel_ablation_nb.py` | 62 cohort: horiz changes 2/12 flagged, **0/50 user-good** |
+| **Calibration** | `umud-calibration-phase-3` | `scripts/build_calibration_nb.py` | v3 complete → `tmp/kaggle-output/calibration-sprint/` |
 | Infer ablation | `umud-apo-gray55-bbox-pipeline-phase-3-v3` | `scripts/build_apo_contrast_fill_nb.py` | v3 gray55+bbox compare |
 
-Datasets: `umud-aligned-apo-gray55-line-timing-50` (micro), `umud-aligned-apo-gray55-line-full` (pending).
+Datasets: `umud-aligned-apo-gray55-line-timing-50` (micro), `umud-aligned-apo-gray55-line-full` (**1044 pairs**, prep v2).
 
-Outputs: `tmp/kaggle-output/apo-gray55-line-eval/`, `apo-contrast-fill-v3/`.
+Outputs: `tmp/kaggle-output/submission-v7/` (best geometry), `submission-v8-full-model/` (full model), `calibration-sprint/`, `apo-gray55-line-eval/`.
 
 ### New session handoff
 
-> Read **Current focus** above. If approved, run full gray55+line prep (`PREP_RUN=4`) → train 10ep → eval on 251 `.tif` → wire gray55 infer + line model into `build_submission_nb.py`. Watch `no_x_overlap` rate; if high after full train, consider longer training or line-connectivity postprocess before touching geometry rules.
+> **Post-compaction queue (do not start until user signals compaction done):**
+> 1. Build + run **v8 MT-fail overlay QC** notebook for 60 NaN images.
+> 2. Wire **`MM_PER_PIXEL=0.098`** → rerun submission with **micro** apo (v7 stack) → calibrated leaderboard submit vs 48.18.
+> 3. Diagnose v8 full-model regression from QC; decide micro vs full for production.
+>
+> **Do not submit v8** to leaderboard until regression understood. **Do not use** global depth median 0.08 for calibration.
 
-**Do not retry:** gray55 train without line conversion, contrast stretch, ROI crop, geometry guard, 512px resize.
+**Do not retry:** gray55 train without line conversion, contrast stretch, ROI crop, geometry guard, 512px resize, `TRAIN_RUN=4` (region GT gray55-full).
 
 ---
 
@@ -636,7 +685,13 @@ Historical checklist — all items done or explicitly deferred.
 | 2026-06-15 | submission-phase-3 v3 | — | 251 test tif | PA/FL NaN 0%, MT NaN 44.6% | — | **complete** |
 | 2026-06-16 | apo-gray55-bbox v3 | resnet34 | old apo model | gray55+bbox clip; 309 test mt_ok 64.4%; single_contour 80 | — | **complete** |
 | 2026-06-16 | train-apo-gray55 (region GT) | resnet34 | gray55-full 1044×10ep | mt_ok 54.6% — regressed vs infer-only gray55 | — | **complete** (rejected) |
-| 2026-06-16 | gray55+line micro | resnet34 | gray55-line-50×5ep | region→line GT; mt_ok 76.5%; single_contour 0 | — | **complete** (scale up pending) |
+| 2026-06-16 | gray55+line micro | resnet34 | gray55-line-50×5ep | region→line GT; mt_ok 76.5%; single_contour 0 | — | **complete** |
+| 2026-06-17 | horiz_parallel ablation | — | 62 no_x_overlap cohort | 100% mt_ok xspan; horiz 2/12 flagged changed, 0/50 good broken | — | **complete** → wired submission |
+| 2026-06-17 | submission v7 | micro gray55+line | 309 test | horiz_parallel; 0% NaN; PNG export fix; leaderboard **48.18** @ MM=1 | **48.18** | **complete** |
+| 2026-06-17 | prep gray55+line full | — | PREP_RUN=4 | 1044 pairs, 473 region→line, 111s | — | **complete** |
+| 2026-06-17 | train gray55+line full | resnet34 | TRAIN_RUN=6 1044×10ep | ~22 min; replaces micro checkpoint path | — | **complete** |
+| 2026-06-17 | submission v8 | full gray55+line | 309 test | **MT NaN 19.4%** — 37 no_contours, 13 single, 10 no_x_overlap | — | **complete** (regressed vs v7) |
+| 2026-06-17 | calibration-phase-3 v3 | — | 1048 train GT geom | depth scale resolution-dependent; **MM≈0.098** recommended uniform | — | **complete** |
 
 ---
 
@@ -666,6 +721,10 @@ Historical checklist — all items done or explicitly deferred.
 | 2026-06-16 | **Apo train:** region GT → dual-boundary line targets at prep (not split models) | — |
 | 2026-06-16 | **Reject** contrast stretch, ROI crop, geometry guard for MT rescue | — |
 | 2026-06-16 | **Reject** gray55 train without line conversion (val Dice misleading on region GT) | — |
+| 2026-06-17 | **horiz_parallel** contour picker in submission (xspan fallback) | User QC: 0/50 good regressions on 62 cohort |
+| 2026-06-17 | Submission export: **all 309** image_ids (not `.tif`-only) | v6 had 251-row bug |
+| 2026-06-17 | **First calibrated submit:** uniform `MM_PER_PIXEL≈0.098` on **v7 micro** before per-cohort depth scaling | Depth global median 0.08 rejected for test |
+| 2026-06-17 | **Do not leaderboard-submit v8** until 60 MT-fail images QC'd | Full model regressed vs micro |
 
 ---
 
@@ -706,6 +765,11 @@ Historical checklist — all items done or explicitly deferred.
 - **Kaggle OAuth CLI in non-interactive shells:** run `export KAGGLE_API_TOKEN=$(.venv/bin/kaggle auth print-access-token)` before `.venv/bin/kaggle` commands; venv activation alone is insufficient. (2026-06-15)
 - **fastai `load_learner` locally:** Kaggle-exported `.pkl` may fail on local fastai 2.8 / Py 3.13 (`Resolver` pickle). Run eval/debug on Kaggle matching docker image. (2026-06-15)
 - **Eval CSV metrics:** never use `str(metric)` as column name — use `type(m).__name__.lower()` (e.g. `dice`). (2026-06-15)
+- **Leaderboard score with `MM_PER_PIXEL=1`:** FL/MT reported as pixels-as-mm (~846 / ~271) dominate normalized MAE; PA (degrees) is minor. Calibrate before interpreting score. v7 @ MM=1 → **48.18**. (2026-06-17)
+- **Calibration:** no train mm labels or TIFF spacing tags; use ref-range midpoint vs GT/pred pixel geometry. Uniform **~0.098 mm/px** plausible first try. **Depth-ruler** scale is **resolution-dependent** — global train median (0.08) wrong for test (77% 800×1200). (2026-06-17)
+- **Full gray55+line train can regress MT NaN** vs micro (v8: 19.4% vs v7: 0%) — more data ≠ better geometry; QC before swapping production model. (2026-06-17)
+- **Submission export:** filter on full `pred_df` / sample_submission template — `.tif`-only filter dropped 58 `.png` rows (v6 bug). (2026-06-17)
+- **Pipeline monitors:** do not download full prep dataset outputs locally; filter artifacts (timing, log, pkl, csv). (2026-06-17)
 
 ### Technical notes (Phase 0/1)
 
