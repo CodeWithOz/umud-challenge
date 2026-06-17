@@ -137,7 +137,7 @@ from fastai.vision.all import (
     unet_learner,
 )
 from fastai.data.block import DataBlock
-from fastai.data.transforms import FuncSplitter
+from fastai.data.transforms import IndexSplitter
 
 DATASET_ROOT = Path(f"/kaggle/input/datasets/{DATASET_SLUG}")
 if not DATASET_ROOT.exists():
@@ -241,13 +241,8 @@ def make_dls(fnames, valid_pct=0.20, bs=8, seed=42, stratify_cohort: dict[str, s
             stems, labels, valid_pct=valid_pct, seed=seed
         )
         valid_set = set(valid_stems)
-
-        def _split(items):
-            train = [i for i, f in enumerate(items) if Path(f).stem not in valid_set]
-            valid = [i for i, f in enumerate(items) if Path(f).stem in valid_set]
-            return train, valid
-
-        splitter = FuncSplitter(_split)
+        valid_idx = [i for i, s in enumerate(stems) if s in valid_set]
+        splitter = IndexSplitter(valid_idx)
         print(
             f"Stratified val: {len(valid_stems)} images across "
             f"{len(set(labels))} resolution cohorts"
