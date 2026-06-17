@@ -2,38 +2,40 @@
 
 ## Current focus
 
-_Last updated: 2026-06-17 (submission v5 **complete** — MT NaN 0%)._
+_Last updated: 2026-06-17 (leaderboard baseline **48.18**; full gray55+line pipeline **in progress**)._
 
-### Best scored submission (unchanged on leaderboard)
+### Leaderboard baseline (v7, micro apo model)
 
-Weighted @256 fasc Dice **0.108**, apo **0.039**. No new leaderboard score yet (mm calibration deferred).
+**Public score: 48.18203** (lower is better — error metric). Submission v7: 309 rows, `MM_PER_PIXEL=1.0` placeholder, micro gray55+line apo (50×5ep) + horiz_parallel geometry, MT NaN 0%.
 
-### Submission v5 results (gray55+line + horiz_parallel)
+**Still open for Phase 3 wrap:** pixel→mm calibration (`MM_PER_PIXEL` hunt) before Phase 4.
 
-Kernel [`umud-submission-phase-3`](https://www.kaggle.com/code/ucheozoemena/umud-submission-phase-3) **v7** — **309 rows** (251 `.tif` + 58 `.png`). v6 bug: export filtered to `.tif` only.
+### Active: full gray55+line pipeline
 
-| Metric | v4 (251 tif only) | **v7 (309)** |
-|--------|-------------------|--------------|
-| Rows in submission.csv | 251 | **309** |
-| PA/FL/MT NaN | 0/0/43% tif | **0/0/0%** all 309 |
+| Step | Kernel | Config | Status |
+|------|--------|--------|--------|
+| Prep | `umud-prep-apo-gray55-line` | `PREP_RUN=4` → 1044 pairs, `umud-aligned-apo-gray55-line-full` | **pushing** |
+| Train | `umud-train-apo-gray55-phase-3` | `TRAIN_RUN=6` → 1044×10ep → `apo_gray55_line_baseline.pkl` | pending |
+| Submission | `umud-submission-phase-3` | same v7 stack, full model | pending |
 
-- All 309 in debug: `mt_fail_reason=ok` (251 `.tif` + 58 `.png`); stack unchanged
-- Stack: gray55+line micro apo (50×5ep) + gray55 bbox infer + **horiz_parallel** picker + fasc v14
+Monitor: `scripts/monitor_gray55_line_full.sh`
 
-**Note:** v5 first push failed (apo model not mounted); v6 added `resolve_pkl` fallback.
+### Submission v7 (micro model — current best file)
 
-### Next: full-scale gray55+line apo train
+Kernel [`umud-submission-phase-3`](https://www.kaggle.com/code/ucheozoemena/umud-submission-phase-3) **v7** — **309 rows** (251 `.tif` + 58 `.png`).
 
-**This is the training run you were remembering** — not another tangent:
+| Metric | v4 | **v7** |
+|--------|-----|--------|
+| Rows | 251 | **309** |
+| PA/FL/MT NaN | 0/0/43% | **0/0/0%** |
 
-| Step | Action |
-|------|--------|
-| Prep | `PREP_RUN=4` → `umud-prep-apo-gray55-line` (1044 apo pairs, region→line GT) |
-| Train | `TRAIN_RUN` full-line profile, **10ep** → replace micro `apo_gray55_line_baseline.pkl` |
-| Eval | Re-run submission v5 stack; target **better masks** on faint-sup clusters (029–033, 042–046) that geometry-only fixes cannot rescue |
-| Leaderboard | Submit v5 CSV manually in Kaggle UI; then re-submit after full model if masks improve |
+Stack: gray55+line micro apo + gray55 bbox infer + **horiz_parallel** picker + fasc v14.
 
-Micro model proved the pipeline (MT NaN 43%→0%); full train targets **mask quality** for leaderboard Dice, not picker logic.
+### Next after full train
+
+1. Resubmit v8 CSV (still `MM_PER_PIXEL=1.0` until calibration)
+2. **Calibration work item** — estimate `MM_PER_PIXEL` from train metadata / known anatomy / val labels → update submission → final Phase 3 leaderboard submit
+3. Phase 4
 
 ### Priority (superseded handoff)
 

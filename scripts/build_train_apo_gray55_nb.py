@@ -34,7 +34,7 @@ cells: list[dict] = [
     code(
         """# --- Parameters you can change ---
 RANDOM_SEED = 42
-TRAIN_RUN = 5  # 5=gray55-line micro 50×5ep; 4=gray55-full×10ep; see profiles
+TRAIN_RUN = 6  # 5=gray55-line micro 50×5ep; 6=gray55-line full 1044×10ep; see profiles
 
 VALID_PCT = 0.20
 BATCH_SIZE = 8
@@ -75,6 +75,12 @@ TRAIN_PROFILES = {
         "dataset_slug": "ucheozoemena/umud-aligned-apo-gray55-line-timing-50",
         "epochs": 5,
         "label": "GAT5 gray55+line apo 50×5ep micro",
+        "export_name": "apo_gray55_line_baseline.pkl",
+    },
+    6: {
+        "dataset_slug": "ucheozoemena/umud-aligned-apo-gray55-line-full",
+        "epochs": FULL_EPOCHS,
+        "label": "GAT6 gray55+line apo full 1044×10ep",
         "export_name": "apo_gray55_line_baseline.pkl",
     },
 }
@@ -278,7 +284,7 @@ def main() -> None:
         "enable_tpu": False,
         "enable_internet": True,
         "keywords": ["gpu"],
-        "dataset_sources": ["ucheozoemena/umud-aligned-apo-gray55-line-timing-50"],
+        "dataset_sources": ["ucheozoemena/umud-aligned-apo-gray55-line-full"],
         "kernel_sources": [],
         "competition_sources": [],
         "model_sources": [],

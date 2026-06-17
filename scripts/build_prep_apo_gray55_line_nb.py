@@ -49,7 +49,7 @@ Micro-test: `PREP_RUN=1` (50 pairs). Full: `PREP_RUN=4` (1044 pairs)."""
     code(
         f"""# --- Parameters you can change ---
 RANDOM_SEED = 42
-PREP_RUN = 1  # 1=50 micro, 2=200, 3=524, 4=1044 full
+PREP_RUN = 4  # 1=50 micro, 2=200, 3=524, 4=1044 full
 
 IMG_SIZE = 256
 APO_FULL = 1044
