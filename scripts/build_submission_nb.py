@@ -57,12 +57,27 @@ MIN_SEP_PX = 15
 # Pixel → mm scale (Option C). Replace before first leaderboard submit.
 MM_PER_PIXEL = 1.0  # placeholder — hunt calibration in Phase 3 work item 5
 
-FASC_MODEL_PATH = Path(
-    "/kaggle/input/notebooks/ucheozoemena/umud-train-mounted-phase-3/fasc_baseline.pkl"
+
+def resolve_pkl(preferred: list[Path], filename: str) -> Path:
+    for p in preferred:
+        if p.exists():
+            return p
+    hits = sorted(Path("/kaggle/input").rglob(filename))
+    if hits:
+        return hits[0]
+    raise FileNotFoundError(f"Could not find {filename} under /kaggle/input")
+
+
+FASC_MODEL_PATH = resolve_pkl(
+    [Path("/kaggle/input/notebooks/ucheozoemena/umud-train-mounted-phase-3/fasc_baseline.pkl")],
+    "fasc_baseline.pkl",
 )
-APO_MODEL_PATH = Path(
-    "/kaggle/input/notebooks/ucheozoemena/umud-train-apo-gray55-phase-3/apo_gray55_line_baseline.pkl"
+APO_MODEL_PATH = resolve_pkl(
+    [Path("/kaggle/input/notebooks/ucheozoemena/umud-train-apo-gray55-phase-3/apo_gray55_line_baseline.pkl")],
+    "apo_gray55_line_baseline.pkl",
 )
+print("Fasc model:", FASC_MODEL_PATH)
+print("Apo model:", APO_MODEL_PATH)
 
 COMPETITION_DIR = Path(
     "/kaggle/input/competitions/umud-challenge-muscle-architecture-in-ultrasound-data"
