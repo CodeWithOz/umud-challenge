@@ -2,43 +2,84 @@
 
 ## Current focus
 
-_Last updated: 2026-06-16 (gray55 train+eval complete)._
+_Last updated: 2026-06-16 (gray55+line micro complete — ready for full scale)._
 
-**Gray55 retrain result:** Prep + train succeeded; **MT eval regressed** vs baseline+gray55 infer on .tif subset (251 images).
+### Best scored submission (unchanged)
 
-| Model | Gray55 infer `mt_ok` | Failures |
-|-------|---------------------|----------|
-| **Baseline apo** (old train) | **60.6%** | `single_contour` 80, `no_x_overlap` 19 |
-| **Gray55-trained apo** | **54.6%** | `single_contour` 87, `no_x_overlap` 27 |
+Weighted @256 fasc Dice **0.108**, apo **0.039**. Submission **v4**: PA/FL NaN **0%**, **MT NaN 43.0%** (251 `.tif` test).
 
-- Train val Dice **0.963** (misleading — region GT dominates).
-- Net: **+9 fixed, −24 broken**; `single_contour` cohort unchanged at 80 still failing.
-- **Conclusion:** Gray55 training alone does not fix bbox-rectangle preds; need line/region strategy.
+### Priority: scale gray55+line apo train
 
-**Next:** Gray55+line conversion micro-test in flight (`umud-prep-apo-gray55-line` → train GAT5 → `umud-apo-gray55-line-eval`).
+**Micro proved the approach** (50 pairs, 5ep, gray55 infer + bbox mask clip):
 
-**Gray55+bbox v3 (inference-only, 309 test):**
+| Model | `mt_ok` (.tif n=251) | `single_contour` | `no_x_overlap` |
+|-------|----------------------|------------------|----------------|
+| Baseline apo + gray55 infer | **60.6%** | 80 | 19 |
+| **Gray55+line apo** (micro) | **76.5%** | **0** | 59 |
 
-- `no_contours` **eliminated** (92 → 0); **80/92** became `single_contour` (solid bbox-region pred, cov ≈ bbox area, r=0.998).
-- Of 92 letterbox collapses: gray fixed **10**, shifted **80** to `single_contour`.
-- **Visual QC:** bbox accurate; gray removes outside noise but inside bbox model often predicts filled rectangle not apo lines. Some rescues (e.g. IMG_00200, IMG_00216).
-- **Contrast stretch:** reject for now.
+- Net **+70 fixed, −30 broken** (+40 MT OK images).
+- Prep: 50 pairs, **24/50** region→line converted; train val Dice **0.518** (5ep).
+- **Pending user approval:** full prep `PREP_RUN=4` (1044) + train `TRAIN_RUN` full-line profile (10ep) → submission integration.
 
-**Gray55 train pipeline:** prep v2 + train v2 + eval v5 complete. See table above.
+**Standard inference preprocessing (keep regardless of model):**
+1. Detect ROI bbox (non-black threshold).
+2. Fill outside bbox with **RGB(55,55,55)** → grayscale 55.
+3. Run apo U-Net; **zero mask pixels outside bbox** before geometry.
 
-**Letterbox collapse (92 `no_contours` preds) — root cause identified:**
+### Apo training strategy (decided this session)
 
-| Finding | Detail |
-|---------|--------|
-| Not random | 92/92 collapsed test images share **letterbox edge signature** `(T≈26, B≈0, L≈2)` — 800×1200 frames with black bottom + side bars |
-| Not upscale bug | Train letterbox GT masks are **~97% fg @256** after squish resize (same as inference path) |
-| Training target | **474/474** train images with that layout have **region-style** GT (`mask_cov` mean **0.974**, all `cov≥0.5`) |
-| Model behaviour | Predicts **100% fg** on letterbox test (slight overshoot over ~97% GT) → `tag_apo_style` → region → invert → **empty** → `no_contours` |
-| OK test cohort | Different layouts (e.g. edge sig `(66,57,57)` ×80, `(0,0,4)` ×57) → sparse **line** preds (~5–10% cov) → MT OK |
+| Approach | Result | Verdict |
+|----------|--------|---------|
+| Gray55 infer only (old model) | 60.6% mt_ok | Helpful preprocessing |
+| Gray55 train, **region GT kept** | 54.6% mt_ok; val Dice 0.963 misleading | **Rejected** — still learns compartment fill |
+| **Gray55 + region→line GT** | 76.5% mt_ok; `single_contour` 80→0 | **Proceed** — unify all apo masks as line targets |
+| Split line/region models | Not run | **Deferred** — conversion cheaper than dual-model routing |
+| Contrast stretch @ infer | 38.5% mt_ok (309) | **Rejected** |
+| ROI crop / geometry guard | Worse or neutral | **Rejected** |
 
-**Implication:** Training is learning letterbox region masks; geometry breaks when pred saturates to 100%. Fixes: ROI crop before infer, geometry guard (`pred_cov>0.95` → line path or erode), or retrain letterbox with line targets.
+**Region→line conversion (prep-time):** for masks with `coverage ≥ 0.5`, rasterize **top + bottom foreground boundaries** as 3px polylines; line masks unchanged. Local GT check: **474/474** converted masks yield finite MT (vs 473/474 raw region).
 
-### Apo inference experiments (ROI crop + geometry guard + gray-context fill)
+**Training masks verified:** apo and fasc are **separate files** — never both structures in one mask. Apo GT: **574 line** + **474 region**. Model predicting fascicle + apo together is a prediction bug, not GT format.
+
+### Letterbox collapse (context)
+
+92/92 `no_contours` test preds share letterbox layout `(T≈26, B≈0, L≈2)` on 800×1200. Train letterbox GT is **region ~97% fg**. Model overshoots to 100% fg → region path → invert → empty.
+
+**Gray55+bbox v3** (old model, 309 test): mt_ok **64.4%**; eliminated `no_contours` but **80/92** letterbox cases became `single_contour` (pred cov ≈ bbox area, r=0.998).
+
+### MT failure modes (geometry glossary)
+
+| `mt_fail_reason` | Meaning |
+|------------------|---------|
+| `no_contours` | No usable contours (often saturated region → invert → empty) |
+| `single_contour` | Only one contour — can't separate superficial vs deep apo |
+| **`no_x_overlap`** | Two contours/lines found, but **x-ranges don't overlap** — no horizontal span to measure thickness between them. Common when line preds are fragmented or horizontally offset. |
+| `line_fit_fail` / `empty_edge_polyline` | Too sparse to fit edge lines |
+
+**Tradeoff observed:** line-target training eliminates `single_contour` but increases `no_x_overlap` (19→59 in micro) — fragmented/offset line preds. Net still strongly positive.
+
+### Key kernels & code paths
+
+| Step | Kernel slug | Builder | Notes |
+|------|-------------|---------|-------|
+| Prep gray55+line | `umud-prep-apo-gray55-line` | `scripts/build_prep_apo_gray55_line_nb.py` | `PREP_RUN=1` micro, `4` full |
+| Train | `umud-train-apo-gray55-phase-3` | `scripts/build_train_apo_gray55_nb.py` | `TRAIN_RUN=5` micro → `apo_gray55_line_baseline.pkl` |
+| Eval | `umud-apo-gray55-line-eval-phase-3` | `scripts/build_apo_gray55_line_eval_nb.py` | Baseline vs line model, gray55 infer |
+| Infer ablation | `umud-apo-gray55-bbox-pipeline-phase-3-v3` | `scripts/build_apo_contrast_fill_nb.py` | v3 gray55+bbox compare |
+
+Datasets: `umud-aligned-apo-gray55-line-timing-50` (micro), `umud-aligned-apo-gray55-line-full` (pending).
+
+Outputs: `tmp/kaggle-output/apo-gray55-line-eval/`, `apo-contrast-fill-v3/`.
+
+### New session handoff
+
+> Read **Current focus** above. If approved, run full gray55+line prep (`PREP_RUN=4`) → train 10ep → eval on 251 `.tif` → wire gray55 infer + line model into `build_submission_nb.py`. Watch `no_x_overlap` rate; if high after full train, consider longer training or line-connectivity postprocess before touching geometry rules.
+
+**Do not retry:** gray55 train without line conversion, contrast stretch, ROI crop, geometry guard, 512px resize.
+
+---
+
+### Apo inference experiments (archive — details below)
 
 **ROI crop (bbox by non-black threshold + paste pred back):**
 - Baseline `mt_ok` mean: **0.5437** (MT NaN ~45.6%)
@@ -52,41 +93,19 @@ _Last updated: 2026-06-16 (gray55 train+eval complete)._
 - MT-fixed: **0**
 - `guard_applied` fraction: **0.301** (guard ran, but didn’t move NaNs).
 
-**Next:** Input preprocessing / contrast normalization for the letterbox cohort (contrast hypothesis).
+**Gray-context fill v2** (computed dark gray, no bbox clip): mt_ok **0.544 → 0.628** on 309 test.
 
-**Gray-context fill (contrast/context hypothesis) — kernel v2 (exported):**
-- Baseline `mt_ok` mean: **0.5437**
-- With gray-fill: `mt_ok` mean **0.6278** (better)
-- Fail counts:
-  - `no_contours`: **92 → 84**
-  - `no_x_overlap`: **49 → 29**
-  - `single_contour`: **0 → 2**
-- MT-fixed (baseline NaN -> gray finite): **30** total
-- Of baseline `no_contours` (**92**): fixed by gray-fill **4**
+**Gray55+bbox v3** (RGB 55, mask clip): mt_ok **0.544 → 0.644** on 309; `no_contours` eliminated; `single_contour` 80.
 
-**Gray55+bbox v3 (complete):** kernel `umud-apo-gray55-bbox-pipeline-phase-3-v3`. See Current focus for stats. Outputs in `tmp/kaggle-output/apo-contrast-fill-v3/`.
+**Gray55 train (region GT):** mt_ok **54.6%** on .tif — regressed. Val Dice 0.963 misleading.
 
-**Training mask verification (local):** apo and fasc are **separate mask files** — each labels one structure. Apo GT: **574 line** + **474 region** (never both in one file). Line apo barely overlaps fasc (~5% fasc px); region apo encompasses fasc anatomically (~93% fasc px inside) but fasc is not labeled in apo masks.
+**Gray55+line micro:** mt_ok **76.5%** on .tif; `single_contour` 80→0; `no_x_overlap` 19→59.
 
-**Next:** Gray55 training prep + retrain experiment.
+**512px resize ablation:** rejected — val Dice 0 vs 256 verify 0.008. Stay @256.
 
-**Hypothesis:** 256px downsampling from ~800×1200 native images discards too much absolute structure signal for sparse fasc masks (~0.26% fg). 512px should retain ~4× more structure pixels (local analysis on P1 sample: mean **170** fg px @256 vs **682** @512; coverage *fraction* stays ~0.26% at both sizes).
+### New session handoff (superseded — see Current focus top)
 
-| Layer | @256 (current) | @512 (ablation) | Recreate full baseline? |
-|-------|----------------|-----------------|-------------------------|
-| Prep datasets | `umud-aligned-fasc-*`, `umud-aligned-apo-*` all baked @256 | New slug `umud-aligned-fasc-timing-50-512px` only for micro-test | **Yes, eventually** — full fasc+apo @512 = new dataset versions + new train runs; **not until** 50×5ep ablation shows Dice improvement |
-| Train notebooks | `IMG_SIZE` from profile; `Resize()` matches prep | `TRAIN_RUN=5`, `img_size=512` | Same code path; different `TRAIN_RUN` / dataset mount |
-| Exported models | `fasc_baseline.pkl` tied to resolution | Ablation overwrites train kernel output | Full 512 baseline = separate export after full 512 prep |
-| Eval / debug | `IMG_SIZE=256`, full datasets | `eval-resize-ablation` on timing-50 @512 | Point eval at matching dataset + model |
-| Submission | `IMG_SIZE=256`, upscale preds to native | Would need `IMG_SIZE=512` + same upscale path | **Deferred** — no submission until we pick a resolution for full train |
-
-**Cost @512 (extrapolated from 256 ladder):** ~4× GPU pixels → expect ~2–4× slower per epoch; T4 may need `BATCH_SIZE=4` at full 2749 scale (micro N=50 keeps bs=8 for isolation).
-
-**What stays identical in ablation:** same 50 fasc filenames (seed 42), stretch align, NEAREST masks, val 80/20 seed 42, resnet34, weighted CE w=150, 5 epochs, aug settings.
-
-### New session handoff
-
-**Suggested opener:**
+**Suggested opener (resize ablation — completed, rejected 512):**
 
 > Continue UMUD Phase 3 resize ablation from `research/log.md`. Run Kaggle prep `PREP_RUN=5` → train `TRAIN_RUN=5` → eval `umud-eval-resize-ablation-phase-3`. Compare val Dice to 256px verify (0.008). Do not full-retrain until ablation result is reviewed.
 
@@ -570,6 +589,9 @@ Historical checklist — all items done or explicitly deferred.
 | 2026-06-15 | train-apo-mounted AT4 weighted | resnet34 | apo 1048 × 10ep | `USE_CLASS_WEIGHTS`, w_fg=15 @256; val Dice **0.039** | — | **complete** |
 | 2026-06-15 | eval-val-dice v4 | — | weighted models | fasc 0.108, apo 0.039 | — | **complete** |
 | 2026-06-15 | submission-phase-3 v3 | — | 251 test tif | PA/FL NaN 0%, MT NaN 44.6% | — | **complete** |
+| 2026-06-16 | apo-gray55-bbox v3 | resnet34 | old apo model | gray55+bbox clip; 309 test mt_ok 64.4%; single_contour 80 | — | **complete** |
+| 2026-06-16 | train-apo-gray55 (region GT) | resnet34 | gray55-full 1044×10ep | mt_ok 54.6% — regressed vs infer-only gray55 | — | **complete** (rejected) |
+| 2026-06-16 | gray55+line micro | resnet34 | gray55-line-50×5ep | region→line GT; mt_ok 76.5%; single_contour 0 | — | **complete** (scale up pending) |
 
 ---
 
@@ -595,6 +617,10 @@ Historical checklist — all items done or explicitly deferred.
 | 2026-06-10 | Dual-track 1040 not 1048: 8 apo filenames on fasc exclude list | Expected, not a data bug |
 | 2026-06-10 | FL bimodality in px: driven by **800×1200 vs 1080×1640** image sizes | Not multi-fascicle per image |
 | 2026-06-10 | Split geometry into Kaggle + local notebooks; shared builder | — |
+| 2026-06-16 | **Apo infer:** gray55 fill RGB(55,55,55) outside bbox + mask clip to bbox | — |
+| 2026-06-16 | **Apo train:** region GT → dual-boundary line targets at prep (not split models) | — |
+| 2026-06-16 | **Reject** contrast stretch, ROI crop, geometry guard for MT rescue | — |
+| 2026-06-16 | **Reject** gray55 train without line conversion (val Dice misleading on region GT) | — |
 
 ---
 
@@ -645,3 +671,9 @@ Historical checklist — all items done or explicitly deferred.
 - Competition **reference** ranges (Data tab): PA 5–45°, FL 30–200 mm, MT 10–50 mm — for manual protocol plausibility checks.
 - Dual-track geometry subset: **1,040** images (apo ∩ clean fasc); 8 apo-only due to fasc exclude list.
 - Apo mask styles (full set): **574 line**, **474 region** (50% coverage threshold).
+- **Apo/fasc masks are separate files** — one structure per mask; dual-track 1048 filenames but not dual-label in one file. (2026-06-16)
+- **High apo val Dice can mislead** when region masks dominate (~97% fg) — metric rewards compartment fill, not MT-usable lines. (2026-06-16)
+- **`no_x_overlap`:** superficial and deep apo edge lines have no shared horizontal span — MT cannot be computed. Distinct from `single_contour` (only one blob). (2026-06-16)
+- **Kaggle prep upload:** notebook `kaggle` 2.0.0 fails on `datasets create` for new slugs; `pip install kaggle==2.0.2` in prep cell; retry `version` after partial create. (2026-06-16)
+- **Eval model paths:** use explicit `resolve_pkl()` + `rglob` — never `name.replace('gray55_', '')` on filenames (loaded wrong model). ERROR kernels don't mount as `kernel_sources`. (2026-06-16)
+- **Monitor scripts:** avoid `kaggle auth print-access-token` in loops (429 rate limit); grep `KernelWorkerStatus.ERROR` not bare `ERROR` in CLI warnings. (2026-06-16)
