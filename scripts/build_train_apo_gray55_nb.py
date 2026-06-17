@@ -2,7 +2,7 @@
 import json
 from pathlib import Path
 
-BUILD_TRAIN_RUN = 5
+BUILD_TRAIN_RUN = 7
 
 DATASET_SLUG_BY_RUN = {
     1: "ucheozoemena/umud-aligned-apo-gray55-timing-50",
@@ -11,6 +11,7 @@ DATASET_SLUG_BY_RUN = {
     4: "ucheozoemena/umud-aligned-apo-gray55-full",
     5: "ucheozoemena/umud-aligned-apo-gray55-line-timing-50",
     6: "ucheozoemena/umud-aligned-apo-gray55-line-full",
+    7: "ucheozoemena/umud-aligned-apo-gray55-line-timing-200",
 }
 
 
@@ -45,9 +46,10 @@ cells: list[dict] = [
     code(
         """# --- Parameters you can change ---
 RANDOM_SEED = 42
-TRAIN_RUN = 5  # 5=gray55-line micro 50×5ep; 6=gray55-line full 1044×10ep; see profiles
+TRAIN_RUN = 7  # 5=micro 50×5ep; 6=full 1044×10ep; 7=200×5ep stratified val (Block 2)
 
 VALID_PCT = 0.20
+STRATIFY_VAL_BY_RESOLUTION = True  # uses manifest resolution_cohort when True
 BATCH_SIZE = 8
 ARCH = "resnet34"
 IMG_SIZE = 256
@@ -94,6 +96,12 @@ TRAIN_PROFILES = {
         "label": "GAT6 gray55+line apo full 1044×10ep",
         "export_name": "apo_gray55_line_baseline.pkl",
     },
+    7: {
+        "dataset_slug": "ucheozoemena/umud-aligned-apo-gray55-line-timing-200",
+        "epochs": 5,
+        "label": "GAT7 gray55+line apo 200×5ep stratified val",
+        "export_name": "apo_gray55_line_200.pkl",
+    },
 }
 
 profile = TRAIN_PROFILES[TRAIN_RUN]
@@ -129,6 +137,7 @@ from fastai.vision.all import (
     unet_learner,
 )
 from fastai.data.block import DataBlock
+from fastai.data.transforms import FuncSplitter
 
 DATASET_ROOT = Path(f"/kaggle/input/datasets/{DATASET_SLUG}")
 if not DATASET_ROOT.exists():
@@ -178,7 +187,33 @@ def open_mask_pil(fn):
     return PILMask.create(binary)
 
 
-def make_dls(fnames, valid_pct=0.20, bs=8, seed=42):
+def make_dls(fnames, valid_pct=0.20, bs=8, seed=42, stratify_cohort: dict[str, str] | None = None):
+    if stratify_cohort:
+        from sklearn.model_selection import train_test_split
+
+        stems = [Path(f).stem for f in fnames]
+        labels = [stratify_cohort.get(s, "unknown") for s in stems]
+        train_stems, valid_stems = train_test_split(
+            stems,
+            test_size=valid_pct,
+            random_state=seed,
+            stratify=labels,
+        )
+        valid_set = set(valid_stems)
+
+        def _split(items):
+            train = [i for i, f in enumerate(items) if Path(f).stem not in valid_set]
+            valid = [i for i, f in enumerate(items) if Path(f).stem in valid_set]
+            return train, valid
+
+        splitter = FuncSplitter(_split)
+        print(
+            f"Stratified val: {len(valid_stems)} images across "
+            f"{len(set(labels))} resolution cohorts"
+        )
+    else:
+        splitter = RandomSplitter(valid_pct=valid_pct, seed=seed)
+
     block = DataBlock(
         blocks=(
             TransformBlock(type_tfms=open_image_pil, batch_tfms=IntToFloatTensor),
@@ -191,22 +226,50 @@ def make_dls(fnames, valid_pct=0.20, bs=8, seed=42):
         get_items=lambda _: fnames,
         get_x=lambda f: IMG_DIR / f.name,
         get_y=lambda f: MSK_DIR / f.name,
-        splitter=RandomSplitter(valid_pct=valid_pct, seed=seed),
+        splitter=splitter,
         item_tfms=Resize(IMG_SIZE),
         batch_tfms=aug_transforms(size=IMG_SIZE, min_scale=0.75, flip_vert=False, do_flip=True),
     )
     return block.dataloaders(fnames, bs=bs, num_workers=2)
+
+
+def load_cohort_by_stem(root: Path) -> dict[str, str]:
+    manifest_dir = resolve_subdir(root, "manifests")
+    manifest_path = manifest_dir / "train_apo_gray55_line.csv"
+    if not manifest_path.exists():
+        print(f"No manifest at {manifest_path} — falling back to random val split")
+        return {}
+    manifest = pd.read_csv(manifest_path)
+    if "resolution_cohort" in manifest.columns:
+        col = "resolution_cohort"
+    elif {"img_h", "img_w"}.issubset(manifest.columns):
+        manifest["resolution_cohort"] = manifest.apply(
+            lambda r: f"{int(r.img_h)}x{int(r.img_w)}", axis=1
+        )
+        col = "resolution_cohort"
+    else:
+        print("Manifest missing resolution columns — random val split")
+        return {}
+    return dict(zip(manifest["stem"].astype(str), manifest[col].astype(str)))
+
 
 img_fnames = get_image_files(IMG_DIR)
 msk_lookup = {p.name for p in get_image_files(MSK_DIR)}
 fnames = [f for f in img_fnames if f.name in msk_lookup]
 print(f"Pairs: {len(fnames)}")
 assert len(fnames) > 0, "No image/mask pairs in mounted dataset"
+cohort_by_stem = load_cohort_by_stem(DATASET_ROOT) if STRATIFY_VAL_BY_RESOLUTION else {}
 """
     ),
     code(
         """t0 = time.perf_counter()
-dls = make_dls(fnames, valid_pct=VALID_PCT, bs=BATCH_SIZE, seed=RANDOM_SEED)
+dls = make_dls(
+    fnames,
+    valid_pct=VALID_PCT,
+    bs=BATCH_SIZE,
+    seed=RANDOM_SEED,
+    stratify_cohort=cohort_by_stem or None,
+)
 _ = dls.one_batch()
 print(f"Dataloader ready: {time.perf_counter() - t0:.1f}s")
 dls.show_batch(max_n=4)

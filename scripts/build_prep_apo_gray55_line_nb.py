@@ -49,7 +49,7 @@ Micro-test: `PREP_RUN=1` (50 pairs). Full: `PREP_RUN=4` (1044 pairs)."""
     code(
         f"""# --- Parameters you can change ---
 RANDOM_SEED = 42
-PREP_RUN = 4  # 1=50 micro, 2=200, 3=524, 4=1044 full
+PREP_RUN = 2  # 1=50 micro, 2=200, 3=524, 4=1044 full
 
 IMG_SIZE = 256
 APO_FULL = 1044
@@ -266,6 +266,9 @@ for i, name in enumerate(tqdm(targets, desc="prep gray55+line")):
     rows.append({
         "filename": name,
         "stem": stem,
+        "img_h": int(img.shape[0]),
+        "img_w": int(img.shape[1]),
+        "resolution_cohort": f"{int(img.shape[0])}x{int(img.shape[1])}",
         "native_style": native_style,
         "converted_region_to_line": converted,
         "mask_cov_native_raw": float(aligned_raw.mean()),

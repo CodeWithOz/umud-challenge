@@ -2,7 +2,7 @@
 
 ## Current focus
 
-_Last updated: 2026-06-17 — **Phase 3 complete.** Phase 4 starts next session._
+_Last updated: 2026-06-17 — **Phase 4 active.** Block 1 complete (0.098 still best cal). Block 2 next. Plan: [Phase 4 iteration plan](#phase-4-iteration-plan)._
 
 ### Phase 3 — closed
 
@@ -22,7 +22,10 @@ _Last updated: 2026-06-17 — **Phase 3 complete.** Phase 4 starts next session.
 | Submit | Model | `MM_PER_PIXEL` | Public score | Role |
 |--------|-------|----------------|--------------|------|
 | v7 | micro gray55+line 50×5ep | 1.0 | 48.18203 | Uncalibrated baseline (unit error) |
-| **v9** | micro gray55+line 50×5ep | **0.098** | **2.35170** | **Phase 3 production submit** |
+| **v9** | micro gray55+line 50×5ep | **0.098** | **2.35170** | **Phase 4 production** (best cal so far) |
+| v10 | micro (same geometry) | 0.110 | 2.56508 | Block 1 — worse than 0.098 |
+| v11 | micro | FL=0.135 MT=0.104 | 2.70446 | Block 1 split GT midpoint |
+| v12 | micro | FL=0.136 MT=0.111 | 2.89431 | Block 1 split test midpoint |
 | v8 | full gray55+line 1044×10ep | 1.0 | — | Ablation only — 19.4% MT NaN; do not submit |
 
 **Production file:** `tmp/kaggle-output/submission-v9-calibrated/submission.csv` — 309 rows, 0% NaN; FL median 82.9 mm, MT median 27.0 mm.
@@ -41,22 +44,26 @@ User QC on 60 MT-fail overlays (`tmp/kaggle-output/v8-mt-fail-viz/`) confirms sa
 
 **Implication (Phase 4, not blocking closure):** scaling 50→1044 apo pairs + 10ep did not improve test geometry; model collapsed toward background on many 800×1200 letterbox cases. Micro (50×5ep) remains production. Hypotheses for Phase 4: class imbalance / CE weighting at scale, val split not stratified by resolution, line-target + long train overfitting, letterbox cohort underrepresented in effective learning signal.
 
-### Phase 4 handoff (next session)
+### Phase 4 active
 
-**Goal:** improve score beyond **2.35** via deliberate iteration.
+**Score to beat:** **2.35170** (v9 — micro gray55+line apo + fasc full + horiz_parallel + `MM_PER_PIXEL=0.098`).
 
-| Avenue | Notes |
-|--------|-------|
-| mm calibration refinement | Per-resolution depth scale (~0.20 on 800×1200 test); separate FL/MT scales; validate vs score |
-| Apo model at scale | Why full train regressed; timing ladder 200→524→full; longer train vs connectivity postprocess |
-| Fasc segmentation | Val Dice 0.108 — PA/FL may improve with better fasc masks |
-| PA geometry | Prototype skews low vs ref 5–45° |
-| Val split | Stratify by image size (800×1200 vs 1080×1640) |
-| Augmentation / architecture | Standard Phase 4 iteration |
+**Active block:** **Block 2 in progress** — apo gray55+line 200-tier prep (`PREP_RUN=2`) + train (`TRAIN_RUN=7`, stratified val). See [Phase 4 iteration plan](#phase-4-iteration-plan).
 
-**Do not retry (Phase 3 ruled out):** unweighted CE, gray55 train without line conversion, contrast stretch, ROI crop, geometry guard, 512px resize, v8 full model for submit.
+### Pending — resume tomorrow (calibration bracket)
 
-**Key paths:** `research/log.md`, `scripts/build_submission_nb.py`, `tmp/kaggle-output/submission-v9-calibrated/`, `tmp/kaggle-output/v8-mt-fail-viz/`, `tmp/kaggle-output/calibration-sprint/`.
+Daily Kaggle submit quota hit **2026-06-17** after 3 Block 1 cal submits. **Resume:**
+
+| Slug | MM | CSV | Command |
+|------|-----|-----|---------|
+| `uniform-0p090` | 0.09 | `tmp/kaggle-output/calibration-sweep/uniform-0p090/submission.csv` | `uv run python scripts/submit_calibration.py --slugs uniform-0p090` |
+| `uniform-0p100` | 0.10 | `tmp/kaggle-output/calibration-sweep/uniform-0p100/submission.csv` | `uv run python scripts/submit_calibration.py --slugs uniform-0p100` |
+
+Or both: `uv run python scripts/submit_calibration.py --slugs uniform-0p090 uniform-0p100`. Compare to v9 **2.35170**. CSVs already generated — no retrain needed.
+
+**Production stack (unchanged until a block passes its gate):** fasc full + micro gray55+line apo (50×5ep) + horiz_parallel + `MM_PER_PIXEL=0.098`.
+
+**Key paths:** `research/log.md`, `scripts/build_submission_nb.py`, `research/calibration_sprint.md`, `tmp/kaggle-output/submission-v9-calibrated/`, `tmp/kaggle-output/calibration-sprint/`.
 
 ### Standard inference preprocessing (unchanged)
 
@@ -146,9 +153,9 @@ Outputs: `tmp/kaggle-output/submission-v7/` (best geometry), `submission-v8-full
 
 ### New session handoff
 
-> **Phase 4 next session:** Read **Current focus** (Phase 4 handoff). Production stack = fasc full + **micro** gray55+line apo + horiz_parallel + `MM_PER_PIXEL=0.098`. Score to beat: **2.35170**.
+> **Phase 4:** Read **Current focus** + [Phase 4 iteration plan](#phase-4-iteration-plan). Check block status table before starting work; update plan only via explicit decision (note date + reason in plan changelog).
 
-**Do not retry:** gray55 train without line conversion, contrast stretch, ROI crop, geometry guard, 512px resize, `TRAIN_RUN=4` (region GT gray55-full).
+**Do not retry:** gray55 train without line conversion, contrast stretch, ROI crop, geometry guard, 512px resize, `TRAIN_RUN=4` (region GT gray55-full), v8 full apo (1044×10ep) until mid-scale ladder passes.
 
 ---
 
@@ -196,6 +203,186 @@ Outputs: `tmp/kaggle-output/submission-v7/` (best geometry), `submission-v8-full
 
 **Your reading is correct:** full-dataset training is still Phase 3 (baseline, not iteration). Phase 4 starts when we deliberately chase a better score.
 
+---
+
+## Phase 4 iteration plan
+
+_Authoritative roadmap for Phase 4. Update the **block status** and **plan changelog** when blocks complete or the plan changes. Do not silently deviate — note date + reason for any change._
+
+### Goal and production baseline
+
+| Item | Value |
+|------|-------|
+| **Score to beat** | **2.35170** (v9 public leaderboard) |
+| **Uncalibrated reference** | v7 @ `MM_PER_PIXEL=1.0` → **48.18203** (FL/MT reported as px-as-mm) |
+| **Production geometry** | micro gray55+line apo 50×5ep + fasc full + horiz_parallel |
+| **Production calibration** | uniform `MM_PER_PIXEL=0.098` |
+| **Submission shape** | 309 rows, 0% NaN (v9) |
+
+### Two failure modes driving the plan
+
+| Problem | Evidence | Likely cause |
+|---------|----------|--------------|
+| **Geometry collapse at scale** | v8 full apo (1044×10ep): **19.4% MT NaN** vs v7 micro **0%** | Jumped 50→1044; model learned background / fragmented lines on 800×1200 letterbox |
+| **Calibration uncertainty** | v7 @ MM=1 → 48.18; v9 @ 0.098 → 2.35 | FL/MT dominate UMUD score (tolerances FL 12 mm, MT 3 mm, PA 6°); 0.098 was first plausible pick, not optimized |
+
+### Strategy: two parallel tracks
+
+| Track | Focus | Cost | When |
+|-------|-------|------|------|
+| **A — Calibration** | mm scale policy on **fixed** v7/v9 pixel geometry | CPU + cheap submits | **First** (Block 1) |
+| **B — Model** | Apo scaling ladder, architecture, inference | GPU retrain | After Block 1 baseline; gates per step |
+
+**Rule:** Never bundle calibration + new model + inference change in a single leaderboard submit — won't know what helped.
+
+### Block status (update as we go)
+
+| Block | Work | Status | Best result / notes |
+|-------|------|--------|---------------------|
+| **1** | Calibration offline sweep + 2–3 leaderboard submits | **complete** | **0.098 still best** (2.35170); 0.110→2.57, split GT→2.70, split test→2.89; bracket 0.09/0.10 blocked (submit limit) |
+| **2** | Apo gray55+line **200-tier** prep + train (5ep, stratified val) | **in progress** | `PREP_RUN=2`, `TRAIN_RUN=7`; gate: `mt_ok` ≥ 76.5%, 0% NaN |
+| **3** | Eval + submission with **best calibration from Block 1** | pending | Combined model + cal submit |
+| **4** | If Block 2 passes: prep **524-tier** + train | pending | Stop if geometry regresses |
+| **5** | Inference ablations (xspan vs horiz_parallel) on best apo checkpoint | pending | After best apo model locked |
+| **6** | Optional: resnet50 @ best N; fasc improvements | pending | Only if Blocks 1–4 plateau |
+
+**Recommended execution order:** 1 → 2 → 3 → (4 if gate passes) → 5 → 6.
+
+### Track A — Calibration (Block 1 detail)
+
+**Inputs:** v7/v9 `submission_debug.csv` (pixel geometry, 0% NaN) — **no retrain**.
+
+**Phase 4a — offline sweep (CPU, no submit):**
+
+1. Regenerate submission CSVs at uniform scales: `0.08, 0.09, 0.098, 0.10, 0.11, 0.12, 0.135`
+2. Add **split scales:** `(FL=0.135, MT=0.104)`, `(FL=0.136, MT=0.111)`
+3. Histogram FL/MT vs ref ranges (FL 30–200 mm, MT 10–50 mm) — sanity before submit
+
+**Phase 4b — per-resolution (if uniform sweep plateaus):**
+
+- Apply scale by `(img_w, img_h)` using calibration kernel cohort table
+- Test cohort: mostly 800×1200 → depth heuristic **~0.20** vs global 0.098
+- Wire `MM_PER_PIXEL` as lookup or cohort rule
+
+**Phase 4c — leaderboard submits (2–4 runs max on same micro geometry):**
+
+- Best uniform from 4a
+- Best split FL/MT from 4a
+- Best per-resolution from 4b (if meaningfully different from uniform)
+
+**Calibration options catalog (from Phase 3 — not all submitted):**
+
+| ID | Policy | FL scale | MT scale | Source | Submitted? |
+|----|--------|----------|----------|--------|------------|
+| A | Uniform **0.098** | 0.098 | 0.098 | Calibration kernel v3 | **Yes (v9)** |
+| B | Ref-range midpoint / GT median px | **0.135** | **0.104** | `research/calibration_sprint.md` | No |
+| C | Ref-range / test pred median px | **0.136** | **0.111** | Local `analyze_calibration.py` | No |
+| D | Uniform band | 0.10–0.12 | same | Working hypothesis | Partial (0.098 only) |
+| E | Depth-strip global median | ~**0.08** | ~0.08 | Calibration kernel | **Rejected** — wrong for test (77% 800×1200) |
+| F | Per-resolution depth scale | cohort | cohort | Calibration kernel | No (~0.20 on 800×1200) |
+| G | Separate FL/MT from depth vs GT | depth-derived | GT-derived | `calibration_sprint.md` step 5 | No |
+
+**Block 1 success criterion:** public score **< 2.35170** on micro geometry alone.
+
+**Block 1 results (2026-06-17):**
+
+| Policy | MM / scales | Public score | vs v9 |
+|--------|-------------|--------------|-------|
+| **uniform-0p098 (v9)** | 0.098 | **2.35170** | baseline |
+| uniform-0p110 | 0.110 | 2.56508 | worse |
+| split-gt-midpoint | FL 0.135 / MT 0.104 | 2.70446 | worse |
+| split-test-midpoint | FL 0.136 / MT 0.111 | 2.89431 | worse |
+
+Offline `ref_midpoint_penalty` ranked split policies best — **does not predict leaderboard** (no hidden labels). **Decision:** keep `MM_PER_PIXEL=0.098` for production; optional bracket **0.09 / 0.10** if daily submit quota allows. **cohort-depth-800** not submitted (worst offline proxy).
+
+Artifacts: `tmp/kaggle-output/calibration-sweep/sweep_results.csv`, `sweep_summary.json`, per-policy `submission.csv`.
+
+### Track B — Performance optimization
+
+#### B1. Dataset scaling (apo — primary bottleneck)
+
+**What we know:**
+
+- Production apo: **50 pairs × 5 epochs** (gray55+line) → **76.5% `mt_ok`**, 0% submission NaN
+- Full apo: **1044 × 10ep** (v8) → regressed — **do not retry** until mid-scale passes gates
+- **Middle gray55+line tiers never tested** — only 50 and 1044
+
+**Apo scaling ladder (gray55+line path):**
+
+| Step | Prep | Train | Epochs | Purpose |
+|------|------|-------|--------|---------|
+| Baseline | `PREP_RUN=1` (50) | `TRAIN_RUN=5` | 5 | Current production |
+| Step 1 | `PREP_RUN=2` (200) | `TRAIN_RUN=7` | 5 | ~4× data, stratified val |
+| Step 2 | `PREP_RUN=3` (524) | `TRAIN_RUN=8` (to add) | 5–7 | Half dataset |
+| **Stop** | `PREP_RUN=4` (1044) | — | — | Until Step 1–2 pass gates |
+
+**Note:** “Double baseline” intent → ladder next rung is **200** (4×), not 100. Add 100-tier only if 200 regresses.
+
+**Decision gate before each scaling step:**
+
+| Metric | Pass | Fail → stop ladder |
+|--------|------|-------------------|
+| Test `mt_ok` (309 images) | ≥ micro baseline (**76.5%** on .tif cohort) | Any increase in MT NaN vs v7 |
+| Val Dice | Stable or up vs micro (~**0.518**) | Large drop + high `no_contours` |
+| Visual QC | Sample `no_x_overlap` / empty preds | Same collapse patterns as v8 |
+
+**Training hygiene before scaling:**
+
+- **Stratified val split by resolution** (800×1200 vs 1080×1640)
+- Keep: class-weighted CE (`w_fg=15`), gray55+line GT, 256px prep
+
+**Fasc track (secondary):** already full scale (2749×10ep, val Dice **0.108**). More data won't help. Defer fasc retrain until apo scaling + calibration settled.
+
+#### B2. Model and inference
+
+**Inference-only (test on micro checkpoint first):**
+
+| Experiment | Rationale | Phase 3 status |
+|------------|-----------|----------------|
+| Contour picker (`xspan_pair` vs `horiz_parallel`) | `xspan_pair` → 100% `mt_ok` on 62-case cohort; production uses `horiz_parallel` | Re-ablate on full 309 |
+| PA geometry refinement | Prototype skews low vs ref 5–45° | Deferred |
+| Bbox / gray55 preprocessing | Locked in production | Do not revisit contrast stretch, ROI crop, geometry guard |
+
+**Retrain-required (one at a time, after apo 200-tier passes gate):**
+
+| Experiment | When |
+|------------|------|
+| **resnet50** (supported in builder, never run) | If 200-tier geometry OK but Dice plateaus |
+| **More epochs at fixed N** | If val Dice still climbing at epoch 5 |
+| **Fasc resnet50 / augmentation** | If apo stable but PA/FL weak |
+
+### Do not retry (Phase 3 ruled out)
+
+- Full apo retrain (1044×10ep) until mid-scale ladder passes
+- 512px resize (val Dice 0 vs 256)
+- Gray55 train without line conversion
+- Unweighted CE
+- Contrast stretch, ROI crop, geometry guard
+- Bundling calibration + model + inference in one submit
+
+### Plan changelog
+
+| Date | Change |
+|------|--------|
+| 2026-06-17 | **Block 2 started.** `PREP_RUN=2`, `TRAIN_RUN=7`, stratified val by `resolution_cohort` in prep manifest; export `apo_gray55_line_200.pkl`. |
+| 2026-06-17 | **Cal bracket deferred** — submit 0.09 / 0.10 tomorrow (quota); see Current focus pending table. |
+| 2026-06-17 | **Plan adopted.** Two-track strategy (calibration first, then apo scaling ladder). Block 1 started. Supersedes brief Phase 4 handoff bullet list in Current focus. |
+
+### Key code paths (Phase 4)
+
+| Step | Script / kernel |
+|------|-----------------|
+| Submission + debug CSV | `scripts/build_submission_nb.py` → `umud-submission-phase-3` |
+| **Block 1 cal sweep** | `scripts/calibration_sweep.py` → `tmp/kaggle-output/calibration-sweep/` |
+| **Block 1 cal submit** | `scripts/submit_calibration.py` |
+| Calibration evidence | `scripts/build_calibration_nb.py` → `umud-calibration-phase-3` |
+| Calibration notes | `research/calibration_sprint.md` |
+| Apo prep gray55+line | `scripts/build_prep_apo_gray55_line_nb.py` (`PREP_RUN` 1–4) |
+| Apo train gray55+line | `scripts/build_train_apo_gray55_nb.py` (`TRAIN_RUN` 5=micro, 6=full; 7–8 TBD) |
+| Fasc train | `scripts/build_train_mounted_nb.py` (`TRAIN_RUN=4` full) |
+
+---
+
 ### mm calibration (Option C) — when and where
 
 | Question | Answer |
@@ -224,7 +411,7 @@ High-level plan for the full pipeline. A new session should read this first for 
 | **1 — Visual QC** | Judge mask quality and alignment before modeling | Labels are manual masks; sparse fascicles and shape mismatch are common | Overlay galleries, coverage histograms, alignment lab (stretch/center/scale), exclude empty/near-empty fasc masks | **Done** |
 | **2 — Geometry & calibration** | Turn aligned masks into PA/FL/MT; validate plausibility | Competition targets are numeric geometry, not masks; mm values need pixel scale | Stretch-align masks; implement geometry rules; hunt pixel→mm; apo region vs line tagging; export clean manifests; histograms vs physiological ranges | **Done** (calibration deferred) |
 | **3 — Baseline model** | First learned pipeline (segment-then-measure) | Establish a score on the leaderboard; test whether masks support learning | fastai U-Net on clean subsets (GPU); stretch-aligned pairs; dual models (fasc + apo); geometry at inference; val split; mm calibration | **Done** (v9 score **2.35**) |
-| **4 — Iterate & submit** | Improve score; Kaggle submission flow | Competition metric is UMUD Score (normalized MAE; lower is better) | Augmentation, architecture tweaks, apo+fasc model design, test inference, calibration refinement, kaggle-run workflow | **Next** |
+| **4 — Iterate & submit** | Improve score; Kaggle submission flow | Competition metric is UMUD Score (normalized MAE; lower is better) | Augmentation, architecture tweaks, apo+fasc model design, test inference, calibration refinement, kaggle-run workflow | **Active** — see [Phase 4 iteration plan](#phase-4-iteration-plan); Block 1 in progress |
 | **5 — Reproducibility (if aiming for prizes)** | Top-3 require open-source, FAIR, reproducible code | Competition rules mandate public repo with license, docs, `requirements.txt` | OSI license, runnable notebook/script, documented inference | Not started |
 
 **Approach:** Data quality before modeling (Phases 0–1). Geometry and calibration before training (Phase 2). Segment-then-measure, not classification. **Stretch** alignment when image and mask shapes differ.
@@ -672,7 +859,11 @@ Historical checklist — all items done or explicitly deferred.
 | 2026-06-17 | submission v8 | full gray55+line | 309 test | **MT NaN 19.4%** — 37 no_contours, 13 single, 10 no_x_overlap | — | **complete** (regressed vs v7) |
 | 2026-06-17 | calibration-phase-3 v3 | — | 1048 train GT geom | depth scale resolution-dependent; **MM≈0.098** recommended uniform | — | **complete** |
 | 2026-06-17 | v8-mt-fail-viz v3 | full gray55+line | 60 MT NaN cases | 37 no_contours, 13 single, 10 no_x_overlap overlays | — | **complete** |
-| 2026-06-17 | submission v9 calibrated | micro gray55+line | 309 test | MM=0.098; 0% NaN; leaderboard **2.35170** | **2.35** | **complete** — Phase 3 production |
+| 2026-06-17 | submission v9 calibrated | micro gray55+line | 309 test | MM=0.098; 0% NaN; leaderboard **2.35170** | **2.35** | **complete** — Phase 4 production cal |
+| 2026-06-17 | phase4-cal uniform-0p110 | micro (v7 geometry) | 309 | MM=0.110 | **2.56508** | **complete** — worse than 0.098 |
+| 2026-06-17 | phase4-cal split-gt-midpoint | micro | 309 | FL=0.135 MT=0.104 | **2.70446** | **complete** |
+| 2026-06-17 | phase4-cal split-test-midpoint | micro | 309 | FL=0.136 MT=0.111 | **2.89431** | **complete** |
+| 2026-06-17 | calibration sweep offline | — | 11 policies | `tmp/kaggle-output/calibration-sweep/sweep_results.csv` | — | **complete** |
 
 ---
 
