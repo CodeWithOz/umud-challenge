@@ -10,12 +10,12 @@ Weighted @256 fasc Dice **0.108**, apo **0.039**. No new leaderboard score yet (
 
 ### Submission v5 results (gray55+line + horiz_parallel)
 
-Kernel [`umud-submission-phase-3`](https://www.kaggle.com/code/ucheozoemena/umud-submission-phase-3) **v6** — **bug:** `submission.csv` wrote only 251 `.tif` rows (PNG 252–309 dropped at export). **v7 fix:** include all 309 test images.
+Kernel [`umud-submission-phase-3`](https://www.kaggle.com/code/ucheozoemena/umud-submission-phase-3) **v7** — **309 rows** (251 `.tif` + 58 `.png`). v6 bug: export filtered to `.tif` only.
 
-| Metric | v4 (251 tif only) | **v5/v6 debug (309)** | **v7 target** |
-|--------|-------------------|----------------------|---------------|
-| Rows in submission.csv | 251 | 251 (bug) | **309** |
-| PA/FL/MT NaN | 0/0/43% tif | **0/0/0%** all 309 in debug | confirm |
+| Metric | v4 (251 tif only) | **v7 (309)** |
+|--------|-------------------|--------------|
+| Rows in submission.csv | 251 | **309** |
+| PA/FL/MT NaN | 0/0/43% tif | **0/0/0%** all 309 |
 
 - All 309 in debug: `mt_fail_reason=ok` (251 `.tif` + 58 `.png`); stack unchanged
 - Stack: gray55+line micro apo (50×5ep) + gray55 bbox infer + **horiz_parallel** picker + fasc v14
