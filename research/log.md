@@ -2,34 +2,39 @@
 
 ## Current focus
 
-_Last updated: 2026-06-17 (submission v5 wired — gray55+line + horiz_parallel)._
+_Last updated: 2026-06-17 (submission v5 **complete** — MT NaN 0%)._
 
 ### Best scored submission (unchanged on leaderboard)
 
-Weighted @256 fasc Dice **0.108**, apo **0.039**. Submission **v4**: PA/FL NaN **0%**, **MT NaN 43.0%** (251 `.tif` test).
+Weighted @256 fasc Dice **0.108**, apo **0.039**. No new leaderboard score yet (mm calibration deferred).
 
-### Active: submission v5 (gray55+line + horiz_parallel)
+### Submission v5 results (gray55+line + horiz_parallel)
 
-Wired into `build_submission_nb.py`:
-- Apo model: `apo_gray55_line_baseline.pkl` (micro, 50 pairs × 5ep)
-- Infer: gray55 outside bbox + mask clip
-- Geometry: **horiz_parallel** picker (xspan fallback)
+Kernel [`umud-submission-phase-3`](https://www.kaggle.com/code/ucheozoemena/umud-submission-phase-3) **v6** — 251 `.tif` test rows:
 
-Local eval expectation on 309 test: **100% MT OK** geometry (xspan_pair baseline); horiz_parallel changes 2/12 user-flagged picks, 0/50 user-good regressions.
+| Metric | v4 | **v5** |
+|--------|-----|--------|
+| PA NaN | 0% | **0%** |
+| FL NaN | 0% | **0%** |
+| **MT NaN** | **43.0%** | **0%** |
 
-**Pending:** push `umud-submission-phase-3` → download `submission_debug.csv` → compare NaN rates vs v4.
+- All 251: `apo_style=line`, `geometry_path=raw_line`, `mt_fail_reason=ok`
+- Stack: gray55+line micro apo (50×5ep) + gray55 bbox infer + **horiz_parallel** picker + fasc v14
 
-### Next after positive v5: full-scale gray55+line train
+**Note:** v5 first push failed (apo model not mounted); v6 added `resolve_pkl` fallback.
+
+### Next: full-scale gray55+line apo train
 
 **This is the training run you were remembering** — not another tangent:
 
 | Step | Action |
 |------|--------|
 | Prep | `PREP_RUN=4` → `umud-prep-apo-gray55-line` (1044 apo pairs, region→line GT) |
-| Train | `TRAIN_RUN` full-line profile, **10ep** → `apo_gray55_line_baseline.pkl` on full data |
-| Eval | Re-run submission v5 stack on 251 `.tif`; expect better masks on faint-sup clusters (029–033, 042–046) that geometry-only fixes cannot rescue |
+| Train | `TRAIN_RUN` full-line profile, **10ep** → replace micro `apo_gray55_line_baseline.pkl` |
+| Eval | Re-run submission v5 stack; target **better masks** on faint-sup clusters (029–033, 042–046) that geometry-only fixes cannot rescue |
+| Leaderboard | Submit v5 CSV manually in Kaggle UI; then re-submit after full model if masks improve |
 
-Micro model (current v5) proved the pipeline; full train targets **mask quality**, not picker logic.
+Micro model proved the pipeline (MT NaN 43%→0%); full train targets **mask quality** for leaderboard Dice, not picker logic.
 
 ### Priority (superseded handoff)
 
