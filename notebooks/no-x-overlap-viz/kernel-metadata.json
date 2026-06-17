@@ -1,0 +1,24 @@
+{
+  "id": "ucheozoemena/umud-no-x-overlap-viz-phase-3",
+  "title": "UMUD No X Overlap Viz Phase 3",
+  "code_file": "no-x-overlap-viz-phase-3.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_tpu": false,
+  "enable_internet": false,
+  "keywords": [
+    "gpu"
+  ],
+  "dataset_sources": [],
+  "kernel_sources": [
+    "ucheozoemena/umud-train-apo-gray55-phase-3"
+  ],
+  "competition_sources": [
+    "umud-challenge-muscle-architecture-in-ultrasound-data"
+  ],
+  "model_sources": [],
+  "docker_image": "gcr.io/kaggle-private-byod/python@sha256:00377cd1b3d470a605bc5b0ceca79969e369644e9b36802242a1c70e627372f9",
+  "machine_shape": "NvidiaTeslaT4"
+}

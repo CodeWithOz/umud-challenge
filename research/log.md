@@ -65,6 +65,7 @@ Weighted @256 fasc Dice **0.108**, apo **0.039**. Submission **v4**: PA/FL NaN *
 | Prep gray55+line | `umud-prep-apo-gray55-line` | `scripts/build_prep_apo_gray55_line_nb.py` | `PREP_RUN=1` micro, `4` full |
 | Train | `umud-train-apo-gray55-phase-3` | `scripts/build_train_apo_gray55_nb.py` | `TRAIN_RUN=5` micro → `apo_gray55_line_baseline.pkl` |
 | Eval | `umud-apo-gray55-line-eval-phase-3` | `scripts/build_apo_gray55_line_eval_nb.py` | Baseline vs line model, gray55 infer |
+| **no_x_overlap QC** | `umud-no-x-overlap-viz-phase-3` | `scripts/build_no_x_overlap_viz_nb.py` | 6-panel gallery: raw, gray55, mask, overlay, edge overlap, x-range bars |
 | Infer ablation | `umud-apo-gray55-bbox-pipeline-phase-3-v3` | `scripts/build_apo_contrast_fill_nb.py` | v3 gray55+bbox compare |
 
 Datasets: `umud-aligned-apo-gray55-line-timing-50` (micro), `umud-aligned-apo-gray55-line-full` (pending).
