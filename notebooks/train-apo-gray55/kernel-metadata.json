@@ -12,7 +12,7 @@
     "gpu"
   ],
   "dataset_sources": [
-    "ucheozoemena/umud-aligned-apo-gray55-line-full"
+    "ucheozoemena/umud-aligned-apo-gray55-line-timing-50"
   ],
   "kernel_sources": [],
   "competition_sources": [],

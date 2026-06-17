@@ -56,6 +56,8 @@ APO_REGION_THRESHOLD = 0.50
 GRAY_FILL_VALUE = 55
 ROI_THRESH = 5
 ROI_PAD_PX = 10
+TOP_K_CANDIDATES = 8
+MIN_SEP_PX = 15
 
 N_SHOW = None  # None = all MT-fail cases; set e.g. 20 for random sample per reason
 RANDOM_SEED = 42

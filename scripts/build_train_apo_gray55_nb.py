@@ -2,6 +2,17 @@
 import json
 from pathlib import Path
 
+BUILD_TRAIN_RUN = 5
+
+DATASET_SLUG_BY_RUN = {
+    1: "ucheozoemena/umud-aligned-apo-gray55-timing-50",
+    2: "ucheozoemena/umud-aligned-apo-gray55-timing-200",
+    3: "ucheozoemena/umud-aligned-apo-gray55-timing-524",
+    4: "ucheozoemena/umud-aligned-apo-gray55-full",
+    5: "ucheozoemena/umud-aligned-apo-gray55-line-timing-50",
+    6: "ucheozoemena/umud-aligned-apo-gray55-line-full",
+}
+
 
 def md(source: str) -> dict:
     lines = source.split("\n")
@@ -273,6 +284,7 @@ def write_nb(path: Path) -> None:
 def main() -> None:
     out = Path(__file__).resolve().parents[1] / "notebooks/train-apo-gray55"
     write_nb(out / "train-apo-gray55-phase-3.ipynb")
+    profile = DATASET_SLUG_BY_RUN[BUILD_TRAIN_RUN]
     meta = {
         "id": "ucheozoemena/umud-train-apo-gray55-phase-3",
         "title": "UMUD Train Apo Gray55 Phase 3",
@@ -284,7 +296,7 @@ def main() -> None:
         "enable_tpu": False,
         "enable_internet": True,
         "keywords": ["gpu"],
-        "dataset_sources": ["ucheozoemena/umud-aligned-apo-gray55-line-full"],
+        "dataset_sources": [profile],
         "kernel_sources": [],
         "competition_sources": [],
         "model_sources": [],

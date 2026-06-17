@@ -2,8 +2,8 @@
 # Post-compaction queue: v8 MT-fail viz (full model) → micro retrain → calibrated submission.
 set -euo pipefail
 cd "$(dirname "$0")/.."
-export KAGGLE_API_TOKEN=$(.venv/bin/kaggle auth print-access-token)
 KAGGLE=.venv/bin/kaggle
+export KAGGLE_API_TOKEN=$($KAGGLE auth print-access-token 2>/dev/null | tail -1)
 LOG=tmp/kaggle-output/post-compaction-monitor.log
 mkdir -p tmp/kaggle-output
 
