@@ -187,17 +187,58 @@ def open_mask_pil(fn):
     return PILMask.create(binary)
 
 
-def make_dls(fnames, valid_pct=0.20, bs=8, seed=42, stratify_cohort: dict[str, str] | None = None):
-    if stratify_cohort:
+def stratified_train_valid_stems(
+    stems: list[str],
+    labels: list[str],
+    valid_pct: float,
+    seed: int,
+) -> tuple[list[str], list[str]]:
+    from collections import Counter
+    import random
+
+    counts = Counter(labels)
+    # sklearn needs ≥2 per class; bucket rare native resolutions together.
+    collapsed = [label if counts[label] >= 2 else "other" for label in labels]
+    counts = Counter(collapsed)
+    if min(counts.values()) < 2:
+        collapsed = [
+            label if counts[label] >= 2 else "other_bucket" for label in collapsed
+        ]
+        counts = Counter(collapsed)
+    if min(counts.values()) >= 2:
         from sklearn.model_selection import train_test_split
 
-        stems = [Path(f).stem for f in fnames]
-        labels = [stratify_cohort.get(s, "unknown") for s in stems]
-        train_stems, valid_stems = train_test_split(
+        return train_test_split(
             stems,
             test_size=valid_pct,
             random_state=seed,
-            stratify=labels,
+            stratify=collapsed,
+        )
+
+    rng = random.Random(seed)
+    by_cohort: dict[str, list[str]] = {}
+    for stem, label in zip(stems, labels):
+        by_cohort.setdefault(label, []).append(stem)
+    train: list[str] = []
+    valid: list[str] = []
+    for cohort_stems in by_cohort.values():
+        rng.shuffle(cohort_stems)
+        if len(cohort_stems) == 1:
+            train.extend(cohort_stems)
+            continue
+        n_val = max(1, round(len(cohort_stems) * valid_pct))
+        valid.extend(cohort_stems[:n_val])
+        train.extend(cohort_stems[n_val:])
+    print("Stratified sklearn failed — used per-cohort manual split")
+    return train, valid
+
+
+def make_dls(fnames, valid_pct=0.20, bs=8, seed=42, stratify_cohort: dict[str, str] | None = None):
+    if stratify_cohort:
+        stems = [Path(f).stem for f in fnames]
+        labels = [stratify_cohort.get(s, "unknown") for s in stems]
+        train_stems, valid_stems = stratified_train_valid_stems(
+            stems, labels, valid_pct=valid_pct, seed=seed
         )
         valid_set = set(valid_stems)
 
