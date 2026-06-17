@@ -47,6 +47,14 @@ REF_FL_MM = (30.0, 200.0)
 REF_MT_MM = (10.0, 50.0)
 SCALE_STRIP_COLS = 80
 
+# geometry constants (must match submission notebook)
+APO_REGION_THRESHOLD = 0.50
+GRAY_FILL_VALUE = 55
+ROI_THRESH = 5
+ROI_PAD_PX = 10
+TOP_K_CANDIDATES = 8
+MIN_SEP_PX = 15
+
 COMPETITION_DIR = Path(
     "/kaggle/input/competitions/umud-challenge-muscle-architecture-in-ultrasound-data"
 )

@@ -23,13 +23,17 @@ log "=== gray55+line FULL pipeline (prep 1044 → train 10ep → submission) ===
 
 $KAGGLE kernels push -p notebooks/prep-apo-gray55-line
 wait_kernel "ucheozoemena/umud-prep-apo-gray55-line" "prep" || exit 1
-$KAGGLE kernels output ucheozoemena/umud-prep-apo-gray55-line -p tmp/kaggle-output/prep-apo-gray55-line-full --force
+# Only fetch timing + log — full dataset is on Kaggle (2000+ PNGs; do not download locally).
+$KAGGLE kernels output ucheozoemena/umud-prep-apo-gray55-line -p tmp/kaggle-output/prep-apo-gray55-line-full --force 2>&1 \
+  | grep -E 'prep_timing|\.log' || true
 
 $KAGGLE kernels push -p notebooks/train-apo-gray55 --accelerator NvidiaTeslaT4
 wait_kernel "ucheozoemena/umud-train-apo-gray55-phase-3" "train" || exit 1
-$KAGGLE kernels output ucheozoemena/umud-train-apo-gray55-phase-3 -p tmp/kaggle-output/train-apo-gray55-line-full --force
+$KAGGLE kernels output ucheozoemena/umud-train-apo-gray55-phase-3 -p tmp/kaggle-output/train-apo-gray55-line-full --force 2>&1 \
+  | grep -E 'timing_report|\.pkl|\.log' || true
 
 $KAGGLE kernels push -p notebooks/submission --accelerator NvidiaTeslaT4
 wait_kernel "ucheozoemena/umud-submission-phase-3" "submission" || exit 1
-$KAGGLE kernels output ucheozoemena/umud-submission-phase-3 -p tmp/kaggle-output/submission-v8-full-model --force
+$KAGGLE kernels output ucheozoemena/umud-submission-phase-3 -p tmp/kaggle-output/submission-v8-full-model --force 2>&1 \
+  | grep -E 'submission.*\.csv|\.log' || true
 log "=== COMPLETE ==="
