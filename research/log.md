@@ -2,7 +2,7 @@
 
 ## Current focus
 
-_Last updated: 2026-06-17 — **Phase 4 active.** Block 2 train complete (val Dice 0.384). Block 3 eval next. Cal bracket resume tomorrow._
+_Last updated: 2026-06-18 — **Production: 200-tier apo + MM=0.09 → score 2.063.** Block 3 complete._
 
 ### Phase 3 — closed
 
@@ -22,10 +22,11 @@ _Last updated: 2026-06-17 — **Phase 4 active.** Block 2 train complete (val Di
 | Submit | Model | `MM_PER_PIXEL` | Public score | Role |
 |--------|-------|----------------|--------------|------|
 | v7 | micro gray55+line 50×5ep | 1.0 | 48.18203 | Uncalibrated baseline (unit error) |
-| **v9** | micro gray55+line 50×5ep | **0.098** | **2.35170** | **Phase 4 production** (best cal so far) |
-| v10 | micro (same geometry) | 0.110 | 2.56508 | Block 1 — worse than 0.098 |
-| v11 | micro | FL=0.135 MT=0.104 | 2.70446 | Block 1 split GT midpoint |
-| v12 | micro | FL=0.136 MT=0.111 | 2.89431 | Block 1 split test midpoint |
+| **v13** | **200-tier** gray55+line 200×5ep | **0.09** | **2.06330** | **Phase 4 production** |
+| v14 | 200-tier | 0.098 | 2.20146 | Block 3 |
+| v9 | micro 50×5ep | 0.098 | 2.35170 | Superseded |
+| v13-cal | micro (v7 geom) | 0.09 | 2.14752 | Cal bracket only |
+| v10 | micro | 0.110 | 2.56508 | Block 1 |
 | v8 | full gray55+line 1044×10ep | 1.0 | — | Ablation only — 19.4% MT NaN; do not submit |
 
 **Production file:** `tmp/kaggle-output/submission-v9-calibrated/submission.csv` — 309 rows, 0% NaN; FL median 82.9 mm, MT median 27.0 mm.
@@ -46,20 +47,21 @@ User QC on 60 MT-fail overlays (`tmp/kaggle-output/v8-mt-fail-viz/`) confirms sa
 
 ### Phase 4 active
 
-**Score to beat:** **2.35170** (v9 — micro gray55+line apo + fasc full + horiz_parallel + `MM_PER_PIXEL=0.098`).
+**Score to beat:** **2.06330** (200-tier apo + `MM_PER_PIXEL=0.09`).
 
-**Active block:** **Block 3 next** — eval + submission with 200-tier apo model (`apo_gray55_line_200.pkl`) + production cal 0.098. Block 2 prep/train **complete** (see below).
+**Active block:** **Block 4** (524-tier ladder) — only if pursuing further apo scale; production stack locked below.
 
-### Pending — resume tomorrow (calibration bracket)
+**Production stack:** fasc full + **200-tier** gray55+line apo (`apo_gray55_line_200.pkl`) + horiz_parallel + **`MM_PER_PIXEL=0.09`**.
 
-Daily Kaggle submit quota hit **2026-06-17** after 3 Block 1 cal submits. **Resume:**
+### Calibration bracket — complete (2026-06-18)
 
-| Slug | MM | CSV | Command |
-|------|-----|-----|---------|
-| `uniform-0p090` | 0.09 | `tmp/kaggle-output/calibration-sweep/uniform-0p090/submission.csv` | `uv run python scripts/submit_calibration.py --slugs uniform-0p090` |
-| `uniform-0p100` | 0.10 | `tmp/kaggle-output/calibration-sweep/uniform-0p100/submission.csv` | `uv run python scripts/submit_calibration.py --slugs uniform-0p100` |
+| Slug | MM | Score | Notes |
+|------|-----|-------|-------|
+| **uniform-0p090** | 0.09 | **2.14752** | Best cal on **micro** geometry |
+| uniform-0p100 | 0.10 | 2.30880 | Between 0.098 and 0.110 |
+| v9 reference | 0.098 | 2.35170 | Previous production |
 
-Or both: `uv run python scripts/submit_calibration.py --slugs uniform-0p090 uniform-0p100`. Compare to v9 **2.35170**. CSVs already generated — no retrain needed.
+**Decision:** adopt **MM=0.09** (not 0.098). Combined with 200-tier apo → **2.06330**.
 
 **Production stack (unchanged until a block passes its gate):** fasc full + micro gray55+line apo (50×5ep) + horiz_parallel + `MM_PER_PIXEL=0.098`.
 
@@ -241,8 +243,8 @@ _Authoritative roadmap for Phase 4. Update the **block status** and **plan chang
 |-------|------|--------|---------------------|
 | **1** | Calibration offline sweep + 2–3 leaderboard submits | **complete** | **0.098 still best** (2.35170); 0.110→2.57, split GT→2.70, split test→2.89; bracket 0.09/0.10 blocked (submit limit) |
 | **2** | Apo gray55+line **200-tier** prep + train (5ep, stratified val) | **complete** | Prep v3 → `umud-aligned-apo-gray55-line-timing-200`; train v9: val Dice **0.384**, 57s; `apo_gray55_line_200.pkl` |
-| **3** | Eval + submission with **best calibration from Block 1** | **next** | Wire 200-tier apo model; gate: `mt_ok` ≥ 76.5%, 0% NaN |
-| **4** | If Block 2 passes: prep **524-tier** + train | pending | Stop if geometry regresses |
+| **3** | Eval + submission with 200-tier apo + cal | **complete** | `mt_ok` **100%** (309); score **2.063** @ MM=0.09, **2.201** @ 0.098 |
+| **4** | If Block 2 gate passed: prep **524-tier** + train | pending | 200-tier passed geometry gate |
 | **5** | Inference ablations (xspan vs horiz_parallel) on best apo checkpoint | pending | After best apo model locked |
 | **6** | Optional: resnet50 @ best N; fasc improvements | pending | Only if Blocks 1–4 plateau |
 
@@ -366,7 +368,8 @@ Artifacts: `tmp/kaggle-output/calibration-sweep/sweep_results.csv`, `sweep_summa
 |------|--------|
 | 2026-06-17 | **Block 2 train complete.** `TRAIN_RUN=7` v9: 200×5ep, stratified val (manual per-cohort fallback), val Dice **0.3838**, 0.057 s/pair/ep. Model: `apo_gray55_line_200.pkl`. Val Dice below micro 0.518 — test geometry TBD in Block 3. |
 | 2026-06-17 | **Block 2 prep complete.** `PREP_RUN=2` v3 → dataset `umud-aligned-apo-gray55-line-timing-200` (manifest includes `img_h`, `img_w`, `resolution_cohort`). |
-| 2026-06-17 | **Cal bracket deferred** — submit 0.09 / 0.10 tomorrow (quota); see Current focus pending table. |
+| 2026-06-18 | **Block 3 complete.** 200-tier apo: `mt_ok` 100%, 0% NaN (val Dice 0.384 did **not** predict test regression). Leaderboard: **2.063** (MM=0.09), 2.201 (MM=0.098). |
+| 2026-06-18 | **Cal bracket complete.** MM=0.09 beats 0.098 on micro (2.15 vs 2.35). Production **MM=0.09**. |
 | 2026-06-17 | **Plan adopted.** Two-track strategy (calibration first, then apo scaling ladder). Block 1 started. Supersedes brief Phase 4 handoff bullet list in Current focus. |
 
 ### Key code paths (Phase 4)
@@ -866,7 +869,10 @@ Historical checklist — all items done or explicitly deferred.
 | 2026-06-17 | phase4-cal split-test-midpoint | micro | 309 | FL=0.136 MT=0.111 | **2.89431** | **complete** |
 | 2026-06-17 | calibration sweep offline | — | 11 policies | `tmp/kaggle-output/calibration-sweep/sweep_results.csv` | — | **complete** |
 | 2026-06-17 | prep gray55+line 200 | — | `PREP_RUN=2` v3 | dataset `umud-aligned-apo-gray55-line-timing-200` | — | **complete** |
-| 2026-06-17 | train gray55+line 200 | resnet34 | `TRAIN_RUN=7` 200×5ep stratified val | val Dice **0.384**; `apo_gray55_line_200.pkl` | — | **complete** |
+| 2026-06-18 | phase4-cal uniform-0p090 | micro | 309 | MM=0.09 | **2.14752** | **complete** |
+| 2026-06-18 | phase4-cal uniform-0p100 | micro | 309 | MM=0.10 | 2.30880 | **complete** |
+| 2026-06-18 | phase4-block3-200tier | 200-tier apo | 309 | MM=0.098 | **2.20146** | **complete** |
+| 2026-06-18 | phase4-block3-200tier | 200-tier apo | 309 | MM=0.09 | **2.06330** | **complete** — production |
 
 ---
 

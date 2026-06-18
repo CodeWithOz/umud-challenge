@@ -4,7 +4,8 @@ from pathlib import Path
 
 # Block 3: 200-tier apo. Production micro: apo_gray55_line_baseline.pkl
 BUILD_APO_MODEL_FILE = "apo_gray55_line_200.pkl"
-BUILD_SUBMISSION_LABEL = "Phase 4 Block 3 — 200-tier apo"
+BUILD_SUBMISSION_LABEL = "Phase 4 production — 200-tier apo + MM=0.09"
+BUILD_MM_PER_PIXEL = 0.09
 
 
 def md(source: str) -> dict:
@@ -58,8 +59,8 @@ ROI_PAD_PX = 10
 TOP_K_CANDIDATES = 8
 MIN_SEP_PX = 15
 
-# Pixel → mm scale (production calibration from Block 1).
-MM_PER_PIXEL = 0.098
+# Production calibration (Block 1 bracket + Block 3 confirm).
+MM_PER_PIXEL = {BUILD_MM_PER_PIXEL}
 APO_MODEL_FILE = "{BUILD_APO_MODEL_FILE}"
 
 
