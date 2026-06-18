@@ -2,6 +2,10 @@
 import json
 from pathlib import Path
 
+# Block 3: 200-tier apo. Production micro: apo_gray55_line_baseline.pkl
+BUILD_APO_MODEL_FILE = "apo_gray55_line_200.pkl"
+BUILD_SUBMISSION_LABEL = "Phase 4 Block 3 — 200-tier apo"
+
 
 def md(source: str) -> dict:
     lines = source.split("\n")
@@ -26,14 +30,14 @@ cells: list[dict] = []
 
 cells.append(
     md(
-        """# UMUD — Submission (Phase 3 v9 calibrated)
+        f"""# UMUD — Submission ({BUILD_SUBMISSION_LABEL})
 
 **GPU notebook** — segment-then-measure pipeline for test images:
 
-1. Load **fasc** + **gray55+line apo** fastai learners (micro model — TRAIN_RUN=5)
+1. Load **fasc** + **gray55+line apo** fastai learners
 2. Apo inference: gray55 outside ROI bbox + mask clip; fasc on raw image
 3. Derive **PA / FL / MT** via horizontality+parallelism contour pairing
-4. Apply **`MM_PER_PIXEL`** to convert FL/MT to mm (calibration v3: **0.098**)
+4. Apply **`MM_PER_PIXEL`** to convert FL/MT to mm (production: **0.098**)
 5. Write `submission.csv` (comma-separated, 309 rows)
 
 > Edit *Configuration*, then re-run from there downward."""
@@ -44,7 +48,7 @@ cells.append(md("""## Configuration"""))
 
 cells.append(
     code(
-        """from pathlib import Path
+        f"""from pathlib import Path
 
 IMG_SIZE = 256
 APO_REGION_THRESHOLD = 0.50
@@ -54,9 +58,9 @@ ROI_PAD_PX = 10
 TOP_K_CANDIDATES = 8
 MIN_SEP_PX = 15
 
-# Pixel → mm scale (calibration v3: ref-range midpoint vs GT/pred geometry).
-# Uniform first try — defer per-resolution cohort scaling until after this submit.
+# Pixel → mm scale (production calibration from Block 1).
 MM_PER_PIXEL = 0.098
+APO_MODEL_FILE = "{BUILD_APO_MODEL_FILE}"
 
 
 def resolve_pkl(preferred: list[Path], filename: str) -> Path:
@@ -66,7 +70,7 @@ def resolve_pkl(preferred: list[Path], filename: str) -> Path:
     hits = sorted(Path("/kaggle/input").rglob(filename))
     if hits:
         return hits[0]
-    raise FileNotFoundError(f"Could not find {filename} under /kaggle/input")
+    raise FileNotFoundError(f"Could not find {{filename}} under /kaggle/input")
 
 
 FASC_MODEL_PATH = resolve_pkl(
@@ -74,8 +78,8 @@ FASC_MODEL_PATH = resolve_pkl(
     "fasc_baseline.pkl",
 )
 APO_MODEL_PATH = resolve_pkl(
-    [Path("/kaggle/input/notebooks/ucheozoemena/umud-train-apo-gray55-phase-3/apo_gray55_line_baseline.pkl")],
-    "apo_gray55_line_baseline.pkl",
+    [Path("/kaggle/input/notebooks/ucheozoemena/umud-train-apo-gray55-phase-3") / APO_MODEL_FILE],
+    APO_MODEL_FILE,
 )
 print("Fasc model:", FASC_MODEL_PATH)
 print("Apo model:", APO_MODEL_PATH)
