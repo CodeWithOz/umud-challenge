@@ -8,7 +8,8 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-SWEEP_DIR = ROOT / "tmp/kaggle-output/calibration-sweep"
+SWEEP_DIR = ROOT / "tmp/kaggle-output/calibration-sweep-200tier"
+DEFAULT_SWEEP_DIR = ROOT / "tmp/kaggle-output/calibration-sweep"
 COMPETITION = "umud-challenge-muscle-architecture-in-ultrasound-data"
 KAGGLE = ROOT / ".venv/bin/kaggle"
 
@@ -32,9 +33,18 @@ def main() -> None:
         help="Policy slugs to submit (default: read submit_shortlist from sweep_summary.json)",
     )
     parser.add_argument("--dry-run", action="store_true", help="Print commands only")
+    parser.add_argument(
+        "--sweep-dir",
+        type=Path,
+        default=None,
+        help="Directory with per-slug submission.csv (default: sweep_summary parent)",
+    )
     args = parser.parse_args()
 
-    summary_path = SWEEP_DIR / "sweep_summary.json"
+    sweep_dir = args.sweep_dir or SWEEP_DIR
+    if not sweep_dir.exists():
+        sweep_dir = DEFAULT_SWEEP_DIR
+    summary_path = sweep_dir / "sweep_summary.json"
     if not summary_path.exists():
         print(f"Run scripts/calibration_sweep.py first — missing {summary_path}", file=sys.stderr)
         sys.exit(1)
@@ -51,11 +61,11 @@ def main() -> None:
         os.environ["KAGGLE_API_TOKEN"] = kaggle_token()
 
     for slug in slugs:
-        csv_path = SWEEP_DIR / slug / "submission.csv"
+        csv_path = sweep_dir / slug / "submission.csv"
         if not csv_path.exists():
             print(f"Missing {csv_path}", file=sys.stderr)
             sys.exit(1)
-        msg = f"phase4-cal-{slug}"
+        msg = f"phase4-cal-200tier-{slug}"
         cmd = [
             str(KAGGLE),
             "competitions",
