@@ -2,7 +2,7 @@
 import json
 from pathlib import Path
 
-BUILD_TRAIN_RUN = 9
+BUILD_TRAIN_RUN = 10
 
 DATASET_SLUG_BY_RUN = {
     1: "ucheozoemena/umud-aligned-apo-gray55-timing-50",
@@ -14,6 +14,7 @@ DATASET_SLUG_BY_RUN = {
     7: "ucheozoemena/umud-aligned-apo-gray55-line-timing-200",
     8: "ucheozoemena/umud-aligned-apo-gray55-line-timing-524",
     9: "ucheozoemena/umud-aligned-apo-gray55-line-timing-200",
+    10: "ucheozoemena/umud-aligned-apo-gray55-line-timing-200",
 }
 
 
@@ -48,7 +49,7 @@ cells: list[dict] = [
     code(
         """# --- Parameters you can change ---
 RANDOM_SEED = 42
-TRAIN_RUN = 9  # 7=200×5ep; 8=524×5ep; 9=200×10ep epoch extension (Block 6)
+TRAIN_RUN = 10  # 7=200×5ep; 9=200×10ep; 10=200×8ep (Block 6b)
 
 VALID_PCT = 0.20
 STRATIFY_VAL_BY_RESOLUTION = True  # uses manifest resolution_cohort when True
@@ -115,6 +116,12 @@ TRAIN_PROFILES = {
         "epochs": FULL_EPOCHS,
         "label": "GAT9 gray55+line apo 200×10ep stratified val",
         "export_name": "apo_gray55_line_200_10ep.pkl",
+    },
+    10: {
+        "dataset_slug": "ucheozoemena/umud-aligned-apo-gray55-line-timing-200",
+        "epochs": 8,
+        "label": "GAT10 gray55+line apo 200×8ep stratified val",
+        "export_name": "apo_gray55_line_200_8ep.pkl",
     },
 }
 

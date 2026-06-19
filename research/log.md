@@ -51,7 +51,7 @@ User QC on 60 MT-fail overlays (`tmp/kaggle-output/v8-mt-fail-viz/`) confirms sa
 
 **Score to beat:** **1.91296** (200-tier + `MM_PER_PIXEL=0.075`).
 
-**Active block:** **Block 6a rejected** — 10ep model: **248/309 `mt_ok` (80.2%)**, 61 MT NaN (empty/sparse masks, same pattern as 524). **Production unchanged:** 5ep + MM=0.075 (1.913). Do not submit 10ep CSV.
+**Active block:** **Block 6b** — 200-tier **8ep** train (`TRAIN_RUN=10`). Gate: `mt_ok` 100% on test, then leaderboard vs **1.913**. Official metric: `scripts/umud_score.py` (from [paulritsche/umud-score](https://www.kaggle.com/code/paulritsche/umud-score)).
 
 **Production stack (locked):** fasc full + 200-tier apo **`apo_gray55_line_200.pkl` (5ep)** + **horiz_parallel** + **`MM_PER_PIXEL=0.075`** → score **1.91296**.
 
