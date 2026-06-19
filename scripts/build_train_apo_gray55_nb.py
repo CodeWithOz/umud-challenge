@@ -2,7 +2,7 @@
 import json
 from pathlib import Path
 
-BUILD_TRAIN_RUN = 10
+BUILD_TRAIN_RUN = 11
 
 DATASET_SLUG_BY_RUN = {
     1: "ucheozoemena/umud-aligned-apo-gray55-timing-50",
@@ -15,7 +15,14 @@ DATASET_SLUG_BY_RUN = {
     8: "ucheozoemena/umud-aligned-apo-gray55-line-timing-524",
     9: "ucheozoemena/umud-aligned-apo-gray55-line-timing-200",
     10: "ucheozoemena/umud-aligned-apo-gray55-line-timing-200",
+    11: "ucheozoemena/umud-aligned-apo-gray55-line-timing-200",
 }
+
+SCRIPTS_DIR = Path(__file__).resolve().parent
+
+
+def embed_script(name: str) -> str:
+    return SCRIPTS_DIR.joinpath(name).read_text()
 
 
 def md(source: str) -> dict:
@@ -49,15 +56,15 @@ cells: list[dict] = [
     code(
         """# --- Parameters you can change ---
 RANDOM_SEED = 42
-TRAIN_RUN = 10  # 7=200×5ep; 9=200×10ep; 10=200×8ep (Block 6b)
+TRAIN_RUN = 11  # 7=200×5ep r34; 11=200×5ep r50 (Block 6c)
 
 VALID_PCT = 0.20
 STRATIFY_VAL_BY_RESOLUTION = True  # uses manifest resolution_cohort when True
 BATCH_SIZE = 8
-ARCH = "resnet34"
 IMG_SIZE = 256
 APO_FULL = 1044
 FULL_EPOCHS = 10
+MM_PER_PIXEL = 0.075  # production calibration for val UMUD score
 
 USE_CLASS_WEIGHTS = True
 APO_FG_WEIGHT = 15.0
@@ -120,16 +127,25 @@ TRAIN_PROFILES = {
     10: {
         "dataset_slug": "ucheozoemena/umud-aligned-apo-gray55-line-timing-200",
         "epochs": 8,
+        "arch": "resnet34",
         "label": "GAT10 gray55+line apo 200×8ep stratified val",
         "export_name": "apo_gray55_line_200_8ep.pkl",
+    },
+    11: {
+        "dataset_slug": "ucheozoemena/umud-aligned-apo-gray55-line-timing-200",
+        "epochs": 5,
+        "arch": "resnet50",
+        "label": "GAT11 gray55+line apo 200×5ep resnet50 (Block 6c)",
+        "export_name": "apo_gray55_line_200_r50.pkl",
     },
 }
 
 profile = TRAIN_PROFILES[TRAIN_RUN]
 DATASET_SLUG = profile["dataset_slug"]
 EPOCHS = profile["epochs"]
+ARCH = profile.get("arch", "resnet34")
 EXPORT_NAME = profile["export_name"]
-print(f"TRAIN_RUN={TRAIN_RUN} | {profile['label']} | dataset={DATASET_SLUG} | epochs={EPOCHS}")
+print(f"TRAIN_RUN={TRAIN_RUN} | {profile['label']} | arch={ARCH} | dataset={DATASET_SLUG} | epochs={EPOCHS}")
 """
     ),
     code(
@@ -357,18 +373,19 @@ print(f"Train wall-clock: {train_sec:.1f}s")
 
 learn.export(WORKING / EXPORT_NAME)
 
-# validation Dice snapshot
+# validation Dice (reference only — primary gate is val UMUD score)
 val_losses, val_metrics = learn.validate(dl=dls.valid)
 if isinstance(val_metrics, (list, tuple)):
     val_dice = float(val_metrics[0]) if val_metrics else float("nan")
 else:
     val_dice = float(val_metrics)
-print(f"Val Dice: {val_dice:.4f}")
+print(f"Val Dice (reference): {val_dice:.4f}")
 
 timing = pd.DataFrame(
     [
         {
             "train_run": TRAIN_RUN,
+            "arch": ARCH,
             "n_pairs": len(fnames),
             "epochs": EPOCHS,
             "img_size": IMG_SIZE,
@@ -379,6 +396,109 @@ timing = pd.DataFrame(
         }
     ]
 )
+timing.to_csv(WORKING / "timing_report.csv", index=False)
+display(timing)
+"""
+    ),
+    md(
+        """## Val UMUD score (primary model-selection metric)
+
+End-to-end **segment-then-measure** on the stratified val split:
+
+- **GT:** stretch-aligned fasc + line-converted apo masks → PA/FL/MT @ `MM_PER_PIXEL`
+- **Pred:** production **fasc** model + **trained apo** (gray55 infer, horiz_parallel)
+- **Metric:** official UMUD score (`scripts/umud_score.py`) — **lower is better**
+
+Also reports `val_mt_ok_pct` (% val images with finite PA/FL/MT) — must reach **100%** before test submit."""
+    ),
+    code(embed_script("segment_geometry.py") + "\n\n" + embed_script("umud_score.py")),
+    code(
+        """from fastai.vision.all import load_learner
+from tqdm.auto import tqdm
+
+COMPETITION_DIR = Path(
+    "/kaggle/input/competitions/umud-challenge-muscle-architecture-in-ultrasound-data"
+)
+COMP_DIRS = {
+    "apo_img": COMPETITION_DIR / "apo_imgs_v1/apo_images_new_model_v1",
+    "apo_mask": COMPETITION_DIR / "apo_masks_v1/apo_masks_new_model_v1",
+    "fasc_img": COMPETITION_DIR / "fasc_imgs_v1/fasc_images_new_model_v1",
+    "fasc_mask": COMPETITION_DIR / "fasc_masks_v1/fasc_masks_new_model_v1",
+}
+IMAGE_EXTS = {".tif", ".tiff", ".png", ".jpg", ".jpeg"}
+
+
+def build_lookup(directory: Path) -> dict[str, Path]:
+    return {
+        p.name: p
+        for p in directory.rglob("*")
+        if p.suffix.lower() in IMAGE_EXTS and p.name != "Thumbs.db"
+    }
+
+
+def resolve_pkl(preferred: list[Path], filename: str) -> Path:
+    for p in preferred:
+        if p.exists():
+            return p
+    hits = sorted(Path("/kaggle/input").rglob(filename))
+    if hits:
+        return hits[0]
+    raise FileNotFoundError(f"Could not find {filename} under /kaggle/input")
+
+
+comp_lookups = {k: build_lookup(v) for k, v in COMP_DIRS.items()}
+manifest_path = resolve_subdir(DATASET_ROOT, "manifests") / "train_apo_gray55_line.csv"
+manifest = pd.read_csv(manifest_path)
+stem_to_filename = dict(zip(manifest["stem"].astype(str), manifest["filename"].astype(str)))
+
+fasc_model_path = resolve_pkl(
+    [Path("/kaggle/input/notebooks/ucheozoemena/umud-train-mounted-phase-3/fasc_baseline.pkl")],
+    "fasc_baseline.pkl",
+)
+fasc_learn = load_learner(fasc_model_path)
+print("Fasc model:", fasc_model_path)
+
+val_stems = [Path(f).stem for f in dls.valid.items]
+print(f"Val images: {len(val_stems)}")
+
+gt_rows, pred_rows = [], []
+for stem in tqdm(val_stems, desc="val umud"):
+    filename = stem_to_filename.get(stem)
+    if not filename:
+        continue
+    if filename not in comp_lookups["fasc_mask"] or filename not in comp_lookups["apo_mask"]:
+        continue
+    img = load_gray(comp_lookups["apo_img"][filename])
+    fasc_raw = load_mask(comp_lookups["fasc_mask"][filename])
+    apo_raw = load_mask(comp_lookups["apo_mask"][filename])
+    gt = gt_geometry_from_masks(fasc_raw, apo_raw, img.shape, MM_PER_PIXEL)
+    gt_rows.append({"image_id": filename, **gt})
+    pred = predict_geometry(img, fasc_learn, learn, IMG_SIZE, MM_PER_PIXEL)
+    pred_rows.append(
+        {
+            "image_id": filename,
+            "pa_deg": pred["pa_deg"],
+            "fl_mm": pred["fl_mm"],
+            "mt_mm": pred["mt_mm"],
+            "mt_fail_reason": pred.get("mt_fail_reason"),
+            "apo_cov": pred.get("apo_cov"),
+        }
+    )
+
+gt_df = pd.DataFrame(gt_rows)
+pred_df = pd.DataFrame(pred_rows)
+pred_submit = pred_df[["image_id", "pa_deg", "fl_mm", "mt_mm"]]
+summary = score_summary(gt_df, pred_submit, row_id_column_name="image_id")
+print("Val UMUD summary:", summary)
+display(local_metric_report(gt_df, pred_submit))
+
+if pred_df["mt_mm"].isna().any():
+    display(pred_df.loc[pred_df["mt_mm"].isna(), ["image_id", "mt_fail_reason", "apo_cov"]])
+    display(pred_df.loc[pred_df["mt_mm"].isna(), "mt_fail_reason"].value_counts())
+
+for col in ("val_umud_score", "val_umud_score_strict", "val_mt_ok_pct", "n_scorable", "n_total"):
+    timing[col] = summary.get(col, float("nan"))
+timing.to_csv(WORKING / "val_umud_report.csv", index=False)
 timing.to_csv(WORKING / "timing_report.csv", index=False)
 display(timing)
 """
@@ -417,8 +537,8 @@ def main() -> None:
         "enable_internet": True,
         "keywords": ["gpu"],
         "dataset_sources": [profile],
-        "kernel_sources": [],
-        "competition_sources": [],
+        "kernel_sources": ["ucheozoemena/umud-train-mounted-phase-3"],
+        "competition_sources": ["umud-challenge-muscle-architecture-in-ultrasound-data"],
         "model_sources": [],
         "docker_image": "gcr.io/kaggle-private-byod/python@sha256:00377cd1b3d470a605bc5b0ceca79969e369644e9b36802242a1c70e627372f9",
         "machine_shape": "NvidiaTeslaT4",

@@ -119,3 +119,58 @@ def local_metric_report(
             }
         )
     return pd.DataFrame(rows)
+
+
+def score_summary(
+    solution: pd.DataFrame,
+    submission: pd.DataFrame,
+    row_id_column_name: str = "image_id",
+) -> dict:
+    """Score val predictions; report partial + strict leaderboard-style metrics."""
+    merged = solution.merge(
+        submission,
+        on=row_id_column_name,
+        how="inner",
+        suffixes=("_true", "_pred"),
+    )
+    if len(merged) == 0:
+        return {
+            "n_total": 0,
+            "n_pred_finite": 0,
+            "n_gt_finite": 0,
+            "n_scorable": 0,
+            "val_mt_ok_pct": float("nan"),
+            "val_umud_score": float("nan"),
+            "val_umud_score_strict": float("nan"),
+        }
+
+    pred_finite = merged[[f"{c}_pred" for c in TARGET_COLS]].notna().all(axis=1)
+    gt_finite = merged[[f"{c}_true" for c in TARGET_COLS]].notna().all(axis=1)
+    scorable = pred_finite & gt_finite
+
+    out = {
+        "n_total": int(len(merged)),
+        "n_pred_finite": int(pred_finite.sum()),
+        "n_gt_finite": int(gt_finite.sum()),
+        "n_scorable": int(scorable.sum()),
+        "val_mt_ok_pct": round(100.0 * float(pred_finite.mean()), 2),
+        "val_umud_score": float("nan"),
+        "val_umud_score_strict": float("nan"),
+    }
+
+    if scorable.any():
+        sol = merged.loc[scorable, [row_id_column_name]].copy()
+        sub = merged.loc[scorable, [row_id_column_name]].copy()
+        for col in TARGET_COLS:
+            sol[col] = merged.loc[scorable, f"{col}_true"].astype(float)
+            sub[col] = merged.loc[scorable, f"{col}_pred"].astype(float)
+        out["val_umud_score"] = round(float(score(sol, sub, row_id_column_name)), 6)
+
+    if pred_finite.all():
+        sub_all = submission[[row_id_column_name, *TARGET_COLS]].copy()
+        sol_all = solution[[row_id_column_name, *TARGET_COLS]].copy()
+        out["val_umud_score_strict"] = round(
+            float(score(sol_all, sub_all, row_id_column_name)), 6
+        )
+
+    return out
