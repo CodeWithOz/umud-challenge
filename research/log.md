@@ -51,7 +51,7 @@ User QC on 60 MT-fail overlays (`tmp/kaggle-output/v8-mt-fail-viz/`) confirms sa
 
 **Score to beat:** **1.91296** (200-tier + `MM_PER_PIXEL=0.075`).
 
-**Active block:** **Block 6a eval** — `TRAIN_RUN=9` train **complete**: val Dice **0.574** @10ep (vs **0.384** @5ep). Next: test `mt_ok` + submission vs **1.913**. Production still **5ep** model until gate passes.
+**Active block:** **Block 6a submission** — `umud-submission-phase-3` with `apo_gray55_line_200_10ep.pkl` + MM=0.075; gate: `mt_ok` 100%, score vs **1.913**.
 
 **Production stack (locked):** fasc full + 200-tier apo **`apo_gray55_line_200.pkl` (5ep)** + **horiz_parallel** + **`MM_PER_PIXEL=0.075`** → score **1.91296**.
 
