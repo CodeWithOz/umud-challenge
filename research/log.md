@@ -254,7 +254,7 @@ _Authoritative roadmap for Phase 4. Update the **block status** and **plan chang
 | **3** | Eval + submission with 200-tier apo + cal | **complete** | `mt_ok` **100%** (309); score **2.063** @ MM=0.09, **2.201** @ 0.098 |
 | **4** | 524-tier apo prep + train | **rejected** | val Dice 0.562 but **62 MT NaN** on test (empty masks); submit ERROR |
 | **5** | Inference ablations (pickers on 200-tier, full 309) | **complete** | horiz_parallel **100%** `mt_ok`; xspan_pair 100% (0 broken vs horiz); top_bottom 87.7% — keep horiz |
-| **6** | Epoch / architecture at 200-tier (same N) | **6a train done** | **6a:** `TRAIN_RUN=9` 200×10ep — val Dice **0.574** (was 0.384 @5ep); export `apo_gray55_line_200_10ep.pkl`; eval next |
+| **6** | Epoch / architecture at 200-tier (same N) | **6a rejected** | 10ep val Dice **0.574** but test **80.2% `mt_ok`** (61 NaN); val Dice misleading again — **keep 5ep** |
 
 **Recommended execution order:** 1 → 2 → 3 → (4 if gate passes) → 5 → 6. **Blocks 1–5 complete;** apo scaling ladder **stopped** at 524; geometry **locked** at horiz_parallel.
 
@@ -393,6 +393,7 @@ Artifacts: `tmp/kaggle-output/calibration-sweep/sweep_results.csv`, `sweep_summa
 | 2026-06-17 | **Block 2 prep complete.** `PREP_RUN=2` v3 → dataset `umud-aligned-apo-gray55-line-timing-200` (manifest includes `img_h`, `img_w`, `resolution_cohort`). |
 | 2026-06-18 | **Block 3 complete.** 200-tier apo: `mt_ok` 100%, 0% NaN (val Dice 0.384 did **not** predict test regression). Leaderboard: **2.063** (MM=0.09), 2.201 (MM=0.098). |
 | 2026-06-19 | **MM locked 0.075** (score 1.913). Cal binary search error: 0.055 submit wasted after 0.065 worsened — bisect toward best next time. |
+| 2026-06-19 | **Block 6a eval rejected.** 10ep: `mt_ok` **80.2%** (61 NaN: no_contours 33, single_contour 15, no_x_overlap 13); val Dice 0.574 did not predict. **Keep 5ep production.** |
 | 2026-06-19 | **Block 6a train complete.** `TRAIN_RUN=9` v11: 200×10ep, val Dice **0.5742** (vs 0.384 @5ep), 106s; `apo_gray55_line_200_10ep.pkl`. |
 | 2026-06-19 | **Block 6a started.** 200-tier epoch extension `TRAIN_RUN=9` (10ep total, +5 vs production 5ep). No per-epoch val curve from run 7 — only final Dice 0.384. |
 | 2026-06-19 | **Block 4 rejected.** 524-tier: 62 MT NaN; user QC confirms empty masks; stick with 200-tier. |
