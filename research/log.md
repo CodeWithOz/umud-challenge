@@ -51,7 +51,7 @@ User QC on 60 MT-fail overlays (`tmp/kaggle-output/v8-mt-fail-viz/`) confirms sa
 
 **Score to beat:** **1.91296** (200-tier + `MM_PER_PIXEL=0.075`).
 
-**Active block:** **Block 4** — prep `PREP_RUN=3` (524 gray55+line) + train `TRAIN_RUN=8`. Eval + submit with **MM=0.075** after train.
+**Active block:** **Block 4 eval** — submission with `apo_gray55_line_524.pkl` + **MM=0.075**; gate: `mt_ok` ≥ 100%, score vs **1.913**.
 
 **Production stack (cal locked):** fasc full + 200-tier apo (`apo_gray55_line_200.pkl`) + horiz_parallel + **`MM_PER_PIXEL=0.075`**.
 
@@ -250,7 +250,7 @@ _Authoritative roadmap for Phase 4. Update the **block status** and **plan chang
 | **1** | Calibration offline sweep + 2–3 leaderboard submits | **complete** | **0.098 still best** (2.35170); 0.110→2.57, split GT→2.70, split test→2.89; bracket 0.09/0.10 blocked (submit limit) |
 | **2** | Apo gray55+line **200-tier** prep + train (5ep, stratified val) | **complete** | Prep v3 → `umud-aligned-apo-gray55-line-timing-200`; train v9: val Dice **0.384**, 57s; `apo_gray55_line_200.pkl` |
 | **3** | Eval + submission with 200-tier apo + cal | **complete** | `mt_ok` **100%** (309); score **2.063** @ MM=0.09, **2.201** @ 0.098 |
-| **4** | 524-tier apo prep + train | **in progress** | `PREP_RUN=3`, `TRAIN_RUN=8`; gate: `mt_ok` ≥ 100%, score vs **1.913** @ MM=0.075 |
+| **4** | 524-tier apo prep + train | **complete** | val Dice **0.562**; `apo_gray55_line_524.pkl` — eval + submit next |
 | **5** | Inference ablations (xspan vs horiz_parallel) on best apo checkpoint | pending | After best apo model locked |
 | **6** | Optional: resnet50 @ best N; fasc improvements | pending | Only if Blocks 1–4 plateau |
 
@@ -376,7 +376,7 @@ Artifacts: `tmp/kaggle-output/calibration-sweep/sweep_results.csv`, `sweep_summa
 | 2026-06-17 | **Block 2 prep complete.** `PREP_RUN=2` v3 → dataset `umud-aligned-apo-gray55-line-timing-200` (manifest includes `img_h`, `img_w`, `resolution_cohort`). |
 | 2026-06-18 | **Block 3 complete.** 200-tier apo: `mt_ok` 100%, 0% NaN (val Dice 0.384 did **not** predict test regression). Leaderboard: **2.063** (MM=0.09), 2.201 (MM=0.098). |
 | 2026-06-19 | **MM locked 0.075** (score 1.913). Cal binary search error: 0.055 submit wasted after 0.065 worsened — bisect toward best next time. |
-| 2026-06-19 | **Block 4 started.** `PREP_RUN=3`, `TRAIN_RUN=8`, export `apo_gray55_line_524.pkl`. |
+| 2026-06-19 | **Block 4 train complete.** 522×5ep, val Dice **0.562** (vs 200-tier 0.384); `apo_gray55_line_524.pkl`. |
 | 2026-06-17 | **Plan adopted.** Two-track strategy (calibration first, then apo scaling ladder). Block 1 started. Supersedes brief Phase 4 handoff bullet list in Current focus. |
 
 ### Key code paths (Phase 4)
