@@ -3,8 +3,8 @@ import json
 from pathlib import Path
 
 # Block 3: 200-tier apo. Production micro: apo_gray55_line_baseline.pkl
-BUILD_APO_MODEL_FILE = "apo_gray55_line_200.pkl"
-BUILD_SUBMISSION_LABEL = "Phase 4 production — 200-tier apo + MM=0.075"
+BUILD_APO_MODEL_FILE = "apo_gray55_line_524.pkl"
+BUILD_SUBMISSION_LABEL = "Phase 4 Block 4 — 524-tier apo + MM=0.075"
 BUILD_MM_PER_PIXEL = 0.075
 
 
@@ -38,7 +38,7 @@ cells.append(
 1. Load **fasc** + **gray55+line apo** fastai learners
 2. Apo inference: gray55 outside ROI bbox + mask clip; fasc on raw image
 3. Derive **PA / FL / MT** via horizontality+parallelism contour pairing
-4. Apply **`MM_PER_PIXEL`** to convert FL/MT to mm (production: **0.098**)
+4. Apply **`MM_PER_PIXEL`** to convert FL/MT to mm (production: **0.075**)
 5. Write `submission.csv` (comma-separated, 309 rows)
 
 > Edit *Configuration*, then re-run from there downward."""
