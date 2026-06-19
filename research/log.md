@@ -2,7 +2,7 @@
 
 ## Current focus
 
-_Last updated: 2026-06-19 — **Block 6 active:** 200-tier epoch extension (5→10ep). Production unchanged: 200×5ep + MM=0.075 (1.913)._
+_Last updated: 2026-06-19 — **Block 6 complete (rejected):** 8ep and 10ep both regress test geometry vs 5ep production. **Keep 200×5ep + MM=0.075 (1.913).** Official metric in `scripts/umud_score.py`._
 
 ### Phase 3 — closed
 
@@ -51,7 +51,7 @@ User QC on 60 MT-fail overlays (`tmp/kaggle-output/v8-mt-fail-viz/`) confirms sa
 
 **Score to beat:** **1.91296** (200-tier + `MM_PER_PIXEL=0.075`).
 
-**Active block:** **Block 6b** — 200-tier **8ep** train (`TRAIN_RUN=10`). Gate: `mt_ok` 100% on test, then leaderboard vs **1.913**. Official metric: `scripts/umud_score.py` (from [paulritsche/umud-score](https://www.kaggle.com/code/paulritsche/umud-score)).
+**Active block:** None — epoch sweep at 200-tier **complete** (5ep production wins). Next candidate if resuming model work: **Block 6c** resnet50 @ 5ep (deferred). Official metric: `scripts/umud_score.py` (from [paulritsche/umud-score](https://www.kaggle.com/code/paulritsche/umud-score)).
 
 **Production stack (locked):** fasc full + 200-tier apo **`apo_gray55_line_200.pkl` (5ep)** + **horiz_parallel** + **`MM_PER_PIXEL=0.075`** → score **1.91296**.
 
@@ -254,9 +254,30 @@ _Authoritative roadmap for Phase 4. Update the **block status** and **plan chang
 | **3** | Eval + submission with 200-tier apo + cal | **complete** | `mt_ok` **100%** (309); score **2.063** @ MM=0.09, **2.201** @ 0.098 |
 | **4** | 524-tier apo prep + train | **rejected** | val Dice 0.562 but **62 MT NaN** on test (empty masks); submit ERROR |
 | **5** | Inference ablations (pickers on 200-tier, full 309) | **complete** | horiz_parallel **100%** `mt_ok`; xspan_pair 100% (0 broken vs horiz); top_bottom 87.7% — keep horiz |
-| **6** | Epoch / architecture at 200-tier (same N) | **6a rejected** | 10ep val Dice **0.574** but test **80.2% `mt_ok`** (61 NaN); val Dice misleading again — **keep 5ep** |
+| **6** | Epoch / architecture at 200-tier (same N) | **6a+6b rejected** | 5ep: val Dice 0.384, **100% `mt_ok`** (prod). 8ep: val 0.591, **88.7% `mt_ok`** (35 NaN). 10ep: val 0.574, **80.2% `mt_ok`** (61 NaN). Val Dice anti-correlates with test geometry — **keep 5ep** |
 
-**Recommended execution order:** 1 → 2 → 3 → (4 if gate passes) → 5 → 6. **Blocks 1–5 complete;** apo scaling ladder **stopped** at 524; geometry **locked** at horiz_parallel.
+**Recommended execution order:** 1 → 2 → 3 → (4 if gate passes) → 5 → 6. **Blocks 1–6 complete;** apo scaling ladder **stopped** at 524; epoch sweep **stopped** at 10ep; geometry **locked** at horiz_parallel.
+
+### Block 6 epoch sweep (200-tier, horiz_parallel, MM=0.075)
+
+| Epochs | val Dice | test `mt_ok` | MT NaN | Fail breakdown (MT) | Leaderboard |
+|--------|----------|--------------|--------|------------------------|-------------|
+| **5** (prod) | **0.384** | **309/309 (100%)** | **0** | — | **1.913** |
+| **8** | 0.591 | 274/309 (88.7%) | 35 | no_contours 8, single_contour 16, no_x_overlap 11 | not submitted |
+| **10** | 0.574 | 248/309 (80.2%) | 61 | no_contours 33, single_contour 15, no_x_overlap 13 | not submitted |
+
+**Pattern:** more epochs → higher val Dice → **worse** test geometry (empty/near-empty apo masks on letterbox cohort). Sweet spot is **5ep**, not 8–10.
+
+### Official UMUD metric (`scripts/umud_score.py`)
+
+Extracted from [paulritsche/umud-score](https://www.kaggle.com/code/paulritsche/umud-score). **Lower is better.** Requires **no NaNs** in submission.
+
+- **Primary:** weighted mean of normalized MAE per target: `MAE / tolerance`
+- **Tolerances:** PA **6°**, FL **12 mm**, MT **3 mm** (literature MDCs)
+- **Weights:** 1.0 each on `pa_deg`, `fl_mm`, `mt_mm`
+- **Tie-break:** `S = S₁ + 1e-6·S₂ + 1e-9·S₃` (normalized MedAE, then RMSE)
+
+Use locally with train/val geometry GT (`local_metric_report()`); test labels are hidden — leaderboard is ground truth. **Gate before submit:** 100% `mt_ok` (any MT NaN → metric error on Kaggle).
 
 ### Block 5 geometry ablation (2026-06-19)
 
@@ -392,6 +413,9 @@ Artifacts: `tmp/kaggle-output/calibration-sweep/sweep_results.csv`, `sweep_summa
 | 2026-06-17 | **Block 2 train complete.** `TRAIN_RUN=7` v9: 200×5ep, stratified val (manual per-cohort fallback), val Dice **0.3838**, 0.057 s/pair/ep. Model: `apo_gray55_line_200.pkl`. Val Dice below micro 0.518 — test geometry TBD in Block 3. |
 | 2026-06-17 | **Block 2 prep complete.** `PREP_RUN=2` v3 → dataset `umud-aligned-apo-gray55-line-timing-200` (manifest includes `img_h`, `img_w`, `resolution_cohort`). |
 | 2026-06-18 | **Block 3 complete.** 200-tier apo: `mt_ok` 100%, 0% NaN (val Dice 0.384 did **not** predict test regression). Leaderboard: **2.063** (MM=0.09), 2.201 (MM=0.098). |
+| 2026-06-19 | **Block 6b eval rejected.** 8ep: `mt_ok` **88.7%** (35 NaN: single_contour 16, no_x_overlap 11, no_contours 8); val Dice **0.591** highest yet but worse than 5ep on test. **Keep 5ep production.** |
+| 2026-06-19 | **Block 6b train complete.** `TRAIN_RUN=10` v12: 200×8ep, val Dice **0.5912**, 87s; `apo_gray55_line_200_8ep.pkl`. |
+| 2026-06-19 | **Official metric extracted.** `scripts/umud_score.py` from paulritsche/umud-score — normalized MAE (PA/6°, FL/12mm, MT/3mm), lower better, no NaNs. |
 | 2026-06-19 | **MM locked 0.075** (score 1.913). Cal binary search error: 0.055 submit wasted after 0.065 worsened — bisect toward best next time. |
 | 2026-06-19 | **Block 6a eval rejected.** 10ep: `mt_ok` **80.2%** (61 NaN: no_contours 33, single_contour 15, no_x_overlap 13); val Dice 0.574 did not predict. **Keep 5ep production.** |
 | 2026-06-19 | **Block 6a train complete.** `TRAIN_RUN=9` v11: 200×10ep, val Dice **0.5742** (vs 0.384 @5ep), 106s; `apo_gray55_line_200_10ep.pkl`. |
