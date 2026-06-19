@@ -51,7 +51,7 @@ User QC on 60 MT-fail overlays (`tmp/kaggle-output/v8-mt-fail-viz/`) confirms sa
 
 **Score to beat:** **1.91296** (200-tier + `MM_PER_PIXEL=0.075`).
 
-**Active block:** **Block 6c eval** — resnet50 @ 5ep train done; submission test gate pending (`mt_ok` 100% required).
+**Active block:** None — **Block 6c** test gate **passed** (309/309 `mt_ok`). Optional: leaderboard submit `apo_gray55_line_200_r50.pkl` vs **1.913**. Production unchanged until score confirms.
 
 **Production stack (locked):** fasc full + 200-tier apo **`apo_gray55_line_200.pkl` (5ep)** + **horiz_parallel** + **`MM_PER_PIXEL=0.075`** → score **1.91296**.
 
@@ -254,7 +254,7 @@ _Authoritative roadmap for Phase 4. Update the **block status** and **plan chang
 | **3** | Eval + submission with 200-tier apo + cal | **complete** | `mt_ok` **100%** (309); score **2.063** @ MM=0.09, **2.201** @ 0.098 |
 | **4** | 524-tier apo prep + train | **rejected** | val Dice 0.562 but **62 MT NaN** on test (empty masks); submit ERROR |
 | **5** | Inference ablations (pickers on 200-tier, full 309) | **complete** | horiz_parallel **100%** `mt_ok`; xspan_pair 100% (0 broken vs horiz); top_bottom 87.7% — keep horiz |
-| **6** | Epoch / architecture at 200-tier (same N) | **6a+6b rejected; 6c active** | 5ep r34 prod: val Dice 0.384, test **100% `mt_ok`**, 1.913. 8ep/10ep: higher val Dice, test geometry fails. **6c:** r50 @ 5ep in flight |
+| **6** | Epoch / architecture at 200-tier (same N) | **6a+6b rejected; 6c eval done** | 5ep r34 prod: test **100% `mt_ok`**, 1.913. 8ep/10ep fail test. **6c r50:** val UMUD 2.487, val `mt_ok` 87.8%; test **100% `mt_ok`** — score TBD |
 
 **Recommended execution order:** 1 → 2 → 3 → (4 if gate passes) → 5 → 6. **Blocks 1–6 complete;** apo scaling ladder **stopped** at 524; epoch sweep **stopped** at 10ep; geometry **locked** at horiz_parallel.
 
@@ -415,6 +415,7 @@ Artifacts: `tmp/kaggle-output/calibration-sweep/sweep_results.csv`, `sweep_summa
 | 2026-06-17 | **Block 2 train complete.** `TRAIN_RUN=7` v9: 200×5ep, stratified val (manual per-cohort fallback), val Dice **0.3838**, 0.057 s/pair/ep. Model: `apo_gray55_line_200.pkl`. Val Dice below micro 0.518 — test geometry TBD in Block 3. |
 | 2026-06-17 | **Block 2 prep complete.** `PREP_RUN=2` v3 → dataset `umud-aligned-apo-gray55-line-timing-200` (manifest includes `img_h`, `img_w`, `resolution_cohort`). |
 | 2026-06-18 | **Block 3 complete.** 200-tier apo: `mt_ok` 100%, 0% NaN (val Dice 0.384 did **not** predict test regression). Leaderboard: **2.063** (MM=0.09), 2.201 (MM=0.098). |
+| 2026-06-19 | **Block 6c test eval.** r50 5ep: **309/309 `mt_ok` (100%)** — passes submit gate. Val UMUD **2.487** had **87.8%** val `mt_ok` (val metric ≠ test again). No leaderboard submit yet. |
 | 2026-06-19 | **Block 6c train complete.** `TRAIN_RUN=11` v14: 200×5ep **resnet50**, val Dice **0.4625**, val UMUD **2.487** (36/41 scorable, **87.8%** val `mt_ok`); 412s; `apo_gray55_line_200_r50.pkl`. |
 | 2026-06-19 | **Val UMUD score wired into train notebook.** Post-train eval: production fasc + trained apo vs GT masks on val split; `val_umud_score` + `val_mt_ok_pct` in `timing_report.csv`. Val Dice demoted to reference. |
 | 2026-06-19 | **Block 6c started.** `TRAIN_RUN=11`: 200×5ep **resnet50**, export `apo_gray55_line_200_r50.pkl`. |
