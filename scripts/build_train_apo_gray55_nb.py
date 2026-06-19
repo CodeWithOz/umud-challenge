@@ -415,10 +415,15 @@ Also reports `val_mt_ok_pct` (% val images with finite PA/FL/MT) — must reach 
     code(
         """from fastai.vision.all import load_learner
 from tqdm.auto import tqdm
+import kagglehub
 
 COMPETITION_DIR = Path(
     "/kaggle/input/competitions/umud-challenge-muscle-architecture-in-ultrasound-data"
 )
+if not COMPETITION_DIR.exists():
+    COMPETITION_DIR = Path(
+        kagglehub.competition_download("umud-challenge-muscle-architecture-in-ultrasound-data")
+    )
 COMP_DIRS = {
     "apo_img": COMPETITION_DIR / "apo_imgs_v1/apo_images_new_model_v1",
     "apo_mask": COMPETITION_DIR / "apo_masks_v1/apo_masks_new_model_v1",
@@ -429,6 +434,8 @@ IMAGE_EXTS = {".tif", ".tiff", ".png", ".jpg", ".jpeg"}
 
 
 def build_lookup(directory: Path) -> dict[str, Path]:
+    if not directory.exists():
+        return {}
     return {
         p.name: p
         for p in directory.rglob("*")
@@ -446,7 +453,20 @@ def resolve_pkl(preferred: list[Path], filename: str) -> Path:
     raise FileNotFoundError(f"Could not find {filename} under /kaggle/input")
 
 
+def resolve_filename(stem: str, stem_to_filename: dict[str, str], lookups: dict[str, dict[str, Path]]) -> str | None:
+    filename = stem_to_filename.get(stem)
+    if filename and filename in lookups["apo_img"]:
+        return filename
+    for cand in (f"{stem}.tif", f"{stem}.png", f"{stem}.jpg"):
+        if cand in lookups["apo_img"]:
+            return cand
+    return None
+
+
 comp_lookups = {k: build_lookup(v) for k, v in COMP_DIRS.items()}
+print({k: len(v) for k, v in comp_lookups.items()})
+assert comp_lookups["apo_img"], f"Competition apo images not found under {COMPETITION_DIR}"
+
 manifest_path = resolve_subdir(DATASET_ROOT, "manifests") / "train_apo_gray55_line.csv"
 manifest = pd.read_csv(manifest_path)
 stem_to_filename = dict(zip(manifest["stem"].astype(str), manifest["filename"].astype(str)))
@@ -462,11 +482,14 @@ val_stems = [Path(f).stem for f in dls.valid.items]
 print(f"Val images: {len(val_stems)}")
 
 gt_rows, pred_rows = [], []
+skip_manifest = skip_fasc = 0
 for stem in tqdm(val_stems, desc="val umud"):
-    filename = stem_to_filename.get(stem)
+    filename = resolve_filename(stem, stem_to_filename, comp_lookups)
     if not filename:
+        skip_manifest += 1
         continue
-    if filename not in comp_lookups["fasc_mask"] or filename not in comp_lookups["apo_mask"]:
+    if filename not in comp_lookups["fasc_mask"]:
+        skip_fasc += 1
         continue
     img = load_gray(comp_lookups["apo_img"][filename])
     fasc_raw = load_mask(comp_lookups["fasc_mask"][filename])
@@ -485,19 +508,34 @@ for stem in tqdm(val_stems, desc="val umud"):
         }
     )
 
+print(f"Scored {len(pred_rows)}/{len(val_stems)} val images (skip_manifest={skip_manifest}, skip_fasc={skip_fasc})")
+
 gt_df = pd.DataFrame(gt_rows)
 pred_df = pd.DataFrame(pred_rows)
-pred_submit = pred_df[["image_id", "pa_deg", "fl_mm", "mt_mm"]]
-summary = score_summary(gt_df, pred_submit, row_id_column_name="image_id")
-print("Val UMUD summary:", summary)
-display(local_metric_report(gt_df, pred_submit))
+if len(pred_df) == 0:
+    summary = {
+        "n_total": 0,
+        "n_pred_finite": 0,
+        "n_gt_finite": 0,
+        "n_scorable": 0,
+        "val_mt_ok_pct": float("nan"),
+        "val_umud_score": float("nan"),
+        "val_umud_score_strict": float("nan"),
+    }
+    print("WARN: no dual-track val images scored — check competition mount + manifest stems")
+else:
+    pred_submit = pred_df[["image_id", "pa_deg", "fl_mm", "mt_mm"]]
+    summary = score_summary(gt_df, pred_submit, row_id_column_name="image_id")
+    print("Val UMUD summary:", summary)
+    display(local_metric_report(gt_df, pred_submit))
+    if pred_df["mt_mm"].isna().any():
+        display(pred_df.loc[pred_df["mt_mm"].isna(), ["image_id", "mt_fail_reason", "apo_cov"]])
+        display(pred_df.loc[pred_df["mt_mm"].isna(), "mt_fail_reason"].value_counts())
 
-if pred_df["mt_mm"].isna().any():
-    display(pred_df.loc[pred_df["mt_mm"].isna(), ["image_id", "mt_fail_reason", "apo_cov"]])
-    display(pred_df.loc[pred_df["mt_mm"].isna(), "mt_fail_reason"].value_counts())
-
+row = timing.iloc[0].to_dict()
 for col in ("val_umud_score", "val_umud_score_strict", "val_mt_ok_pct", "n_scorable", "n_total"):
-    timing[col] = summary.get(col, float("nan"))
+    row[col] = summary.get(col, float("nan"))
+timing = pd.DataFrame([row])
 timing.to_csv(WORKING / "val_umud_report.csv", index=False)
 timing.to_csv(WORKING / "timing_report.csv", index=False)
 display(timing)
