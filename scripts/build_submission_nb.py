@@ -3,8 +3,8 @@ import json
 from pathlib import Path
 
 # Block 3: 200-tier apo. Production micro: apo_gray55_line_baseline.pkl
-BUILD_APO_MODEL_FILE = "apo_gray55_line_524.pkl"
-BUILD_SUBMISSION_LABEL = "Phase 4 Block 4 — 524-tier apo + MM=0.075"
+BUILD_APO_MODEL_FILE = "apo_gray55_line_200.pkl"
+BUILD_SUBMISSION_LABEL = "Phase 4 production — 200-tier apo + MM=0.075"
 BUILD_MM_PER_PIXEL = 0.075
 
 

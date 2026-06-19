@@ -2,7 +2,7 @@
 
 ## Current focus
 
-_Last updated: 2026-06-19 — **MM=0.075 locked.** Block 4 (524-tier) in progress._
+_Last updated: 2026-06-19 — **Block 6 active:** 200-tier epoch extension (5→10ep). Production unchanged: 200×5ep + MM=0.075 (1.913)._
 
 ### Phase 3 — closed
 
@@ -51,9 +51,13 @@ User QC on 60 MT-fail overlays (`tmp/kaggle-output/v8-mt-fail-viz/`) confirms sa
 
 **Score to beat:** **1.91296** (200-tier + `MM_PER_PIXEL=0.075`).
 
-**Active block:** **Block 4 eval** — submission with `apo_gray55_line_524.pkl` + **MM=0.075**; gate: `mt_ok` ≥ 100%, score vs **1.913**.
+**Active block:** **Block 6a** — 200-tier **epoch extension** (`TRAIN_RUN=9`, 200×**10ep**, same dataset as Block 2). Gate: val Dice vs 0.384 @5ep; then test `mt_ok` + leaderboard vs **1.913**. Production stack unchanged until pass.
 
-**Production stack (cal locked):** fasc full + 200-tier apo (`apo_gray55_line_200.pkl`) + horiz_parallel + **`MM_PER_PIXEL=0.075`**.
+**Production stack (locked):** fasc full + 200-tier apo **`apo_gray55_line_200.pkl` (5ep)** + **horiz_parallel** + **`MM_PER_PIXEL=0.075`** → score **1.91296**.
+
+**Block 4 (524-tier):** rejected — 62 MT NaN (empty masks); QC at `tmp/kaggle-output/block4-mt-fail-viz/figures/`.
+
+**Block 5 (geometry ablation):** **complete** on full 309 with 200-tier apo — see [Block 5 results](#block-5-geometry-ablation-2026-06-19). **Decision:** keep **horiz_parallel** (100% `mt_ok`, 0 broken vs xspan); do not switch to xspan_pair.
 
 ### Calibration — locked at 0.075 (2026-06-19)
 
@@ -69,9 +73,7 @@ User QC on 60 MT-fail overlays (`tmp/kaggle-output/v8-mt-fail-viz/`) confirms sa
 
 **Do not submit** additional calibration values unless the plan explicitly changes.
 
-**Production stack (unchanged until a block passes its gate):** fasc full + micro gray55+line apo (50×5ep) + horiz_parallel + `MM_PER_PIXEL=0.098`.
-
-**Key paths:** `research/log.md`, `scripts/build_submission_nb.py`, `research/calibration_sprint.md`, `tmp/kaggle-output/submission-v9-calibrated/`, `tmp/kaggle-output/calibration-sprint/`.
+**Key paths:** `research/log.md`, `scripts/build_submission_nb.py`, `tmp/kaggle-output/block5-geom-ablation/`, `tmp/kaggle-output/block4-mt-fail-viz/`.
 
 ### Standard inference preprocessing (unchanged)
 
@@ -250,13 +252,28 @@ _Authoritative roadmap for Phase 4. Update the **block status** and **plan chang
 | **1** | Calibration offline sweep + 2–3 leaderboard submits | **complete** | **0.098 still best** (2.35170); 0.110→2.57, split GT→2.70, split test→2.89; bracket 0.09/0.10 blocked (submit limit) |
 | **2** | Apo gray55+line **200-tier** prep + train (5ep, stratified val) | **complete** | Prep v3 → `umud-aligned-apo-gray55-line-timing-200`; train v9: val Dice **0.384**, 57s; `apo_gray55_line_200.pkl` |
 | **3** | Eval + submission with 200-tier apo + cal | **complete** | `mt_ok` **100%** (309); score **2.063** @ MM=0.09, **2.201** @ 0.098 |
-| **4** | 524-tier apo prep + train | **complete** | val Dice **0.562**; `apo_gray55_line_524.pkl` — eval + submit next |
-| **5** | Inference ablations (xspan vs horiz_parallel) on best apo checkpoint | pending | After best apo model locked |
-| **6** | Optional: resnet50 @ best N; fasc improvements | pending | Only if Blocks 1–4 plateau |
+| **4** | 524-tier apo prep + train | **rejected** | val Dice 0.562 but **62 MT NaN** on test (empty masks); submit ERROR |
+| **5** | Inference ablations (pickers on 200-tier, full 309) | **complete** | horiz_parallel **100%** `mt_ok`; xspan_pair 100% (0 broken vs horiz); top_bottom 87.7% — keep horiz |
+| **6** | Epoch / architecture at 200-tier (same N) | **6a in progress** | **6a:** `TRAIN_RUN=9` 200×10ep — val Dice @5ep was 0.384, **no per-epoch curve logged**; **6b:** resnet50 deferred |
 
-**Recommended execution order:** 1 → 2 → 3 → (4 if gate passes) → 5 → 6.
+**Recommended execution order:** 1 → 2 → 3 → (4 if gate passes) → 5 → 6. **Blocks 1–5 complete;** apo scaling ladder **stopped** at 524; geometry **locked** at horiz_parallel.
 
-### Track A — Calibration (Block 1 detail)
+### Block 5 geometry ablation (2026-06-19)
+
+**Kernel:** `umud-block5-geom-ablation-phase-3` · **Model:** `apo_gray55_line_200.pkl` · **n=309**
+
+| Picker | `mt_ok` | `mt_ok` % | Failures |
+|--------|---------|-----------|----------|
+| top_bottom (DLTrack rule) | 271/309 | 87.7% | 38× `no_x_overlap` |
+| **xspan_pair** | **309/309** | **100%** | — |
+| **horiz_parallel** (production) | **309/309** | **100%** | — |
+
+**horiz_parallel vs xspan_pair (200-tier):** 0 cases where horiz fails but xspan succeeds; 0 cases where xspan succeeds but horiz fails. On images where both succeed, median |ΔMT_px| = **0**; max |ΔMT_px| = **375** (different contour pairs, same pass rate).
+
+**Decision:** **Keep horiz_parallel** in submission — validated on full 309 at production apo tier; no `mt_ok` gain from switching to xspan_pair. top_bottom remains worse (38 failures).
+
+Artifacts: `tmp/kaggle-output/block5-geom-ablation/block5_geom_ablation.csv`, `block5_geom_ablation_summary.json`. Builder: `scripts/build_block5_geom_ablation_nb.py`.
+
 
 **Inputs:** v7/v9 `submission_debug.csv` (pixel geometry, 0% NaN) — **no retrain**.
 
@@ -347,7 +364,7 @@ Artifacts: `tmp/kaggle-output/calibration-sweep/sweep_results.csv`, `sweep_summa
 
 | Experiment | Rationale | Phase 3 status |
 |------------|-----------|----------------|
-| Contour picker (`xspan_pair` vs `horiz_parallel`) | `xspan_pair` → 100% `mt_ok` on 62-case cohort; production uses `horiz_parallel` | Re-ablate on full 309 |
+| Contour picker (`xspan_pair` vs `horiz_parallel`) | Block 5: full 309 @ 200-tier — both 100% `mt_ok`; **keep horiz_parallel** | **complete** |
 | PA geometry refinement | Prototype skews low vs ref 5–45° | Deferred |
 | Bbox / gray55 preprocessing | Locked in production | Do not revisit contrast stretch, ROI crop, geometry guard |
 
@@ -376,6 +393,8 @@ Artifacts: `tmp/kaggle-output/calibration-sweep/sweep_results.csv`, `sweep_summa
 | 2026-06-17 | **Block 2 prep complete.** `PREP_RUN=2` v3 → dataset `umud-aligned-apo-gray55-line-timing-200` (manifest includes `img_h`, `img_w`, `resolution_cohort`). |
 | 2026-06-18 | **Block 3 complete.** 200-tier apo: `mt_ok` 100%, 0% NaN (val Dice 0.384 did **not** predict test regression). Leaderboard: **2.063** (MM=0.09), 2.201 (MM=0.098). |
 | 2026-06-19 | **MM locked 0.075** (score 1.913). Cal binary search error: 0.055 submit wasted after 0.065 worsened — bisect toward best next time. |
+| 2026-06-19 | **Block 6a started.** 200-tier epoch extension `TRAIN_RUN=9` (10ep total, +5 vs production 5ep). No per-epoch val curve from run 7 — only final Dice 0.384. |
+| 2026-06-19 | **Block 4 rejected.** 524-tier: 62 MT NaN; user QC confirms empty masks; stick with 200-tier. |
 | 2026-06-19 | **Block 4 train complete.** 522×5ep, val Dice **0.562** (vs 200-tier 0.384); `apo_gray55_line_524.pkl`. |
 | 2026-06-17 | **Plan adopted.** Two-track strategy (calibration first, then apo scaling ladder). Block 1 started. Supersedes brief Phase 4 handoff bullet list in Current focus. |
 
@@ -389,7 +408,8 @@ Artifacts: `tmp/kaggle-output/calibration-sweep/sweep_results.csv`, `sweep_summa
 | Calibration evidence | `scripts/build_calibration_nb.py` → `umud-calibration-phase-3` |
 | Calibration notes | `research/calibration_sprint.md` |
 | Apo prep gray55+line | `scripts/build_prep_apo_gray55_line_nb.py` (`PREP_RUN` 1–4) |
-| Apo train gray55+line | `scripts/build_train_apo_gray55_nb.py` (`TRAIN_RUN` 5=micro, 6=full; 7–8 TBD) |
+| Apo train gray55+line | `scripts/build_train_apo_gray55_nb.py` (`TRAIN_RUN` 5=micro, 7=200, 8=524) |
+| **Block 5 geom ablation** | `scripts/build_block5_geom_ablation_nb.py` → `umud-block5-geom-ablation-phase-3` |
 | Fasc train | `scripts/build_train_mounted_nb.py` (`TRAIN_RUN=4` full) |
 
 ---
