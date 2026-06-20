@@ -292,41 +292,55 @@ def split_nested_list(l, idxs, left_in=None, right_in=None):
     return L(L(*left_in, *left), L(*right, *right_in))
 
 
-def _encoder_split_idxs(encoder, module_path: str) -> list:
-    """Map timm feature_info.module_name to indices for split_nested_list."""
-    names = list(encoder._modules.keys())
-    parts = module_path.split(".")
-    if parts[0] in names:
-        idxs = [names.index(parts[0])]
-        if len(parts) > 1:
-            sub = getattr(encoder, parts[0])
-            sub_names = list(sub._modules.keys())
-            for p in parts[1:]:
-                idxs.append(int(p) if p.isdigit() else sub_names.index(p))
-        return idxs
-    # ConvNeXt-style flat names: stages.0 -> stages_0
-    if len(parts) >= 2 and parts[1].isdigit():
-        flat = f"{parts[0]}_{parts[1]}"
-        if flat in names:
-            return [names.index(flat)]
-    if module_path in names:
-        return [names.index(module_path)]
-    raise ValueError(f"Cannot resolve encoder module {module_path!r} in {names}")
-
-
 def _timm_splitter(m):
     from fastai.torch_core import getattrs
     from fastai.data.core import L
 
-    encoder_module_names = L(*list(m.encoder._modules.keys()))
-    encoder_split_idxs = _encoder_split_idxs(m.encoder, m.feature_info.module_name(0))
-    encoder_modules = getattrs(m.encoder, *encoder_module_names)
-    encoder_early, encoder_late = split_nested_list(encoder_modules, encoder_split_idxs)
-    encoder_early = _get_params_from_modules(encoder_early)
-    encoder_late = _get_params_from_modules(encoder_late)
+    split_path = m.feature_info.module_name(0).split(".")
+
+    def module_children(mod):
+        return getattrs(mod, *list(mod._modules.keys()))
+
+    enc = m.encoder
+    enc_names = list(enc._modules.keys())
+    enc_mods = module_children(enc)
+
+    # LeViT-style single wrapper
+    if len(enc_mods) == 1 and enc_mods[0]._modules:
+        inner = enc_mods[0]
+        inner_names = list(inner._modules.keys())
+        inner_mods = module_children(inner)
+        cut = _split_cut_index(inner_names, split_path)
+        encoder_early = _get_params_from_modules(inner_mods[:cut])
+        encoder_late = _get_params_from_modules(inner_mods[cut:])
+    else:
+        cut = _split_cut_index(enc_names, split_path)
+        encoder_early = _get_params_from_modules(enc_mods[:cut])
+        encoder_late = _get_params_from_modules(enc_mods[cut:])
+
     decoder = _get_params_from_attrs(m.decoder, L(*list(m.decoder._modules.keys())))
     head = _get_params_from_attrs(m.head, L(*list(m.head._modules.keys())))
     return L(encoder_early, encoder_late, L(*decoder, *head))
+
+
+def _split_cut_index(names: list[str], split_path: list[str]) -> int:
+    """Index in `names` where fine-tuning should begin (modules before are frozen)."""
+    if not split_path:
+        return max(1, len(names) // 2)
+    head = split_path[0]
+    if head in names:
+        return names.index(head)
+    if len(split_path) >= 2 and split_path[1].isdigit():
+        flat = f"{head}_{split_path[1]}"
+        if flat in names:
+            return names.index(flat)
+    flat = "_".join(split_path[:2]) if len(split_path) >= 2 else head
+    if flat in names:
+        return names.index(flat)
+    for i, n in enumerate(names):
+        if n.startswith(head):
+            return i
+    return max(1, len(names) // 2)
 
 
 def _timm_stats(m):

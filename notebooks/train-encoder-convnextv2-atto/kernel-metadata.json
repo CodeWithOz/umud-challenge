@@ -1,0 +1,26 @@
+{
+  "id": "ucheozoemena/umud-train-encoder-convnextv2-atto-phase-3",
+  "title": "UMUD Train Encoder ConvNeXt V2 Phase 3",
+  "code_file": "train-encoder-convnextv2-atto-phase-3.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_tpu": false,
+  "enable_internet": true,
+  "keywords": [
+    "gpu"
+  ],
+  "dataset_sources": [
+    "ucheozoemena/umud-aligned-apo-gray55-line-timing-200"
+  ],
+  "kernel_sources": [
+    "ucheozoemena/umud-train-mounted-phase-3"
+  ],
+  "competition_sources": [
+    "umud-challenge-muscle-architecture-in-ultrasound-data"
+  ],
+  "model_sources": [],
+  "docker_image": "gcr.io/kaggle-private-byod/python@sha256:00377cd1b3d470a605bc5b0ceca79969e369644e9b36802242a1c70e627372f9",
+  "machine_shape": "NvidiaTeslaT4"
+}

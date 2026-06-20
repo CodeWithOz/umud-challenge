@@ -4,6 +4,7 @@ from pathlib import Path
 
 # Production 5ep r50 (Block 6c — score 1.873 beats r34 1.913)
 BUILD_APO_MODEL_FILE = "apo_gray55_line_200_r50.pkl"
+BUILD_APO_KERNEL_SLUG = "umud-train-apo-gray55-phase-3"
 BUILD_SUBMISSION_LABEL = "Phase 4 production — 200-tier apo r50 5ep + MM=0.075"
 BUILD_MM_PER_PIXEL = 0.075
 
@@ -79,7 +80,7 @@ FASC_MODEL_PATH = resolve_pkl(
     "fasc_baseline.pkl",
 )
 APO_MODEL_PATH = resolve_pkl(
-    [Path("/kaggle/input/notebooks/ucheozoemena/umud-train-apo-gray55-phase-3") / APO_MODEL_FILE],
+    [Path("/kaggle/input/notebooks/ucheozoemena/{BUILD_APO_KERNEL_SLUG}") / APO_MODEL_FILE],
     APO_MODEL_FILE,
 )
 print("Fasc model:", FASC_MODEL_PATH)

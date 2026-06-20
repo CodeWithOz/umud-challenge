@@ -2,7 +2,7 @@
 
 ## Current focus
 
-_Last updated: 2026-06-20 — **Block 7 complete.** convnext_tiny rejected on test (**70.9%** `mt_ok`). **Production unchanged:** r50 → **1.873**._
+_Last updated: 2026-06-20 — **Block 8 queued:** 6 new encoders, one notebook each. Block 7b test eval pending. Prod: r50 **1.873**._
 
 ### Phase 3 — closed
 
@@ -52,7 +52,9 @@ User QC on 60 MT-fail overlays (`tmp/kaggle-output/v8-mt-fail-viz/`) confirms sa
 
 **Score to beat:** **1.87312** (200-tier r50 + `MM_PER_PIXEL=0.075`). Previous prod **1.91296** (r34 5ep).
 
-**Active block:** **Block 7** — encoder sweep @ 200×5ep (`TRAIN_RUN` 13–19). Gate: val UMUD + test `mt_ok` 100% + leaderboard vs **1.873**.
+**Active block:** **Block 8** — new encoder families @ 200×5ep, **separate Kaggle notebook per encoder**. Same val metrics + test `mt_ok` gate + LB submit if 100% test mt_ok.
+
+**Also pending:** Block 7b — test-set eval for r18, enb0, enb1, mnv3, regnet (convnext_tiny done: **70.9%** rejected).
 
 **Production stack (locked):** fasc full + **`apo_gray55_line_200_r50.pkl` (r50 5ep)** + horiz_parallel + **`MM_PER_PIXEL=0.075`** → **1.87312**.
 
@@ -256,7 +258,8 @@ _Authoritative roadmap for Phase 4. Update the **block status** and **plan chang
 | **4** | 524-tier apo prep + train | **rejected** | val Dice 0.562 but **62 MT NaN** on test (empty masks); submit ERROR |
 | **5** | Inference ablations (pickers on 200-tier, full 309) | **complete** | horiz_parallel **100%** `mt_ok`; xspan_pair 100% (0 broken vs horiz); top_bottom 87.7% — keep horiz |
 | **6** | Epoch / architecture at 200-tier (same N) | **complete** | r50 @ 5ep → **1.873**; 8ep/10ep rejected |
-| **7** | Encoder sweep @ 200×5ep | **complete** | convnext_tiny best val UMUD but **rejected** on test (70.9% mt_ok); prod stays r50 |
+| **7** | Encoder sweep @ 200×5ep | **complete** | convnext_tiny rejected on test; prod stays r50 |
+| **8** | New families @ 200×5ep (1 notebook / encoder) | **queued** | LeViT, ResNetV2, ConvNeXtV2, EfficientNetV2, MaxViT, MaxViT V2 |
 
 **Recommended execution order:** 1 → 2 → 3 → (4 if gate passes) → 5 → 6. **Blocks 1–6 complete;** apo scaling ladder **stopped** at 524; epoch sweep **stopped** at 10ep; geometry **locked** at horiz_parallel.
 
@@ -303,7 +306,30 @@ Same data/epochs as Block 6 winners; vary **U-Net encoder** only. Timm models vi
 | **18** | mobilenetv3_small_100 | 0.386 | **2.733** | **100%** | — | — | 30s; perfect val mt_ok but worse UMUD |
 | **19** | regnetx_004 | 0.426 | **2.750** | **100%** | — | — | 38s; worse than r50 |
 
-**Sweep verdict:** No encoder beats r50 on the full pipeline. **convnext_tiny** had best val UMUD (**1.75**) but **70.9%** test `mt_ok` (90 MT NaN: no_contours 44, single_contour 37, no_x_overlap 9) — same val→test disconnect as 8–10ep runs. **Production stays r50 @ 1.873.** convnext_small (15) not run.
+**Sweep verdict:** No Block 7 encoder beats r50 on the full pipeline. **convnext_tiny** best val UMUD (**1.75**) but **70.9%** test `mt_ok`. **Production stays r50 @ 1.873.**
+
+### Block 8 encoder sweep (200-tier × 5ep — one notebook per encoder)
+
+Registry: `scripts/block8_encoders.py`. Builder: `scripts/build_train_encoder_nb.py`. Runner: `scripts/run_block8_encoder.py --slug <slug>` or `--all --submit-lb`.
+
+Same analysis as Block 7: train → **val_umud_score**, **val_umud_score_strict**, **val_mt_ok_pct** → test submission debug **309 mt_ok** → leaderboard submit if **100%** test mt_ok (even when val UMUD worse than r50).
+
+| Order | Slug | Family | timm arch | Export | Status |
+|-------|------|--------|-----------|--------|--------|
+| 1 | `levit128s` | LeViT | `levit_128s` | `apo_gray55_line_200_levit128s.pkl` | pending |
+| 2 | `resnetv2-18` | ResNet V2 | `resnetv2_18` | `apo_gray55_line_200_rv2_18.pkl` | pending |
+| 3 | `convnextv2-atto` | ConvNeXt V2 | `convnextv2_atto` | `apo_gray55_line_200_cnxv2_atto.pkl` | pending |
+| 4 | `efficientnetv2-rw-t` | EfficientNet V2 | `efficientnetv2_rw_t` | `apo_gray55_line_200_env2_rw_t.pkl` | pending |
+| 5 | `maxvit-nano` | MaxViT | `maxvit_nano_rw_256` | `apo_gray55_line_200_maxvit_nano.pkl` | pending |
+| 6 | `maxxvitv2-nano` | MaxViT V2 | `maxxvitv2_nano_rw_256` | `apo_gray55_line_200_maxxvitv2_nano.pkl` | pending |
+
+**Notebook paths:** `notebooks/train-encoder-<slug>/` → Kaggle kernel `umud-train-encoder-<slug>-phase-3`.
+
+**MaxViT V2:** timm name `maxxvitv2_*` (CoAtNet/MaxViT hybrid V2 line).
+
+| Slug | val Dice | val UMUD | val mt_ok | test mt_ok | LB | Notes |
+|------|----------|----------|-----------|------------|-----|-------|
+| *(fill after each run)* | | | | | | |
 
 ### Official UMUD metric (`scripts/umud_score.py`)
 
@@ -452,6 +478,7 @@ Artifacts: `tmp/kaggle-output/calibration-sweep/sweep_results.csv`, `sweep_summa
 | 2026-06-17 | **Block 2 train complete.** `TRAIN_RUN=7` v9: 200×5ep, stratified val (manual per-cohort fallback), val Dice **0.3838**, 0.057 s/pair/ep. Model: `apo_gray55_line_200.pkl`. Val Dice below micro 0.518 — test geometry TBD in Block 3. |
 | 2026-06-17 | **Block 2 prep complete.** `PREP_RUN=2` v3 → dataset `umud-aligned-apo-gray55-line-timing-200` (manifest includes `img_h`, `img_w`, `resolution_cohort`). |
 | 2026-06-18 | **Block 3 complete.** 200-tier apo: `mt_ok` 100%, 0% NaN (val Dice 0.384 did **not** predict test regression). Leaderboard: **2.063** (MM=0.09), 2.201 (MM=0.098). |
+| 2026-06-20 | **Block 8 queued.** Six encoders (LeViT, ResNetV2, ConvNeXtV2, EfficientNetV2, MaxViT, MaxViT V2) — separate notebooks under `notebooks/train-encoder-*`; runner `scripts/run_block8_encoder.py`. timm splitter hardened for LeViT/ResNetV2. |
 | 2026-06-20 | **Block 7 convnext_tiny test eval rejected.** Submission debug: **219/309 mt_ok (70.9%)** — 90 MT NaN (no_contours 44, single_contour 37, no_x_overlap 9). Val UMUD 1.75 did not transfer. **Keep r50 prod.** |
 | 2026-06-20 | **Block 7 sweep complete (13–19 except cxs).** regnetx_004: val UMUD **2.750**, 100% val `mt_ok`. mobilenetv3: **2.733**, 100%. |
 | 2026-06-20 | **Block 7 convnext_tiny complete.** `TRAIN_RUN=14`: val Dice **0.494**, val UMUD **1.750** (best yet), **65.9%** val `mt_ok` (27/41); 143s; `apo_gray55_line_200_cxt.pkl`. Test eval priority. |
