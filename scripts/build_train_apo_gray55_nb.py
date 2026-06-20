@@ -2,7 +2,7 @@
 import json
 from pathlib import Path
 
-BUILD_TRAIN_RUN = 11
+BUILD_TRAIN_RUN = 12
 
 DATASET_SLUG_BY_RUN = {
     1: "ucheozoemena/umud-aligned-apo-gray55-timing-50",
@@ -16,6 +16,11 @@ DATASET_SLUG_BY_RUN = {
     9: "ucheozoemena/umud-aligned-apo-gray55-line-timing-200",
     10: "ucheozoemena/umud-aligned-apo-gray55-line-timing-200",
     11: "ucheozoemena/umud-aligned-apo-gray55-line-timing-200",
+    12: "ucheozoemena/umud-aligned-apo-gray55-line-timing-200",
+}
+
+EXTRA_DATASET_SOURCES_BY_RUN: dict[int, list[str]] = {
+    12: ["ucheozoemena/umud-apo-line-model-200"],
 }
 
 SCRIPTS_DIR = Path(__file__).resolve().parent
@@ -56,7 +61,7 @@ cells: list[dict] = [
     code(
         """# --- Parameters you can change ---
 RANDOM_SEED = 42
-TRAIN_RUN = 11  # 7=200×5ep r34; 11=200×5ep r50 (Block 6c)
+TRAIN_RUN = 12  # 12=eval-only val UMUD backfill prod r34
 
 VALID_PCT = 0.20
 STRATIFY_VAL_BY_RESOLUTION = True  # uses manifest resolution_cohort when True
@@ -138,14 +143,23 @@ TRAIN_PROFILES = {
         "label": "GAT11 gray55+line apo 200×5ep resnet50 (Block 6c)",
         "export_name": "apo_gray55_line_200_r50.pkl",
     },
+    12: {
+        "dataset_slug": "ucheozoemena/umud-aligned-apo-gray55-line-timing-200",
+        "epochs": 0,
+        "arch": "resnet34",
+        "eval_only": True,
+        "label": "GAT12 val UMUD backfill — prod r34 200×5ep (no retrain)",
+        "export_name": "apo_gray55_line_200.pkl",
+    },
 }
 
 profile = TRAIN_PROFILES[TRAIN_RUN]
 DATASET_SLUG = profile["dataset_slug"]
 EPOCHS = profile["epochs"]
 ARCH = profile.get("arch", "resnet34")
+EVAL_ONLY = profile.get("eval_only", False)
 EXPORT_NAME = profile["export_name"]
-print(f"TRAIN_RUN={TRAIN_RUN} | {profile['label']} | arch={ARCH} | dataset={DATASET_SLUG} | epochs={EPOCHS}")
+print(f"TRAIN_RUN={TRAIN_RUN} | {profile['label']} | arch={ARCH} | eval_only={EVAL_ONLY} | dataset={DATASET_SLUG} | epochs={EPOCHS}")
 """
     ),
     code(
@@ -351,47 +365,71 @@ dls.show_batch(max_n=4)
     code(
         """t_train = time.perf_counter()
 import torch
+from fastai.vision.all import load_learner
 
-if USE_CLASS_WEIGHTS:
-    loss_weights = torch.tensor([1.0, APO_FG_WEIGHT])
-    loss_func = CrossEntropyLossFlat(axis=1, weight=loss_weights)
-    print(f"Class weights: background=1.0, structure={APO_FG_WEIGHT}")
+
+def resolve_pkl(preferred: list[Path], filename: str) -> Path:
+    for p in preferred:
+        if p.exists():
+            return p
+    hits = sorted(Path("/kaggle/input").rglob(filename))
+    if hits:
+        return hits[0]
+    raise FileNotFoundError(f"Could not find {filename} under /kaggle/input")
+
+
+if EVAL_ONLY:
+    apo_path = resolve_pkl(
+        [
+            Path("/kaggle/input/datasets/ucheozoemena/umud-apo-line-model-200") / EXPORT_NAME,
+            Path("/kaggle/input/notebooks/ucheozoemena/umud-train-apo-gray55-phase-3") / EXPORT_NAME,
+        ],
+        EXPORT_NAME,
+    )
+    learn = load_learner(apo_path)
+    train_sec = 0.0
+    val_dice = float("nan")
+    print(f"Eval-only: loaded {apo_path}")
 else:
-    loss_func = CrossEntropyLossFlat(axis=1)
+    if USE_CLASS_WEIGHTS:
+        loss_weights = torch.tensor([1.0, APO_FG_WEIGHT])
+        loss_func = CrossEntropyLossFlat(axis=1, weight=loss_weights)
+        print(f"Class weights: background=1.0, structure={APO_FG_WEIGHT}")
+    else:
+        loss_func = CrossEntropyLossFlat(axis=1)
 
-learn = unet_learner(
-    dls,
-    encoder(),
-    metrics=[Dice()],
-    loss_func=loss_func,
-    self_attention=True,
-)
-learn.fine_tune(EPOCHS)
-t1 = time.perf_counter()
-train_sec = t1 - t_train
-print(f"Train wall-clock: {train_sec:.1f}s")
+    learn = unet_learner(
+        dls,
+        encoder(),
+        metrics=[Dice()],
+        loss_func=loss_func,
+        self_attention=True,
+    )
+    learn.fine_tune(EPOCHS)
+    t1 = time.perf_counter()
+    train_sec = t1 - t_train
+    print(f"Train wall-clock: {train_sec:.1f}s")
+    learn.export(WORKING / EXPORT_NAME)
 
-learn.export(WORKING / EXPORT_NAME)
-
-# validation Dice (reference only — primary gate is val UMUD score)
-val_losses, val_metrics = learn.validate(dl=dls.valid)
-if isinstance(val_metrics, (list, tuple)):
-    val_dice = float(val_metrics[0]) if val_metrics else float("nan")
-else:
-    val_dice = float(val_metrics)
-print(f"Val Dice (reference): {val_dice:.4f}")
+    val_losses, val_metrics = learn.validate(dl=dls.valid)
+    if isinstance(val_metrics, (list, tuple)):
+        val_dice = float(val_metrics[0]) if val_metrics else float("nan")
+    else:
+        val_dice = float(val_metrics)
+    print(f"Val Dice (reference): {val_dice:.4f}")
 
 timing = pd.DataFrame(
     [
         {
             "train_run": TRAIN_RUN,
             "arch": ARCH,
+            "eval_only": EVAL_ONLY,
             "n_pairs": len(fnames),
             "epochs": EPOCHS,
             "img_size": IMG_SIZE,
-            "val_dice": round(val_dice, 4),
+            "val_dice": round(val_dice, 4) if val_dice == val_dice else None,
             "total_sec": round(train_sec, 1),
-            "sec_per_pair_epoch": round(train_sec / max(1, len(fnames) * EPOCHS), 3),
+            "sec_per_pair_epoch": round(train_sec / max(1, len(fnames) * max(EPOCHS, 1)), 3),
             "dataset": DATASET_SLUG,
         }
     ]
@@ -563,6 +601,7 @@ def main() -> None:
     out = Path(__file__).resolve().parents[1] / "notebooks/train-apo-gray55"
     write_nb(out / "train-apo-gray55-phase-3.ipynb")
     profile = DATASET_SLUG_BY_RUN[BUILD_TRAIN_RUN]
+    dataset_sources = [profile] + EXTRA_DATASET_SOURCES_BY_RUN.get(BUILD_TRAIN_RUN, [])
     meta = {
         "id": "ucheozoemena/umud-train-apo-gray55-phase-3",
         "title": "UMUD Train Apo Gray55 Phase 3",
@@ -574,7 +613,7 @@ def main() -> None:
         "enable_tpu": False,
         "enable_internet": True,
         "keywords": ["gpu"],
-        "dataset_sources": [profile],
+        "dataset_sources": dataset_sources,
         "kernel_sources": ["ucheozoemena/umud-train-mounted-phase-3"],
         "competition_sources": ["umud-challenge-muscle-architecture-in-ultrasound-data"],
         "model_sources": [],
