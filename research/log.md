@@ -54,7 +54,7 @@ User QC on 60 MT-fail overlays (`tmp/kaggle-output/v8-mt-fail-viz/`) confirms sa
 
 **Active block:** **Block 6c backfill** — val UMUD on prod r34 (`TRAIN_RUN=12`) for apples-to-apples vs r50 val UMUD 2.487. **r50 promoted to production candidate** pending backfill comparison + user confirm.
 
-**Production stack (locked):** fasc full + 200-tier apo **`apo_gray55_line_200.pkl` (5ep)** + **horiz_parallel** + **`MM_PER_PIXEL=0.075`** → score **1.91296**.
+**Production stack (locked):** fasc full + 200-tier apo **`apo_gray55_line_200_r50.pkl` (r50 5ep)** + **horiz_parallel** + **`MM_PER_PIXEL=0.075`** → score **1.87312**.
 
 **Block 4 (524-tier):** rejected — 62 MT NaN (empty masks); QC at `tmp/kaggle-output/block4-mt-fail-viz/figures/`.
 
@@ -255,17 +255,20 @@ _Authoritative roadmap for Phase 4. Update the **block status** and **plan chang
 | **3** | Eval + submission with 200-tier apo + cal | **complete** | `mt_ok` **100%** (309); score **2.063** @ MM=0.09, **2.201** @ 0.098 |
 | **4** | 524-tier apo prep + train | **rejected** | val Dice 0.562 but **62 MT NaN** on test (empty masks); submit ERROR |
 | **5** | Inference ablations (pickers on 200-tier, full 309) | **complete** | horiz_parallel **100%** `mt_ok`; xspan_pair 100% (0 broken vs horiz); top_bottom 87.7% — keep horiz |
-| **6** | Epoch / architecture at 200-tier (same N) | **6a+6b rejected; 6c eval done** | 5ep r34 prod: test **100% `mt_ok`**, 1.913. 8ep/10ep fail test. **6c r50:** val UMUD 2.487, val `mt_ok` 87.8%; test **100% `mt_ok`** — score TBD |
+| **6** | Epoch / architecture at 200-tier (same N) | **6c complete** | r50 @ 5ep wins: val UMUD **2.487** vs r34 **2.814**; test **1.873** vs **1.913**. 8ep/10ep rejected. **Production → r50** |
 
 **Recommended execution order:** 1 → 2 → 3 → (4 if gate passes) → 5 → 6. **Blocks 1–6 complete;** apo scaling ladder **stopped** at 524; epoch sweep **stopped** at 10ep; geometry **locked** at horiz_parallel.
 
 ### Block 6 epoch sweep (200-tier, horiz_parallel, MM=0.075)
 
-| Epochs | val Dice | test `mt_ok` | MT NaN | Fail breakdown (MT) | Leaderboard |
-|--------|----------|--------------|--------|------------------------|-------------|
-| **5** (prod) | **0.384** | **309/309 (100%)** | **0** | — | **1.913** |
-| **8** | 0.591 | 274/309 (88.7%) | 35 | no_contours 8, single_contour 16, no_x_overlap 11 | not submitted |
-| **10** | 0.574 | 248/309 (80.2%) | 61 | no_contours 33, single_contour 15, no_x_overlap 13 | not submitted |
+| Epochs | Arch | val Dice | val UMUD | val `mt_ok` | test `mt_ok` | Leaderboard |
+|--------|------|----------|----------|-------------|--------------|-------------|
+| **5** (prod r34) | r34 | 0.384 | **2.814** | **100%** (41/41) | **100%** | **1.913** |
+| **5** (6c r50) | r50 | 0.463 | **2.487** | 87.8% (36/41) | **100%** | **1.873** |
+| **8** | r34 | 0.591 | — | — | 88.7% | not submitted |
+| **10** | r34 | 0.574 | — | — | 80.2% | not submitted |
+
+**Val UMUD backfill (same split, TRAIN_RUN=12):** r34 **2.814** @ 100% val `mt_ok` vs r50 **2.487** @ 87.8% — r50 lower (better) on val despite fewer scorable rows; test leaderboard confirms (**1.873** vs **1.913**).
 
 **Pattern:** more epochs → higher val Dice → **worse** test geometry (empty/near-empty apo masks on letterbox cohort). Sweet spot is **5ep**, not 8–10.
 
@@ -416,6 +419,7 @@ Artifacts: `tmp/kaggle-output/calibration-sweep/sweep_results.csv`, `sweep_summa
 | 2026-06-17 | **Block 2 train complete.** `TRAIN_RUN=7` v9: 200×5ep, stratified val (manual per-cohort fallback), val Dice **0.3838**, 0.057 s/pair/ep. Model: `apo_gray55_line_200.pkl`. Val Dice below micro 0.518 — test geometry TBD in Block 3. |
 | 2026-06-17 | **Block 2 prep complete.** `PREP_RUN=2` v3 → dataset `umud-aligned-apo-gray55-line-timing-200` (manifest includes `img_h`, `img_w`, `resolution_cohort`). |
 | 2026-06-18 | **Block 3 complete.** 200-tier apo: `mt_ok` 100%, 0% NaN (val Dice 0.384 did **not** predict test regression). Leaderboard: **2.063** (MM=0.09), 2.201 (MM=0.098). |
+| 2026-06-20 | **Val UMUD backfill (r34 prod).** `TRAIN_RUN=12`: val UMUD **2.814**, **100%** val `mt_ok` (41/41) — same split as r50 **2.487** / 87.8%. Test leaderboard still favors r50. |
 | 2026-06-20 | **Block 6c leaderboard score.** r50 5ep @ MM=0.075 → **1.87312** (beats prod **1.91296**). Submit `block6c-r50-200x5ep`. |
 | 2026-06-19 | **Block 6c leaderboard submit.** `block6c-r50-200x5ep` submitted. |
 | 2026-06-19 | **Block 6c test eval.** r50 5ep: **309/309 `mt_ok` (100%)** — passes submit gate. Val UMUD **2.487** had **87.8%** val `mt_ok`. |
