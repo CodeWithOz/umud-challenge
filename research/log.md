@@ -298,6 +298,7 @@ Same data/epochs as Block 6 winners; vary **U-Net encoder** only. Timm models vi
 | 11 (ref) | resnet50 | 0.463 | **2.487** | 87.8% | **100%** | **1.873** | current prod |
 | **13** | resnet18 | 0.554 | **2.503** | 92.7% | — | — | 54s; test eval pending |
 | **14** | convnext_tiny | 0.494 | **1.750** | 65.9% | — | — | 143s; **best val UMUD** — test eval priority |
+| **16** | efficientnet_b0 | 0.423 | **2.752** | 97.6% | — | — | 32s; worse than r50 |
 
 ### Official UMUD metric (`scripts/umud_score.py`)
 
