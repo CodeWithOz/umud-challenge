@@ -2,7 +2,7 @@
 
 ## Current focus
 
-_Last updated: 2026-06-19 — **Block 6c active:** resnet50 @ 200×5ep. **Val UMUD score** is primary model-selection metric (replaces val Dice). Production unchanged: r34 5ep + MM=0.075 (1.913)._
+_Last updated: 2026-06-20 — **Block 6 complete.** Production: **r50 5ep** + MM=0.075 → **1.873**. Val UMUD is primary model-selection metric._
 
 ### Phase 3 — closed
 
@@ -52,7 +52,7 @@ User QC on 60 MT-fail overlays (`tmp/kaggle-output/v8-mt-fail-viz/`) confirms sa
 
 **Score to beat:** **1.87312** (200-tier r50 + `MM_PER_PIXEL=0.075`). Previous prod **1.91296** (r34 5ep).
 
-**Active block:** **Block 6c backfill** — val UMUD on prod r34 (`TRAIN_RUN=12`) for apples-to-apples vs r50 val UMUD 2.487. **r50 promoted to production candidate** pending backfill comparison + user confirm.
+**Active block:** None — **Block 6 complete.** Production: **r50 5ep** (score **1.873**).
 
 **Production stack (locked):** fasc full + 200-tier apo **`apo_gray55_line_200_r50.pkl` (r50 5ep)** + **horiz_parallel** + **`MM_PER_PIXEL=0.075`** → score **1.87312**.
 
