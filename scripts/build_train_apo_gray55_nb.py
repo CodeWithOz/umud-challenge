@@ -379,13 +379,20 @@ def resolve_pkl(preferred: list[Path], filename: str) -> Path:
 
 
 if EVAL_ONLY:
-    apo_path = resolve_pkl(
-        [
-            Path("/kaggle/input/datasets/ucheozoemena/umud-apo-line-model-200") / EXPORT_NAME,
-            Path("/kaggle/input/notebooks/ucheozoemena/umud-train-apo-gray55-phase-3") / EXPORT_NAME,
-        ],
-        EXPORT_NAME,
-    )
+    import kagglehub
+
+    preferred = [
+        Path("/kaggle/input/datasets/ucheozoemena/umud-apo-line-model-200") / EXPORT_NAME,
+        Path("/kaggle/input/notebooks/ucheozoemena/umud-train-apo-gray55-phase-3") / EXPORT_NAME,
+    ]
+    try:
+        apo_path = resolve_pkl(preferred, EXPORT_NAME)
+    except FileNotFoundError:
+        model_root = Path(kagglehub.dataset_download("ucheozoemena/umud-apo-line-model-200"))
+        hits = sorted(model_root.rglob(EXPORT_NAME))
+        if not hits:
+            raise FileNotFoundError(f"Could not find {EXPORT_NAME} via mount or kagglehub")
+        apo_path = hits[0]
     learn = load_learner(apo_path)
     train_sec = 0.0
     val_dice = float("nan")

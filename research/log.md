@@ -22,7 +22,8 @@ _Last updated: 2026-06-19 — **Block 6c active:** resnet50 @ 200×5ep. **Val UM
 | Submit | Model | `MM_PER_PIXEL` | Public score | Role |
 |--------|-------|----------------|--------------|------|
 | v7 | micro gray55+line 50×5ep | 1.0 | 48.18203 | Uncalibrated baseline (unit error) |
-| **v16** | 200-tier | **0.075** | **1.91296** | **Production MM** |
+| **v17** | 200-tier **r50** | **0.075** | **1.87312** | **Block 6c — new best** |
+| **v16** | 200-tier r34 | **0.075** | **1.91296** | Previous production |
 | v15 | 200-tier | 0.085 | 1.99285 | Superseded |
 | **v13** | 200-tier | 0.09 | 2.06330 | Previous production |
 | v14 | 200-tier | 0.098 | 2.20146 | Block 3 |
@@ -49,9 +50,9 @@ User QC on 60 MT-fail overlays (`tmp/kaggle-output/v8-mt-fail-viz/`) confirms sa
 
 ### Phase 4 active
 
-**Score to beat:** **1.91296** (200-tier + `MM_PER_PIXEL=0.075`).
+**Score to beat:** **1.87312** (200-tier r50 + `MM_PER_PIXEL=0.075`). Previous prod **1.91296** (r34 5ep).
 
-**Active block:** None — **Block 6c** test gate **passed** (309/309 `mt_ok`). Optional: leaderboard submit `apo_gray55_line_200_r50.pkl` vs **1.913**. Production unchanged until score confirms.
+**Active block:** **Block 6c backfill** — val UMUD on prod r34 (`TRAIN_RUN=12`) for apples-to-apples vs r50 val UMUD 2.487. **r50 promoted to production candidate** pending backfill comparison + user confirm.
 
 **Production stack (locked):** fasc full + 200-tier apo **`apo_gray55_line_200.pkl` (5ep)** + **horiz_parallel** + **`MM_PER_PIXEL=0.075`** → score **1.91296**.
 
@@ -415,7 +416,8 @@ Artifacts: `tmp/kaggle-output/calibration-sweep/sweep_results.csv`, `sweep_summa
 | 2026-06-17 | **Block 2 train complete.** `TRAIN_RUN=7` v9: 200×5ep, stratified val (manual per-cohort fallback), val Dice **0.3838**, 0.057 s/pair/ep. Model: `apo_gray55_line_200.pkl`. Val Dice below micro 0.518 — test geometry TBD in Block 3. |
 | 2026-06-17 | **Block 2 prep complete.** `PREP_RUN=2` v3 → dataset `umud-aligned-apo-gray55-line-timing-200` (manifest includes `img_h`, `img_w`, `resolution_cohort`). |
 | 2026-06-18 | **Block 3 complete.** 200-tier apo: `mt_ok` 100%, 0% NaN (val Dice 0.384 did **not** predict test regression). Leaderboard: **2.063** (MM=0.09), 2.201 (MM=0.098). |
-| 2026-06-19 | **Block 6c leaderboard submit.** `block6c-r50-200x5ep` — score pending vs **1.913**. |
+| 2026-06-20 | **Block 6c leaderboard score.** r50 5ep @ MM=0.075 → **1.87312** (beats prod **1.91296**). Submit `block6c-r50-200x5ep`. |
+| 2026-06-19 | **Block 6c leaderboard submit.** `block6c-r50-200x5ep` submitted. |
 | 2026-06-19 | **Block 6c test eval.** r50 5ep: **309/309 `mt_ok` (100%)** — passes submit gate. Val UMUD **2.487** had **87.8%** val `mt_ok`. |
 | 2026-06-19 | **Block 6c train complete.** `TRAIN_RUN=11` v14: 200×5ep **resnet50**, val Dice **0.4625**, val UMUD **2.487** (36/41 scorable, **87.8%** val `mt_ok`); 412s; `apo_gray55_line_200_r50.pkl`. |
 | 2026-06-19 | **Val UMUD score wired into train notebook.** Post-train eval: production fasc + trained apo vs GT masks on val split; `val_umud_score` + `val_mt_ok_pct` in `timing_report.csv`. Val Dice demoted to reference. |
