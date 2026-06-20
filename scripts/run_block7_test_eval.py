@@ -34,15 +34,8 @@ SUBMIT_POLL_MAX = 120
 
 
 def kaggle_env() -> dict[str, str]:
-    env = os.environ.copy()
-    proc = subprocess.run(
-        [str(KAGGLE), "auth", "print-access-token"],
-        capture_output=True,
-        text=True,
-        check=True,
-    )
-    env["KAGGLE_API_TOKEN"] = proc.stdout.strip().splitlines()[-1]
-    return env
+    """Use existing auth; avoid print-access-token (rate-limited)."""
+    return os.environ.copy()
 
 
 def run(cmd: list[str], env: dict[str, str] | None = None) -> None:
@@ -73,6 +66,13 @@ def patch_submission_model(pkl: str, label: str) -> None:
         flags=re.M,
     )
     text = re.sub(
+        r'^BUILD_APO_KERNEL_SLUG = ".*?"',
+        'BUILD_APO_KERNEL_SLUG = "umud-train-apo-gray55-phase-3"',
+        text,
+        count=1,
+        flags=re.M,
+    )
+    text = re.sub(
         r'^BUILD_SUBMISSION_LABEL = ".*?"',
         f'BUILD_SUBMISSION_LABEL = "{label}"',
         text,
@@ -80,6 +80,33 @@ def patch_submission_model(pkl: str, label: str) -> None:
         flags=re.M,
     )
     SUBMIT_BUILD.write_text(text)
+
+
+def restore_submission_prod() -> None:
+    text = SUBMIT_BUILD.read_text()
+    text = re.sub(
+        r'^BUILD_APO_MODEL_FILE = ".*?"',
+        'BUILD_APO_MODEL_FILE = "apo_gray55_line_200_r50.pkl"',
+        text,
+        count=1,
+        flags=re.M,
+    )
+    text = re.sub(
+        r'^BUILD_APO_KERNEL_SLUG = ".*?"',
+        'BUILD_APO_KERNEL_SLUG = "umud-train-apo-gray55-phase-3"',
+        text,
+        count=1,
+        flags=re.M,
+    )
+    text = re.sub(
+        r'^BUILD_SUBMISSION_LABEL = ".*?"',
+        'BUILD_SUBMISSION_LABEL = "Phase 4 production — 200-tier apo r50 5ep + MM=0.075"',
+        text,
+        count=1,
+        flags=re.M,
+    )
+    SUBMIT_BUILD.write_text(text)
+    run([sys.executable, str(SUBMIT_BUILD)])
 
 
 def poll_kernel(slug: str, env: dict[str, str], max_loops: int) -> str:
@@ -175,6 +202,11 @@ def main() -> None:
     for r in results:
         if r.get("status") == "ok":
             print(f"  {r['arch']}: {r['mt_ok_pct']}% mt_ok ({r['mt_ok']}/{r['n']})")
+
+    restore_submission_prod()
+    run([str(KAGGLE), "kernels", "push", "-p", str(SUBMIT_DIR), "--accelerator", "NvidiaTeslaT4"], env=env)
+    patch_train_run(11)
+    run([sys.executable, str(TRAIN_BUILD)])
 
 
 if __name__ == "__main__":

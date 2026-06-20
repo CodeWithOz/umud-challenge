@@ -2,7 +2,7 @@
 
 ## Current focus
 
-_Last updated: 2026-06-20 — **Block 8 queued:** 6 new encoders, one notebook each. Block 7b test eval pending. Prod: r50 **1.873**._
+_Last updated: 2026-06-20 — **Block 7b complete.** Four encoders @ 100% test mt_ok → LB submitted (scores pending). Prod: r50 **1.873** until beaten._
 
 ### Phase 3 — closed
 
@@ -52,11 +52,9 @@ User QC on 60 MT-fail overlays (`tmp/kaggle-output/v8-mt-fail-viz/`) confirms sa
 
 **Score to beat:** **1.87312** (200-tier r50 + `MM_PER_PIXEL=0.075`). Previous prod **1.91296** (r34 5ep).
 
-**Active block:** **Block 8** — new encoder families @ 200×5ep, **separate Kaggle notebook per encoder**. Same val metrics + test `mt_ok` gate + LB submit if 100% test mt_ok.
+**Active block:** **Block 8** — queued (6 encoders, separate notebooks). **Block 7b complete.**
 
-**Also pending:** Block 7b — test-set eval for r18, enb0, enb1, mnv3, regnet (convnext_tiny done: **70.9%** rejected).
-
-**Production stack (locked):** fasc full + **`apo_gray55_line_200_r50.pkl` (r50 5ep)** + horiz_parallel + **`MM_PER_PIXEL=0.075`** → **1.87312**.
+**Production stack (locked):** fasc full + **`apo_gray55_line_200_r50.pkl` (r50 5ep)** + horiz_parallel + **`MM_PER_PIXEL=0.075`** → **1.87312** (until a Block 7b submit scores lower).
 
 **Block 4 (524-tier):** rejected — 62 MT NaN (empty masks); QC at `tmp/kaggle-output/block4-mt-fail-viz/figures/`.
 
@@ -299,14 +297,14 @@ Same data/epochs as Block 6 winners; vary **U-Net encoder** only. Timm models vi
 | TRAIN_RUN | Encoder | val Dice | val UMUD | val `mt_ok` | test `mt_ok` | LB | Notes |
 |-----------|---------|----------|----------|-------------|--------------|-----|-------|
 | 11 (ref) | resnet50 | 0.463 | **2.487** | 87.8% | **100%** | **1.873** | current prod |
-| **13** | resnet18 | 0.554 | **2.503** | 92.7% | — | — | 54s; test eval pending |
-| **14** | convnext_tiny | 0.494 | **1.750** | 65.9% | **70.9%** | — | **rejected** — val UMUD best but 90 MT NaN on test |
-| **16** | efficientnet_b0 | 0.423 | **2.752** | 97.6% | — | — | 32s; worse than r50 |
-| **17** | efficientnet_b1 | 0.414 | **2.655** | 97.6% | — | — | 34s; worse than r50 |
-| **18** | mobilenetv3_small_100 | 0.386 | **2.733** | **100%** | — | — | 30s; perfect val mt_ok but worse UMUD |
-| **19** | regnetx_004 | 0.426 | **2.750** | **100%** | — | — | 38s; worse than r50 |
+| **13** | resnet18 | 0.554 | **2.503** | 92.7% | **100%** | submitted | `block7-resnet18-200x5ep` |
+| **14** | convnext_tiny | 0.494 | **1.750** | 65.9% | **70.9%** | — | rejected — best val UMUD, geometry fail |
+| **16** | efficientnet_b0 | 0.423 | **2.752** | 97.6% | **74.4%** | — | rejected — 79 MT NaN |
+| **17** | efficientnet_b1 | 0.414 | **2.655** | 97.6% | **100%** | submitted | `block7-efficientnet_b1-200x5ep` |
+| **18** | mobilenetv3_small_100 | 0.386 | **2.733** | **100%** | **100%** | submitted | `block7-mobilenetv3_small_100-200x5ep` |
+| **19** | regnetx_004 | 0.426 | **2.750** | **100%** | **100%** | submitted | `block7-regnetx_004-200x5ep` |
 
-**Sweep verdict:** No Block 7 encoder beats r50 on the full pipeline. **convnext_tiny** best val UMUD (**1.75**) but **70.9%** test `mt_ok`. **Production stays r50 @ 1.873.**
+**Block 7b verdict:** **4/6** non-r50 encoders pass test gate (100% `mt_ok`); **convnext_tiny** and **efficientnet_b0** rejected. Leaderboard scores pending for r18, enb1, mnv3, regnet — val UMUD was worse than r50 for all, but user requested submits to check end-to-end score. **Production stays r50 @ 1.873** until a submit beats it.
 
 ### Block 8 encoder sweep (200-tier × 5ep — one notebook per encoder)
 
@@ -478,6 +476,7 @@ Artifacts: `tmp/kaggle-output/calibration-sweep/sweep_results.csv`, `sweep_summa
 | 2026-06-17 | **Block 2 train complete.** `TRAIN_RUN=7` v9: 200×5ep, stratified val (manual per-cohort fallback), val Dice **0.3838**, 0.057 s/pair/ep. Model: `apo_gray55_line_200.pkl`. Val Dice below micro 0.518 — test geometry TBD in Block 3. |
 | 2026-06-17 | **Block 2 prep complete.** `PREP_RUN=2` v3 → dataset `umud-aligned-apo-gray55-line-timing-200` (manifest includes `img_h`, `img_w`, `resolution_cohort`). |
 | 2026-06-18 | **Block 3 complete.** 200-tier apo: `mt_ok` 100%, 0% NaN (val Dice 0.384 did **not** predict test regression). Leaderboard: **2.063** (MM=0.09), 2.201 (MM=0.098). |
+| 2026-06-20 | **Block 7b complete.** Test mt_ok: r18/mnv3/regnet/enb1 **100%** (LB submitted); enb0 **74.4%** rejected; cxt **70.9%** (prior). Summary: `data/kaggle-outputs/block7-test-eval/test_eval_summary.json`. |
 | 2026-06-20 | **Block 8 queued.** Six encoders (LeViT, ResNetV2, ConvNeXtV2, EfficientNetV2, MaxViT, MaxViT V2) — separate notebooks under `notebooks/train-encoder-*`; runner `scripts/run_block8_encoder.py`. timm splitter hardened for LeViT/ResNetV2. |
 | 2026-06-20 | **Block 7 convnext_tiny test eval rejected.** Submission debug: **219/309 mt_ok (70.9%)** — 90 MT NaN (no_contours 44, single_contour 37, no_x_overlap 9). Val UMUD 1.75 did not transfer. **Keep r50 prod.** |
 | 2026-06-20 | **Block 7 sweep complete (13–19 except cxs).** regnetx_004: val UMUD **2.750**, 100% val `mt_ok`. mobilenetv3: **2.733**, 100%. |
