@@ -2,7 +2,7 @@
 
 ## Current focus
 
-_Last updated: 2026-06-20 — **Block 7:** convnext_tiny val UMUD **1.75** (best yet); running EfficientNet. Production: **r50** → **1.873**._
+_Last updated: 2026-06-20 — **Block 7:** convnext_tiny val UMUD **1.75** (best); regnetx_004 (19) running. Production: **r50** → **1.873**._
 
 ### Phase 3 — closed
 
@@ -300,6 +300,7 @@ Same data/epochs as Block 6 winners; vary **U-Net encoder** only. Timm models vi
 | **14** | convnext_tiny | 0.494 | **1.750** | 65.9% | — | — | 143s; **best val UMUD** — test eval priority |
 | **16** | efficientnet_b0 | 0.423 | **2.752** | 97.6% | — | — | 32s; worse than r50 |
 | **17** | efficientnet_b1 | 0.414 | **2.655** | 97.6% | — | — | 34s; worse than r50 |
+| **18** | mobilenetv3_small_100 | 0.386 | **2.733** | **100%** | — | — | 30s; perfect val mt_ok but worse UMUD |
 
 ### Official UMUD metric (`scripts/umud_score.py`)
 
