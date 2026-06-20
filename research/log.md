@@ -2,7 +2,7 @@
 
 ## Current focus
 
-_Last updated: 2026-06-20 — **Block 7 active:** encoder sweep @ 200×5ep. Production: **r50** → **1.873**. Val UMUD metrics unchanged._
+_Last updated: 2026-06-20 — **Block 7 active:** r18 done (val UMUD 2.503); next **convnext_tiny** (14). Production: **r50** → **1.873**. Val UMUD metrics unchanged._
 
 ### Phase 3 — closed
 
@@ -293,6 +293,11 @@ Same data/epochs as Block 6 winners; vary **U-Net encoder** only. Timm models vi
 
 **Not in v1 sweep:** ViT/Swin (heavier, need more data); HRNet (strong but complex); SE-ResNeXt (add if ResNet family wins).
 
+| TRAIN_RUN | Encoder | val Dice | val UMUD | val `mt_ok` | test `mt_ok` | LB | Notes |
+|-----------|---------|----------|----------|-------------|--------------|-----|-------|
+| 11 (ref) | resnet50 | 0.463 | **2.487** | 87.8% | **100%** | **1.873** | current prod |
+| **13** | resnet18 | 0.554 | **2.503** | 92.7% | — | — | 54s; higher Dice, similar val UMUD vs r50; test eval pending |
+
 ### Official UMUD metric (`scripts/umud_score.py`)
 
 Extracted from [paulritsche/umud-score](https://www.kaggle.com/code/paulritsche/umud-score). **Lower is better.** Requires **no NaNs** in submission.
@@ -440,6 +445,7 @@ Artifacts: `tmp/kaggle-output/calibration-sweep/sweep_results.csv`, `sweep_summa
 | 2026-06-17 | **Block 2 train complete.** `TRAIN_RUN=7` v9: 200×5ep, stratified val (manual per-cohort fallback), val Dice **0.3838**, 0.057 s/pair/ep. Model: `apo_gray55_line_200.pkl`. Val Dice below micro 0.518 — test geometry TBD in Block 3. |
 | 2026-06-17 | **Block 2 prep complete.** `PREP_RUN=2` v3 → dataset `umud-aligned-apo-gray55-line-timing-200` (manifest includes `img_h`, `img_w`, `resolution_cohort`). |
 | 2026-06-18 | **Block 3 complete.** 200-tier apo: `mt_ok` 100%, 0% NaN (val Dice 0.384 did **not** predict test regression). Leaderboard: **2.063** (MM=0.09), 2.201 (MM=0.098). |
+| 2026-06-20 | **Block 7 r18 complete.** `TRAIN_RUN=13`: val Dice **0.554**, val UMUD **2.503**, **92.7%** val `mt_ok` (38/41); 54s; `apo_gray55_line_200_r18.pkl`. Test eval not run yet. |
 | 2026-06-20 | **Block 7 started.** Encoder sweep TRAIN_RUN 13–19 @ 200×5ep; timm U-Net via `scripts/timm_unet.py`. First run: **resnet18** (13). |
 | 2026-06-20 | **Val UMUD backfill (r34 prod).** `TRAIN_RUN=12`: val UMUD **2.814**, **100%** val `mt_ok` (41/41) — same split as r50 **2.487** / 87.8%. Test leaderboard still favors r50. |
 | 2026-06-20 | **Block 6c leaderboard score.** r50 5ep @ MM=0.075 → **1.87312** (beats prod **1.91296**). Submit `block6c-r50-200x5ep`. |
