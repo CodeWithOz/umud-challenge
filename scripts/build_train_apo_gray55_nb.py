@@ -2,7 +2,9 @@
 import json
 from pathlib import Path
 
-BUILD_TRAIN_RUN = 12
+BUILD_TRAIN_RUN = 13
+
+FASTAI_RESNETS = frozenset({"resnet18", "resnet34", "resnet50"})
 
 DATASET_SLUG_BY_RUN = {
     1: "ucheozoemena/umud-aligned-apo-gray55-timing-50",
@@ -17,6 +19,13 @@ DATASET_SLUG_BY_RUN = {
     10: "ucheozoemena/umud-aligned-apo-gray55-line-timing-200",
     11: "ucheozoemena/umud-aligned-apo-gray55-line-timing-200",
     12: "ucheozoemena/umud-aligned-apo-gray55-line-timing-200",
+    13: "ucheozoemena/umud-aligned-apo-gray55-line-timing-200",
+    14: "ucheozoemena/umud-aligned-apo-gray55-line-timing-200",
+    15: "ucheozoemena/umud-aligned-apo-gray55-line-timing-200",
+    16: "ucheozoemena/umud-aligned-apo-gray55-line-timing-200",
+    17: "ucheozoemena/umud-aligned-apo-gray55-line-timing-200",
+    18: "ucheozoemena/umud-aligned-apo-gray55-line-timing-200",
+    19: "ucheozoemena/umud-aligned-apo-gray55-line-timing-200",
 }
 
 EXTRA_DATASET_SOURCES_BY_RUN: dict[int, list[str]] = {
@@ -61,7 +70,7 @@ cells: list[dict] = [
     code(
         """# --- Parameters you can change ---
 RANDOM_SEED = 42
-TRAIN_RUN = 12  # 12=eval-only val UMUD backfill prod r34
+TRAIN_RUN = 13  # Block 7 encoder sweep — see TRAIN_PROFILES
 
 VALID_PCT = 0.20
 STRATIFY_VAL_BY_RESOLUTION = True  # uses manifest resolution_cohort when True
@@ -151,6 +160,55 @@ TRAIN_PROFILES = {
         "label": "GAT12 val UMUD backfill — prod r34 200×5ep (no retrain)",
         "export_name": "apo_gray55_line_200.pkl",
     },
+    13: {
+        "dataset_slug": "ucheozoemena/umud-aligned-apo-gray55-line-timing-200",
+        "epochs": 5,
+        "arch": "resnet18",
+        "label": "GAT13 Block7 resnet18 200×5ep",
+        "export_name": "apo_gray55_line_200_r18.pkl",
+    },
+    14: {
+        "dataset_slug": "ucheozoemena/umud-aligned-apo-gray55-line-timing-200",
+        "epochs": 5,
+        "arch": "convnext_tiny",
+        "label": "GAT14 Block7 convnext_tiny 200×5ep",
+        "export_name": "apo_gray55_line_200_cxt.pkl",
+    },
+    15: {
+        "dataset_slug": "ucheozoemena/umud-aligned-apo-gray55-line-timing-200",
+        "epochs": 5,
+        "arch": "convnext_small",
+        "label": "GAT15 Block7 convnext_small 200×5ep",
+        "export_name": "apo_gray55_line_200_cxs.pkl",
+    },
+    16: {
+        "dataset_slug": "ucheozoemena/umud-aligned-apo-gray55-line-timing-200",
+        "epochs": 5,
+        "arch": "efficientnet_b0",
+        "label": "GAT16 Block7 efficientnet_b0 200×5ep",
+        "export_name": "apo_gray55_line_200_enb0.pkl",
+    },
+    17: {
+        "dataset_slug": "ucheozoemena/umud-aligned-apo-gray55-line-timing-200",
+        "epochs": 5,
+        "arch": "efficientnet_b1",
+        "label": "GAT17 Block7 efficientnet_b1 200×5ep",
+        "export_name": "apo_gray55_line_200_enb1.pkl",
+    },
+    18: {
+        "dataset_slug": "ucheozoemena/umud-aligned-apo-gray55-line-timing-200",
+        "epochs": 5,
+        "arch": "mobilenetv3_small_100",
+        "label": "GAT18 Block7 mobilenetv3_small 200×5ep",
+        "export_name": "apo_gray55_line_200_mnv3.pkl",
+    },
+    19: {
+        "dataset_slug": "ucheozoemena/umud-aligned-apo-gray55-line-timing-200",
+        "epochs": 5,
+        "arch": "regnetx_004",
+        "label": "GAT19 Block7 regnetx_004 200×5ep",
+        "export_name": "apo_gray55_line_200_rgx004.pkl",
+    },
 }
 
 profile = TRAIN_PROFILES[TRAIN_RUN]
@@ -158,8 +216,9 @@ DATASET_SLUG = profile["dataset_slug"]
 EPOCHS = profile["epochs"]
 ARCH = profile.get("arch", "resnet34")
 EVAL_ONLY = profile.get("eval_only", False)
+USE_TIMM = ARCH not in ("resnet18", "resnet34", "resnet50")
 EXPORT_NAME = profile["export_name"]
-print(f"TRAIN_RUN={TRAIN_RUN} | {profile['label']} | arch={ARCH} | eval_only={EVAL_ONLY} | dataset={DATASET_SLUG} | epochs={EPOCHS}")
+print(f"TRAIN_RUN={TRAIN_RUN} | {profile['label']} | arch={ARCH} | timm={USE_TIMM} | eval_only={EVAL_ONLY} | dataset={DATASET_SLUG} | epochs={EPOCHS}")
 """
     ),
     code(
@@ -183,6 +242,7 @@ from fastai.vision.all import (
     TransformBlock,
     aug_transforms,
     get_image_files,
+    resnet18,
     resnet34,
     resnet50,
     unet_learner,
@@ -217,9 +277,11 @@ print(f"masks: {MSK_DIR}")
     code(
         """SEG_CODES = ["background", "structure"]
 
-
-def encoder():
-    return resnet50 if ARCH == "resnet50" else resnet34
+FASTAI_ENCODERS = {
+    "resnet18": resnet18,
+    "resnet34": resnet34,
+    "resnet50": resnet50,
+}
 
 
 def open_image_pil(fn):
@@ -362,6 +424,8 @@ print(f"Dataloader ready: {time.perf_counter() - t0:.1f}s")
 dls.show_batch(max_n=4)
 """
     ),
+    md("## Timm U-Net helper (ConvNeXt, EfficientNet, …)"),
+    code(embed_script("timm_unet.py")),
     code(
         """t_train = time.perf_counter()
 import torch
@@ -398,6 +462,11 @@ if EVAL_ONLY:
     val_dice = float("nan")
     print(f"Eval-only: loaded {apo_path}")
 else:
+    if USE_TIMM:
+        import subprocess
+        import sys
+
+        subprocess.run([sys.executable, "-m", "pip", "install", "-q", "timm"], check=True)
     if USE_CLASS_WEIGHTS:
         loss_weights = torch.tensor([1.0, APO_FG_WEIGHT])
         loss_func = CrossEntropyLossFlat(axis=1, weight=loss_weights)
@@ -405,13 +474,22 @@ else:
     else:
         loss_func = CrossEntropyLossFlat(axis=1)
 
-    learn = unet_learner(
-        dls,
-        encoder(),
-        metrics=[Dice()],
-        loss_func=loss_func,
-        self_attention=True,
-    )
+    if USE_TIMM:
+        learn = timm_unet_learner(
+            dls,
+            ARCH,
+            metrics=[Dice()],
+            loss_func=loss_func,
+            bottleneck="conv",
+        )
+    else:
+        learn = unet_learner(
+            dls,
+            FASTAI_ENCODERS[ARCH],
+            metrics=[Dice()],
+            loss_func=loss_func,
+            self_attention=True,
+        )
     learn.fine_tune(EPOCHS)
     t1 = time.perf_counter()
     train_sec = t1 - t_train

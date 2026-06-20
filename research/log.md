@@ -2,7 +2,7 @@
 
 ## Current focus
 
-_Last updated: 2026-06-20 — **Block 6 complete.** Production: **r50 5ep** + MM=0.075 → **1.873**. Val UMUD is primary model-selection metric._
+_Last updated: 2026-06-20 — **Block 7 active:** encoder sweep @ 200×5ep. Production: **r50** → **1.873**. Val UMUD metrics unchanged._
 
 ### Phase 3 — closed
 
@@ -52,9 +52,9 @@ User QC on 60 MT-fail overlays (`tmp/kaggle-output/v8-mt-fail-viz/`) confirms sa
 
 **Score to beat:** **1.87312** (200-tier r50 + `MM_PER_PIXEL=0.075`). Previous prod **1.91296** (r34 5ep).
 
-**Active block:** None — **Block 6 complete.** Production: **r50 5ep** (score **1.873**).
+**Active block:** **Block 7** — encoder sweep @ 200×5ep (`TRAIN_RUN` 13–19). Gate: val UMUD + test `mt_ok` 100% + leaderboard vs **1.873**.
 
-**Production stack (locked):** fasc full + 200-tier apo **`apo_gray55_line_200_r50.pkl` (r50 5ep)** + **horiz_parallel** + **`MM_PER_PIXEL=0.075`** → score **1.87312**.
+**Production stack (locked):** fasc full + **`apo_gray55_line_200_r50.pkl` (r50 5ep)** + horiz_parallel + **`MM_PER_PIXEL=0.075`** → **1.87312**.
 
 **Block 4 (524-tier):** rejected — 62 MT NaN (empty masks); QC at `tmp/kaggle-output/block4-mt-fail-viz/figures/`.
 
@@ -255,7 +255,8 @@ _Authoritative roadmap for Phase 4. Update the **block status** and **plan chang
 | **3** | Eval + submission with 200-tier apo + cal | **complete** | `mt_ok` **100%** (309); score **2.063** @ MM=0.09, **2.201** @ 0.098 |
 | **4** | 524-tier apo prep + train | **rejected** | val Dice 0.562 but **62 MT NaN** on test (empty masks); submit ERROR |
 | **5** | Inference ablations (pickers on 200-tier, full 309) | **complete** | horiz_parallel **100%** `mt_ok`; xspan_pair 100% (0 broken vs horiz); top_bottom 87.7% — keep horiz |
-| **6** | Epoch / architecture at 200-tier (same N) | **6c complete** | r50 @ 5ep wins: val UMUD **2.487** vs r34 **2.814**; test **1.873** vs **1.913**. 8ep/10ep rejected. **Production → r50** |
+| **6** | Epoch / architecture at 200-tier (same N) | **complete** | r50 @ 5ep → **1.873**; 8ep/10ep rejected |
+| **7** | Encoder sweep @ 200×5ep | **active** | TRAIN_RUN 13–19: r18, ConvNeXt, EfficientNet, MobileNetV3, RegNet |
 
 **Recommended execution order:** 1 → 2 → 3 → (4 if gate passes) → 5 → 6. **Blocks 1–6 complete;** apo scaling ladder **stopped** at 524; epoch sweep **stopped** at 10ep; geometry **locked** at horiz_parallel.
 
@@ -271,6 +272,26 @@ _Authoritative roadmap for Phase 4. Update the **block status** and **plan chang
 **Val UMUD backfill (same split, TRAIN_RUN=12):** r34 **2.814** @ 100% val `mt_ok` vs r50 **2.487** @ 87.8% — r50 lower (better) on val despite fewer scorable rows; test leaderboard confirms (**1.873** vs **1.913**).
 
 **Pattern:** more epochs → higher val Dice → **worse** test geometry (empty/near-empty apo masks on letterbox cohort). Sweet spot is **5ep**, not 8–10.
+
+### Block 7 encoder sweep (200-tier × 5ep, horiz_parallel, MM=0.075)
+
+Same data/epochs as Block 6 winners; vary **U-Net encoder** only. Timm models via `scripts/timm_unet.py` (walkwithfastai pattern). Val metrics unchanged: **`val_umud_score`**, **`val_umud_score_strict`**, **`val_mt_ok_pct`**.
+
+| TRAIN_RUN | Encoder (timm name) | Params ~ | Rationale | Export |
+|-----------|---------------------|----------|-----------|--------|
+| **13** | **resnet18** | 11M | Lighter ResNet baseline (user request) | `apo_gray55_line_200_r18.pkl` |
+| 14 | **convnext_tiny** | 28M | Modern CNN; strong small model | `apo_gray55_line_200_cxt.pkl` |
+| 15 | convnext_small | 50M | Next-size ConvNeXt if tiny promising | `apo_gray55_line_200_cxs.pkl` |
+| 16 | **efficientnet_b0** | 5M | Efficient compound-scaled (user request) | `apo_gray55_line_200_enb0.pkl` |
+| 17 | efficientnet_b1 | 8M | Step up EfficientNet | `apo_gray55_line_200_enb1.pkl` |
+| 18 | mobilenetv3_small_100 | 2.5M | Mobile — fast iteration / edge case | `apo_gray55_line_200_mnv3.pkl` |
+| 19 | regnetx_004 | 5M | Meta RegNet — efficient width/depth design | `apo_gray55_line_200_rgx004.pkl` |
+
+**Reference (Block 6):** resnet34 → 1.913 LB; **resnet50 → 1.873 LB** (current prod).
+
+**Why these families:** Medical/ultrasound segmentation papers often use ResNet, EfficientNet, or MobileNet encoders; ConvNeXt is a strong modern replacement for ResNet at similar compute; RegNet/MobileNetV3 add efficient points on the speed–accuracy curve. All use ImageNet pretrain (`enable_internet: true`).
+
+**Not in v1 sweep:** ViT/Swin (heavier, need more data); HRNet (strong but complex); SE-ResNeXt (add if ResNet family wins).
 
 ### Official UMUD metric (`scripts/umud_score.py`)
 
@@ -419,6 +440,7 @@ Artifacts: `tmp/kaggle-output/calibration-sweep/sweep_results.csv`, `sweep_summa
 | 2026-06-17 | **Block 2 train complete.** `TRAIN_RUN=7` v9: 200×5ep, stratified val (manual per-cohort fallback), val Dice **0.3838**, 0.057 s/pair/ep. Model: `apo_gray55_line_200.pkl`. Val Dice below micro 0.518 — test geometry TBD in Block 3. |
 | 2026-06-17 | **Block 2 prep complete.** `PREP_RUN=2` v3 → dataset `umud-aligned-apo-gray55-line-timing-200` (manifest includes `img_h`, `img_w`, `resolution_cohort`). |
 | 2026-06-18 | **Block 3 complete.** 200-tier apo: `mt_ok` 100%, 0% NaN (val Dice 0.384 did **not** predict test regression). Leaderboard: **2.063** (MM=0.09), 2.201 (MM=0.098). |
+| 2026-06-20 | **Block 7 started.** Encoder sweep TRAIN_RUN 13–19 @ 200×5ep; timm U-Net via `scripts/timm_unet.py`. First run: **resnet18** (13). |
 | 2026-06-20 | **Val UMUD backfill (r34 prod).** `TRAIN_RUN=12`: val UMUD **2.814**, **100%** val `mt_ok` (41/41) — same split as r50 **2.487** / 87.8%. Test leaderboard still favors r50. |
 | 2026-06-20 | **Block 6c leaderboard score.** r50 5ep @ MM=0.075 → **1.87312** (beats prod **1.91296**). Submit `block6c-r50-200x5ep`. |
 | 2026-06-19 | **Block 6c leaderboard submit.** `block6c-r50-200x5ep` submitted. |

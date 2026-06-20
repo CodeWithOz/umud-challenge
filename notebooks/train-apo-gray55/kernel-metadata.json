@@ -12,8 +12,7 @@
     "gpu"
   ],
   "dataset_sources": [
-    "ucheozoemena/umud-aligned-apo-gray55-line-timing-200",
-    "ucheozoemena/umud-apo-line-model-200"
+    "ucheozoemena/umud-aligned-apo-gray55-line-timing-200"
   ],
   "kernel_sources": [
     "ucheozoemena/umud-train-mounted-phase-3"
