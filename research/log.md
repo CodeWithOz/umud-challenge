@@ -2,7 +2,7 @@
 
 ## Current focus
 
-_Last updated: 2026-06-20 — **Block 7:** convnext_tiny val UMUD **1.75** (best); regnetx_004 (19) running. Production: **r50** → **1.873**._
+_Last updated: 2026-06-20 — **Block 7 sweep done** (13–19 except cxs). **convnext_tiny** best val UMUD **1.75** → test eval running. Prod: r50 **1.873**._
 
 ### Phase 3 — closed
 
@@ -301,6 +301,9 @@ Same data/epochs as Block 6 winners; vary **U-Net encoder** only. Timm models vi
 | **16** | efficientnet_b0 | 0.423 | **2.752** | 97.6% | — | — | 32s; worse than r50 |
 | **17** | efficientnet_b1 | 0.414 | **2.655** | 97.6% | — | — | 34s; worse than r50 |
 | **18** | mobilenetv3_small_100 | 0.386 | **2.733** | **100%** | — | — | 30s; perfect val mt_ok but worse UMUD |
+| **19** | regnetx_004 | 0.426 | **2.750** | **100%** | — | — | 38s; worse than r50 |
+
+**Sweep verdict (val):** **convnext_tiny** is the only encoder beating r50 on val UMUD (**1.75 vs 2.49**); test eval + leaderboard submit next. EfficientNet/RegNet/MobileNet all worse. convnext_small (15) deferred until cxt test gate passes.
 
 ### Official UMUD metric (`scripts/umud_score.py`)
 
@@ -449,6 +452,7 @@ Artifacts: `tmp/kaggle-output/calibration-sweep/sweep_results.csv`, `sweep_summa
 | 2026-06-17 | **Block 2 train complete.** `TRAIN_RUN=7` v9: 200×5ep, stratified val (manual per-cohort fallback), val Dice **0.3838**, 0.057 s/pair/ep. Model: `apo_gray55_line_200.pkl`. Val Dice below micro 0.518 — test geometry TBD in Block 3. |
 | 2026-06-17 | **Block 2 prep complete.** `PREP_RUN=2` v3 → dataset `umud-aligned-apo-gray55-line-timing-200` (manifest includes `img_h`, `img_w`, `resolution_cohort`). |
 | 2026-06-18 | **Block 3 complete.** 200-tier apo: `mt_ok` 100%, 0% NaN (val Dice 0.384 did **not** predict test regression). Leaderboard: **2.063** (MM=0.09), 2.201 (MM=0.098). |
+| 2026-06-20 | **Block 7 sweep complete (13–19 except cxs).** regnetx_004: val UMUD **2.750**, 100% val `mt_ok`. mobilenetv3: **2.733**, 100%. Only **convnext_tiny** beats r50 on val UMUD → test eval. |
 | 2026-06-20 | **Block 7 convnext_tiny complete.** `TRAIN_RUN=14`: val Dice **0.494**, val UMUD **1.750** (best yet), **65.9%** val `mt_ok` (27/41); 143s; `apo_gray55_line_200_cxt.pkl`. Test eval priority. |
 | 2026-06-20 | **timm splitter fix.** ConvNeXt flat module names (`stages_0` vs `stages.0`) broke `_timm_splitter`; fixed in `scripts/timm_unet.py`. |
 | 2026-06-20 | **Block 7 started.** Encoder sweep TRAIN_RUN 13–19 @ 200×5ep; timm U-Net via `scripts/timm_unet.py`. First run: **resnet18** (13). |

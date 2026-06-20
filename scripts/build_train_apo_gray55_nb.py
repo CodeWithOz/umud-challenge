@@ -2,7 +2,7 @@
 import json
 from pathlib import Path
 
-BUILD_TRAIN_RUN = 19
+BUILD_TRAIN_RUN = 14
 
 FASTAI_RESNETS = frozenset({"resnet18", "resnet34", "resnet50"})
 
@@ -70,7 +70,7 @@ cells: list[dict] = [
     code(
         """# --- Parameters you can change ---
 RANDOM_SEED = 42
-TRAIN_RUN = 19  # Block 7 encoder sweep — see TRAIN_PROFILES
+TRAIN_RUN = 14  # Block 7 encoder sweep — see TRAIN_PROFILES
 
 VALID_PCT = 0.20
 STRATIFY_VAL_BY_RESOLUTION = True  # uses manifest resolution_cohort when True

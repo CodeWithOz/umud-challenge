@@ -2,9 +2,9 @@
 import json
 from pathlib import Path
 
-# Production 5ep r50 (Block 6c — score 1.873 beats r34 1.913)
-BUILD_APO_MODEL_FILE = "apo_gray55_line_200_r50.pkl"
-BUILD_SUBMISSION_LABEL = "Phase 4 production — 200-tier apo r50 5ep + MM=0.075"
+# Block 7 eval — convnext_tiny (val UMUD 1.75); production remains r50 until LB confirms
+BUILD_APO_MODEL_FILE = "apo_gray55_line_200_cxt.pkl"
+BUILD_SUBMISSION_LABEL = "Block 7 eval — 200-tier apo convnext_tiny 5ep + MM=0.075"
 BUILD_MM_PER_PIXEL = 0.075
 
 
