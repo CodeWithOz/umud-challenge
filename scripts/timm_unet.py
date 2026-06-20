@@ -292,19 +292,40 @@ def split_nested_list(l, idxs, left_in=None, right_in=None):
     return L(L(*left_in, *left), L(*right, *right_in))
 
 
+def _encoder_split_idxs(encoder, module_path: str) -> list:
+    """Map timm feature_info.module_name to indices for split_nested_list."""
+    names = list(encoder._modules.keys())
+    parts = module_path.split(".")
+    if parts[0] in names:
+        idxs = [names.index(parts[0])]
+        if len(parts) > 1:
+            sub = getattr(encoder, parts[0])
+            sub_names = list(sub._modules.keys())
+            for p in parts[1:]:
+                idxs.append(int(p) if p.isdigit() else sub_names.index(p))
+        return idxs
+    # ConvNeXt-style flat names: stages.0 -> stages_0
+    if len(parts) >= 2 and parts[1].isdigit():
+        flat = f"{parts[0]}_{parts[1]}"
+        if flat in names:
+            return [names.index(flat)]
+    if module_path in names:
+        return [names.index(module_path)]
+    raise ValueError(f"Cannot resolve encoder module {module_path!r} in {names}")
+
+
 def _timm_splitter(m):
     from fastai.torch_core import getattrs
     from fastai.data.core import L
 
-    encoder_module_names = L(m.encoder._modules)
-    encoder_split_idxs = m.feature_info.module_name(0).split(".")
-    encoder_split_idxs[0] = encoder_module_names.index(encoder_split_idxs[0])
+    encoder_module_names = L(*list(m.encoder._modules.keys()))
+    encoder_split_idxs = _encoder_split_idxs(m.encoder, m.feature_info.module_name(0))
     encoder_modules = getattrs(m.encoder, *encoder_module_names)
     encoder_early, encoder_late = split_nested_list(encoder_modules, encoder_split_idxs)
     encoder_early = _get_params_from_modules(encoder_early)
     encoder_late = _get_params_from_modules(encoder_late)
-    decoder = _get_params_from_attrs(m.decoder, L(m.decoder._modules))
-    head = _get_params_from_attrs(m.head, L(m.head._modules))
+    decoder = _get_params_from_attrs(m.decoder, L(*list(m.decoder._modules.keys())))
+    head = _get_params_from_attrs(m.head, L(*list(m.head._modules.keys())))
     return L(encoder_early, encoder_late, L(*decoder, *head))
 
 
