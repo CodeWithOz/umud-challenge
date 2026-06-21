@@ -18,6 +18,25 @@ umud-challenge.zip
 data/download.log
 data/umud-challenge-muscle-architecture-in-ultrasound-data.zip
 
+# model binaries / large artifacts (not insight reports — track CSV/JSON instead)
+*.pkl
+*.pt
+*.pth
+*.h5
+*.onnx
+
+# process logs (kernel stdout / run logs — not curated reports of numbers)
+*.log
+
+# raw image / data files (track the numeric reports they produce, not the pixels)
+*.tif
+*.tiff
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.bmp
+
 # cursor
 .cursor/hooks/state
 

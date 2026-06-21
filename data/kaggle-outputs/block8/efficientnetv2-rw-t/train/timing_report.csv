@@ -1,0 +1,2 @@
+encoder_slug,family,arch,n_pairs,epochs,img_size,val_dice,total_sec,sec_per_pair_epoch,dataset,val_umud_score,val_umud_score_strict,val_mt_ok_pct,n_scorable,n_total
+efficientnetv2-rw-t,EfficientNet V2,efficientnetv2_rw_t,200,5,256,0.3581,42.2,0.042,ucheozoemena/umud-aligned-apo-gray55-line-timing-200,2.68635,,97.56,40,41

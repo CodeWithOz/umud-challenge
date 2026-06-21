@@ -1,0 +1,61 @@
+[
+  {
+    "train_run": 18,
+    "arch": "mobilenetv3_small_100",
+    "pkl": "apo_gray55_line_200_mnv3.pkl",
+    "status": "ok",
+    "n": 309,
+    "mt_ok": 309,
+    "mt_ok_pct": 100.0,
+    "mt_nan": 0,
+    "fail_reasons": {}
+  },
+  {
+    "train_run": 19,
+    "arch": "regnetx_004",
+    "pkl": "apo_gray55_line_200_rgx004.pkl",
+    "status": "ok",
+    "n": 309,
+    "mt_ok": 309,
+    "mt_ok_pct": 100.0,
+    "mt_nan": 0,
+    "fail_reasons": {}
+  },
+  {
+    "train_run": 13,
+    "arch": "resnet18",
+    "pkl": "apo_gray55_line_200_r18.pkl",
+    "status": "ok",
+    "n": 309,
+    "mt_ok": 309,
+    "mt_ok_pct": 100.0,
+    "mt_nan": 0,
+    "fail_reasons": {}
+  },
+  {
+    "train_run": 16,
+    "arch": "efficientnet_b0",
+    "pkl": "apo_gray55_line_200_enb0.pkl",
+    "status": "ok",
+    "n": 309,
+    "mt_ok": 230,
+    "mt_ok_pct": 74.43,
+    "mt_nan": 79,
+    "fail_reasons": {
+      "single_contour": 31,
+      "no_contours": 31,
+      "no_x_overlap": 17
+    }
+  },
+  {
+    "train_run": 17,
+    "arch": "efficientnet_b1",
+    "pkl": "apo_gray55_line_200_enb1.pkl",
+    "status": "ok",
+    "n": 309,
+    "mt_ok": 309,
+    "mt_ok_pct": 100.0,
+    "mt_nan": 0,
+    "fail_reasons": {}
+  }
+]

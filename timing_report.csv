@@ -1,0 +1,2 @@
+train_run,arch,eval_only,n_pairs,epochs,img_size,val_dice,total_sec,sec_per_pair_epoch,dataset,val_umud_score,val_umud_score_strict,val_mt_ok_pct,n_scorable,n_total
+19,regnetx_004,False,200,5,256,0.4255,38.3,0.038,ucheozoemena/umud-aligned-apo-gray55-line-timing-200,2.749985,2.749985,100.0,41,41

@@ -1,0 +1,2 @@
+encoder_slug,family,arch,n_pairs,epochs,img_size,val_dice,total_sec,sec_per_pair_epoch,dataset,val_umud_score,val_umud_score_strict,val_mt_ok_pct,n_scorable,n_total
+convnextv2-atto,ConvNeXt V2,convnextv2_atto,200,5,256,0.46,48.8,0.049,ucheozoemena/umud-aligned-apo-gray55-line-timing-200,1.918853,,68.29,28,41
