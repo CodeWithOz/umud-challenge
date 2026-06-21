@@ -2,7 +2,20 @@
 
 ## Current focus
 
-_Last updated: 2026-06-21 — **Block 9 (calibration pivot) staged.** Encoder axis exhausted (1.82–1.98 = MT only, 1/9 of score). New attack: per-target output calibration recovered from a fitted LB tracking metric. Submission notebook rebuilt with calibration + NaN-fallback; awaiting LB submit (PA→13)._
+_Last updated: 2026-06-21 — **Block 9 calibration WON: LB 1.07757** (from 1.82151, −41% error). Per-target output calibration on the maxvit geometry. Submission 2 (PA→18) built + verified, blocked by daily limit (5/5 used) until 00:00 UTC._
+
+### Block 9 result (2026-06-21)
+
+| Submit | Change | Public LB | vs prev |
+|--------|--------|-----------|---------|
+| **block9-s1** | maxvit geom + **PA→13, FL→77, MT→19.8+shrink.5**, NaN→center | **1.07757** | **−0.744** vs maxvit 1.82151 |
+| block8-maxvit | maxvit apo, MM=0.075 (no calibration) | 1.82151 | (prior prod) |
+
+**Confirmed:** the score was **calibration-bound, not segmentation-bound**. PA was the dominant wasted term (predicted ~3°, true ~17–21°). FL ~14mm low. MT spread→LB r=+0.89. The offline-unidentifiable PA bet paid off (1.077 ≪ FL+MT-only floor of ~1.5). Tracking metric directionality validated on a fresh point (refit predicts s1 1.034 vs actual 1.077).
+
+**Refit with s1 (`scripts/refit_after_s1.py`):** μ_pa↑**20.85**, μ_fl 72.2, μ_mt **22.2** — PA still the top error at 13; over-shrank MT slightly low. **Submission 2 (`data/kaggle-outputs/block9-s1/submission_s2.csv`, candidate B):** PA→18, FL×0.088, MT→21.5+shrink.45 — robust best-worst-case across both center estimates; predicts ~0.6–0.7. **Downside-protected** (LB keeps best). Submit after 00:00 UTC reset.
+
+**Private-LB note:** CSV submits score the public set fine; for the private (2×) LB select the **notebook** submission (v31, re-runs on hidden test with NaN-fallback). See [[umud-private-lb-needs-nan-fallback]].
 
 ### Block 9 — output calibration + tracking metric (2026-06-21)
 
