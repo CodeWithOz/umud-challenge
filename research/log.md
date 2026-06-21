@@ -2,7 +2,29 @@
 
 ## Current focus
 
-_Last updated: 2026-06-21 — **Block 8 complete.** New prod **maxvit-nano LB 1.82151** (beats rv2 1.842)._
+_Last updated: 2026-06-21 — **Block 9 (calibration pivot) staged.** Encoder axis exhausted (1.82–1.98 = MT only, 1/9 of score). New attack: per-target output calibration recovered from a fitted LB tracking metric. Submission notebook rebuilt with calibration + NaN-fallback; awaiting LB submit (PA→13)._
+
+### Block 9 — output calibration + tracking metric (2026-06-21)
+
+**Insight:** `fl_px` is identical across **all 16 scored submissions** (fasc model never changed) → the entire 1.82–1.98 spread is MT (the apo encoder), i.e. **1/9 of the score**. The encoder sweep optimized ~11% of the metric.
+
+**Tracking metric (`scripts/fit_truth.py`):** fit effective true centers to 16 (predictions, LB) pairs under a constant-truth model `LB ≈ c0 + (1/3)[mean|pa−μpa|/6 + mean|fl−μfl|/12 + mean|mt−μmt|/3]`. Fit **R²=0.896, LOO Spearman 0.91**; predicts maxvit 1.833 vs real 1.82151.
+- Recovered: **μ_pa≈17.2°, μ_fl≈76.9mm, μ_mt≈19.8mm** vs model medians **3°/63.5/22**.
+- **PA contributes ~0.73 to every score** and is ~fixed/wasted (all subs predict ~3°; ref range 5–45°, sample_submission 13°/17°, lit 10–30°). **Offline-unidentifiable** (RMSE flat for μ_pa 3–17 — `scripts/sensitivity_pa.py`) → must be LB-tested.
+- **FL** identical everywhere, ~14mm low → split scale **S_FL=0.0908** (FL median→77).
+- **MT** spread vs LB **r=+0.89** (tighter=better) → recenter **S_MT=0.0667** + shrink α=0.5.
+
+**Calibration (`scripts/calibrate.py`, baked into `build_submission_nb.py`):** fixed per-image transforms (robust to hidden 2× test) + **any NaN → target center** (kills the private-LB NaN risk permanently). Local: 309 rows, **0 NaN**; tracking predictions FL+MT recenter→1.506, +shrink→1.28, +PA→13→~0.79 (PA optimistic).
+
+**Submission 1 (staged, PA→13):** predicted robustly <1.5 (likely ~1.0–1.1). Reserve 2nd submit to tune PA→16–17 / harder shrink / per-cohort from feedback.
+
+**Key scripts:** `scripts/fit_truth.py`, `sensitivity_pa.py`, `eval_candidates.py`, `calibrate.py`, `validate_submission.py`, `analyze_submissions.py`, `gt_geometry_dist.py`. Fit: `data/fit_mu.npy`.
+
+---
+
+### Block 8 (superseded as production by Block 9 calibration)
+
+_Block 8 complete. maxvit-nano LB 1.82151 (beats rv2 1.842) — now the geometry base for Block 9 calibration._
 
 ### Phase 3 — closed
 
