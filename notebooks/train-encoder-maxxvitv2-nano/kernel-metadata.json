@@ -1,6 +1,6 @@
 {
   "id": "ucheozoemena/umud-train-encoder-maxxvitv2-nano-phase-3",
-  "title": "UMUD Train Encoder MaxViT V2 Phase 3",
+  "title": "UMUD Train Encoder maxxvitv2-nano Phase 3",
   "code_file": "train-encoder-maxxvitv2-nano-phase-3.ipynb",
   "language": "python",
   "kernel_type": "notebook",

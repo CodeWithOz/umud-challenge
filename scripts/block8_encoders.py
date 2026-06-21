@@ -21,6 +21,7 @@ class EncoderSpec:
     val_mt_ok_pct: float | None = None
     test_mt_ok_pct: float | None = None
     lb_score: float | None = None
+    img_size: int = 256
 
     @property
     def kernel_id(self) -> str:
@@ -46,7 +47,8 @@ BLOCK8_ENCODERS: tuple[EncoderSpec, ...] = (
         arch="levit_128s",
         export_name="apo_gray55_line_200_levit128s.pkl",
         params_m=9.2,
-        note="LeViT-128S — light hybrid ViT/CNN",
+        note="LeViT-128S — light hybrid ViT/CNN; IMG_SIZE 224 (256 breaks U-Net skips)",
+        img_size=224,
     ),
     EncoderSpec(
         slug="resnetv2-18",

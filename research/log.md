@@ -2,7 +2,7 @@
 
 ## Current focus
 
-_Last updated: 2026-06-21 — **Block 7b scored:** **r18 → 1.86662** new prod (beats r50 1.873). **Block 8 active** (LeViT first)._
+_Last updated: 2026-06-21 — **Block 8 complete.** New prod **maxvit-nano LB 1.82151** (beats rv2 1.842)._
 
 ### Phase 3 — closed
 
@@ -22,7 +22,9 @@ _Last updated: 2026-06-21 — **Block 7b scored:** **r18 → 1.86662** new prod 
 | Submit | Model | `MM_PER_PIXEL` | Public score | Role |
 |--------|-------|----------------|--------------|------|
 | v7 | micro gray55+line 50×5ep | 1.0 | 48.18203 | Uncalibrated baseline (unit error) |
-| **block7-r18** | 200-tier **resnet18** | **0.075** | **1.86662** | **Block 7b — new production** |
+| **block8-maxvit** | 200-tier **maxvit_nano** | **0.075** | **1.82151** | **Block 8 — new production** |
+| **block8-rv2** | 200-tier **resnetv2_18** | **0.075** | **1.84197** | Previous Block 8 prod |
+| **block7-r18** | 200-tier **resnet18** | **0.075** | **1.86662** | Previous production |
 | **block7-rgx** | 200-tier regnetx_004 | **0.075** | **1.87201** | Beats r50; val UMUD misleading |
 | **block6c-r50** | 200-tier r50 | **0.075** | **1.87312** | Previous production |
 | block7-enb1 | 200-tier efficientnet_b1 | 0.075 | 1.88316 | 100% test mt_ok; worse than r18 |
@@ -55,11 +57,11 @@ User QC on 60 MT-fail overlays (`tmp/kaggle-output/v8-mt-fail-viz/`) confirms sa
 
 ### Phase 4 active
 
-**Score to beat:** **1.86662** (200-tier **resnet18** + `MM_PER_PIXEL=0.075`). Previous prod **1.87312** (r50).
+**Score to beat:** **1.82151** (200-tier **maxvit_nano** + `MM_PER_PIXEL=0.075`). Previous prod **1.84197** (resnetv2_18).
 
-**Active block:** **Block 8** — six encoders, one notebook each (`scripts/run_block8_encoder.py`).
+**Active block:** **Block 8 — complete** (6/6 encoders evaluated).
 
-**Production stack:** fasc full + **`apo_gray55_line_200_r18.pkl` (resnet18 5ep)** + horiz_parallel + **`MM_PER_PIXEL=0.075`** → **1.86662**.
+**Production stack:** fasc full + **`apo_gray55_line_200_maxvit_nano.pkl` (maxvit_nano 5ep)** + horiz_parallel + **`MM_PER_PIXEL=0.075`** → **1.82151**.
 
 **Block 4 (524-tier):** rejected — 62 MT NaN (empty masks); QC at `tmp/kaggle-output/block4-mt-fail-viz/figures/`.
 
@@ -319,12 +321,12 @@ Same analysis as Block 7: train → **val_umud_score**, **val_umud_score_strict*
 
 | Order | Slug | Family | timm arch | Export | Status |
 |-------|------|--------|-----------|--------|--------|
-| 1 | `levit128s` | LeViT | `levit_128s` | `apo_gray55_line_200_levit128s.pkl` | **running** |
-| 2 | `resnetv2-18` | ResNet V2 | `resnetv2_18` | `apo_gray55_line_200_rv2_18.pkl` | pending |
-| 3 | `convnextv2-atto` | ConvNeXt V2 | `convnextv2_atto` | `apo_gray55_line_200_cnxv2_atto.pkl` | pending |
-| 4 | `efficientnetv2-rw-t` | EfficientNet V2 | `efficientnetv2_rw_t` | `apo_gray55_line_200_env2_rw_t.pkl` | pending |
-| 5 | `maxvit-nano` | MaxViT | `maxvit_nano_rw_256` | `apo_gray55_line_200_maxvit_nano.pkl` | pending |
-| 6 | `maxxvitv2-nano` | MaxViT V2 | `maxxvitv2_nano_rw_256` | `apo_gray55_line_200_maxxvitv2_nano.pkl` | pending |
+| 1 | `levit128s` | LeViT | `levit_128s` | `apo_gray55_line_200_levit128s.pkl` | **complete** (IMG 224; 256 → U-Net skip error) |
+| 2 | `resnetv2-18` | ResNet V2 | `resnetv2_18` | `apo_gray55_line_200_rv2_18.pkl` | **complete** |
+| 3 | `convnextv2-atto` | ConvNeXt V2 | `convnextv2_atto` | `apo_gray55_line_200_cnxv2_atto.pkl` | **rejected** (94% test mt_ok) |
+| 4 | `efficientnetv2-rw-t` | EfficientNet V2 | `efficientnetv2_rw_t` | `apo_gray55_line_200_env2_rw_t.pkl` | **complete** |
+| 5 | `maxvit-nano` | MaxViT | `maxvit_nano_rw_256` | `apo_gray55_line_200_maxvit_nano.pkl` | **complete — prod** |
+| 6 | `maxxvitv2-nano` | MaxViT V2 | `maxxvitv2_nano_rw_256` | `apo_gray55_line_200_maxxvitv2_nano.pkl` | **rejected** (99.7% test mt_ok) |
 
 **Notebook paths:** `notebooks/train-encoder-<slug>/` → Kaggle kernel `umud-train-encoder-<slug>-phase-3`.
 
@@ -332,7 +334,12 @@ Same analysis as Block 7: train → **val_umud_score**, **val_umud_score_strict*
 
 | Slug | val Dice | val UMUD | val mt_ok | test mt_ok | LB | Notes |
 |------|----------|----------|-----------|------------|-----|-------|
-| *(fill after each run)* | | | | | | |
+| `levit128s` | 0.368 | 2.908 | 100% | **100%** | **1.91255** | IMG 224; train 64s; worse than r18 1.867 |
+| `resnetv2-18` | 0.478 | 2.574 | 95.1% | **100%** | **1.84197** | train 60s; superseded by maxvit |
+| `convnextv2-atto` | 0.460 | 1.919 | 68.3% | 94.2% | — | rejected: no_x_overlap 10, single_contour 7, no_contours 1 |
+| `efficientnetv2-rw-t` | 0.358 | 2.686 | 97.6% | **100%** | **1.98186** | train 42s; worse than rv2 |
+| `maxvit-nano` | 0.438 | 2.427 | 87.8% | **100%** | **1.82151** | **new prod**; train 71s |
+| `maxxvitv2-nano` | 0.417 | 2.490 | 90.2% | 99.7% | — | rejected: single_contour 1 |
 
 ### Official UMUD metric (`scripts/umud_score.py`)
 

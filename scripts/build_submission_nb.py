@@ -2,11 +2,12 @@
 import json
 from pathlib import Path
 
-# Production resnet18 (Block 7b — score 1.867 beats r50 1.873)
-BUILD_APO_MODEL_FILE = "apo_gray55_line_200_r18.pkl"
-BUILD_APO_KERNEL_SLUG = "umud-train-apo-gray55-phase-3"
-BUILD_SUBMISSION_LABEL = "Phase 4 production — 200-tier apo resnet18 5ep + MM=0.075"
+# Production maxvit-nano (Block 8 — score 1.822 beats rv2 1.842)
+BUILD_APO_MODEL_FILE = "apo_gray55_line_200_maxvit_nano.pkl"
+BUILD_APO_KERNEL_SLUG = "umud-train-encoder-maxvit-nano-phase-3"
+BUILD_SUBMISSION_LABEL = "Phase 4 production — 200-tier apo maxvit-nano 5ep + MM=0.075"
 BUILD_MM_PER_PIXEL = 0.075
+BUILD_IMG_SIZE = 256
 
 
 def md(source: str) -> dict:
@@ -52,7 +53,7 @@ cells.append(
     code(
         f"""from pathlib import Path
 
-IMG_SIZE = 256
+IMG_SIZE = {BUILD_IMG_SIZE}
 APO_REGION_THRESHOLD = 0.50
 GRAY_FILL_VALUE = 55
 ROI_THRESH = 5

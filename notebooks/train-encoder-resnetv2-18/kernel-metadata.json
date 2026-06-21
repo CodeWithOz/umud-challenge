@@ -1,6 +1,6 @@
 {
   "id": "ucheozoemena/umud-train-encoder-resnetv2-18-phase-3",
-  "title": "UMUD Train Encoder ResNet V2 Phase 3",
+  "title": "UMUD Train Encoder resnetv2-18 Phase 3",
   "code_file": "train-encoder-resnetv2-18-phase-3.ipynb",
   "language": "python",
   "kernel_type": "notebook",

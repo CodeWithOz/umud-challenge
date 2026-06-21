@@ -40,7 +40,7 @@ EPOCHS = {EPOCHS}
 VALID_PCT = 0.20
 STRATIFY_VAL_BY_RESOLUTION = True
 BATCH_SIZE = 8
-IMG_SIZE = 256
+IMG_SIZE = {enc.img_size}
 MM_PER_PIXEL = 0.075
 USE_CLASS_WEIGHTS = True
 APO_FG_WEIGHT = 15.0
@@ -144,7 +144,7 @@ def write_notebook(g55, enc: EncoderSpec) -> Path:
     nb_path.write_text(json.dumps(nb, indent=1))
     meta = {
         "id": enc.kernel_id,
-        "title": f"UMUD Train Encoder {enc.family} Phase 3",
+        "title": f"UMUD Train Encoder {enc.slug} Phase 3",
         "code_file": enc.ipynb_name,
         "language": "python",
         "kernel_type": "notebook",
