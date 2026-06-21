@@ -90,7 +90,7 @@ def restore_submission_prod() -> None:
     text = SUBMIT_BUILD.read_text()
     text = re.sub(
         r'^BUILD_APO_MODEL_FILE = ".*?"',
-        'BUILD_APO_MODEL_FILE = "apo_gray55_line_200_r50.pkl"',
+        'BUILD_APO_MODEL_FILE = "apo_gray55_line_200_r18.pkl"',
         text,
         count=1,
         flags=re.M,
@@ -104,7 +104,7 @@ def restore_submission_prod() -> None:
     )
     text = re.sub(
         r'^BUILD_SUBMISSION_LABEL = ".*?"',
-        'BUILD_SUBMISSION_LABEL = "Phase 4 production — 200-tier apo r50 5ep + MM=0.075"',
+        'BUILD_SUBMISSION_LABEL = "Phase 4 production — 200-tier apo resnet18 5ep + MM=0.075"',
         text,
         count=1,
         flags=re.M,

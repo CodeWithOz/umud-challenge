@@ -2,10 +2,10 @@
 import json
 from pathlib import Path
 
-# Production 5ep r50 (Block 6c — score 1.873 beats r34 1.913)
-BUILD_APO_MODEL_FILE = "apo_gray55_line_200_r50.pkl"
+# Production resnet18 (Block 7b — score 1.867 beats r50 1.873)
+BUILD_APO_MODEL_FILE = "apo_gray55_line_200_r18.pkl"
 BUILD_APO_KERNEL_SLUG = "umud-train-apo-gray55-phase-3"
-BUILD_SUBMISSION_LABEL = "Phase 4 production — 200-tier apo r50 5ep + MM=0.075"
+BUILD_SUBMISSION_LABEL = "Phase 4 production — 200-tier apo resnet18 5ep + MM=0.075"
 BUILD_MM_PER_PIXEL = 0.075
 
 
