@@ -2,20 +2,25 @@
 
 ## Current focus
 
-_Last updated: 2026-06-21 — **Block 9 calibration WON: LB 1.07757** (from 1.82151, −41% error). Per-target output calibration on the maxvit geometry. Submission 2 (PA→18) built + verified, blocked by daily limit (5/5 used) until 00:00 UTC._
+_Last updated: 2026-06-22 — **Block 9 WON. Best LB 1.06757** (from 1.82151, −41%). Per-target output calibration on maxvit geometry. s2 (PA18) beat s1 (PA13). Calibration ~exhausted (refit floor c0≈0.32); next gains need better geometry, not scaling._
 
-### Block 9 result (2026-06-21)
+### Block 9 result (LB-confirmed 2026-06-22)
 
 | Submit | Change | Public LB | vs prev |
 |--------|--------|-----------|---------|
-| **block9-s1** | maxvit geom + **PA→13, FL→77, MT→19.8+shrink.5**, NaN→center | **1.07757** | **−0.744** vs maxvit 1.82151 |
 | block8-maxvit | maxvit apo, MM=0.075 (no calibration) | 1.82151 | (prior prod) |
+| **block9-s1** (v31) | maxvit geom + **PA→13, FL→77, MT→19.8+shrink.5**, NaN→center | **1.07757** | −0.744 |
+| **block9-s2** (v32) | **PA→18, FL→74.5, MT→21.5+shrink.45** | **1.06757** | **−0.010 (best)** |
 
-**Confirmed:** the score was **calibration-bound, not segmentation-bound**. PA was the dominant wasted term (predicted ~3°, true ~17–21°). FL ~14mm low. MT spread→LB r=+0.89. The offline-unidentifiable PA bet paid off (1.077 ≪ FL+MT-only floor of ~1.5). Tracking metric directionality validated on a fresh point (refit predicts s1 1.034 vs actual 1.077).
+**Confirmed:** score was **calibration-bound, not segmentation-bound**. PA was the dominant wasted term (predicted ~3°, true ~14–18°). FL ~14mm low. The offline-unidentifiable PA bet paid off (1.077 ≪ FL+MT-only floor ~1.5).
 
-**Refit with s1 (`scripts/refit_after_s1.py`):** μ_pa↑**20.85**, μ_fl 72.2, μ_mt **22.2** — PA still the top error at 13; over-shrank MT slightly low. **Submission 2 (`data/kaggle-outputs/block9-s1/submission_s2.csv`, candidate B):** PA→18, FL×0.088, MT→21.5+shrink.45 — robust best-worst-case across both center estimates; predicts ~0.6–0.7. **Downside-protected** (LB keeps best). Submit after 00:00 UTC reset.
+**Refit incl. s1+s2 (`scripts/refit_block9.py`, n=18):** μ_pa≈**14.2**, μ_fl≈72, μ_mt≈22, **floor c0≈0.32**. s2 beat s1 despite PA 13→18 (away from μ_pa≈14) → the **PA optimum is broad (13–18); s2's edge was FL/MT, not PA**. RMSE 0.056. Tracking metric understates shrink benefit (biased toward constant) — don't trust it to pick shrink strength.
 
-**Private-LB note:** CSV submits score the public set fine; for the private (2×) LB select the **notebook** submission (v31, re-runs on hidden test with NaN-fallback). See [[umud-private-lb-needs-nan-fallback]].
+**Verdict:** calibration is at its practical floor. A refined s3 (PA≈14–15, S_FL≈0.085, S_MT≈0.075, moderate shrink) shaves ~0.01–0.02 at most. **Substantial further gains require better per-image geometry** (stronger fascicle→FL/PA and apo→MT signal) = model work, a new block.
+
+**Private-LB note:** CSV submits score the public set; for the private (2×) LB submit the **notebook** (v31=s1, v32=s2 — both re-run on hidden test with NaN-fallback). Private score revealed only post-competition. See [[umud-private-lb-needs-nan-fallback]].
+
+**Scheduled submit:** launchd one-shot (`scripts/submit_s2_scheduled.sh`) fired 00:07 UTC at quota reset → s2 1.06757; self-removed.
 
 ### Block 9 — output calibration + tracking metric (2026-06-21)
 
