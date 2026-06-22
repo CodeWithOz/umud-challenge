@@ -2,7 +2,36 @@
 
 ## Current focus
 
-_Last updated: 2026-06-22 — **Block 9 WON. Best LB 1.06757** (from 1.82151, −41%). Per-target output calibration on maxvit geometry. s2 (PA18) beat s1 (PA13). Calibration ~exhausted (refit floor c0≈0.32); next gains need better geometry, not scaling._
+_Last updated: 2026-06-22 — **Block 10 complete.** Re-ranked all Block 7/8 encoders with Block 9 s2 calibration + tracking metric (no retrain). **Surprise: resnetv2_18 beats maxvit** (LB~s2 **1.044** vs **1.068**; track_s2 0.630 vs 0.654). Next: optional Kaggle submit rv2+s2 to confirm; or Block 11 model work if calibration exhausted._
+
+### Block 10 — encoder re-rank with Block 9 calibration (2026-06-22)
+
+**Method:** `scripts/block10_eval.py` — apply s2 calibration (PA=18, split FL/MT scales, shrink=0.45, NaN→center) to saved `submission_debug.csv` pixel geometry from each Block 7/8 train run. **No retraining** — only post-processing changed.
+
+**Ranking (track_s2, lower better; LB~s2 anchored on maxvit s2 public 1.06757):**
+
+| Rank | Encoder | Block | mt_ok raw | LB @0.075 | LB~s2 | track_s2 |
+|------|---------|-------|-----------|-----------|-------|----------|
+| **1** | **resnetv2_18** | 8 | 100% | 1.842 | **~1.044** | **0.630** |
+| 2 | maxvit_nano | 8 | 100% | 1.822 | ~1.068 | 0.654 |
+| 3 | convnext_tiny | 7 | 71% | — | ~1.069 | 0.655 |
+| 4 | efficientnet_b1 | 7 | 100% | 1.883 | ~1.079 | 0.666 |
+| 5 | resnet18 | 7 | 100% | 1.867 | ~1.082 | 0.668 |
+| 6 | regnetx_004 | 7 | 100% | 1.872 | ~1.089 | 0.675 |
+| 7 | maxxvitv2_nano | 8 | 99.7% | — | ~1.096 | 0.682 |
+| 8 | efficientnet_b0 | 7 | 74% | — | ~1.100 | 0.686 |
+| 9 | mobilenetv3 | 7 | 100% | 1.917 | ~1.105 | 0.691 |
+| 10 | levit128s | 8 | 100% | 1.913 | ~1.108 | 0.694 |
+| 11 | efficientnetv2_rw_t | 8 | 100% | 1.982 | ~1.126 | 0.712 |
+| 12 | convnextv2_atto | 8 | 94% | — | ~1.128 | 0.714 |
+
+**Key findings:**
+- Under legacy MM=0.075, **maxvit won** (1.822). After s2 calibration, **rv2 wins** — tighter MT spread (std 2.47 vs 2.58) after recenter+shrink.
+- FL identical across all encoders (fasc model fixed); rank changes are **MT-only**.
+- NaN models (cxt, enb0, etc.) now score via fallback; previously un-submittable.
+- **Not re-evaluated** (no saved debug CSV): resnet50, resnet34, convnext_small — need one Kaggle submission run each if wanted.
+
+**Artifacts:** `data/kaggle-outputs/block10/block10_results.csv`, `.json`
 
 ### Block 9 result (LB-confirmed 2026-06-22)
 
@@ -306,7 +335,8 @@ _Authoritative roadmap for Phase 4. Update the **block status** and **plan chang
 | **5** | Inference ablations (pickers on 200-tier, full 309) | **complete** | horiz_parallel **100%** `mt_ok`; xspan_pair 100% (0 broken vs horiz); top_bottom 87.7% — keep horiz |
 | **6** | Epoch / architecture at 200-tier (same N) | **complete** | r50 @ 5ep → **1.873**; 8ep/10ep rejected |
 | **7** | Encoder sweep @ 200×5ep | **complete** | convnext_tiny rejected on test; prod stays r50 |
-| **8** | New families @ 200×5ep (1 notebook / encoder) | **queued** | LeViT, ResNetV2, ConvNeXtV2, EfficientNetV2, MaxViT, MaxViT V2 |
+| **8** | New families @ 200×5ep (1 notebook / encoder) | **complete** | maxvit **1.822** @0.075; **Block 10:** rv2 **~1.044** @s2 beats maxvit **~1.068** |
+| **10** | Re-rank Block 7/8 encoders with Block 9 s2 cal + tracking metric | **complete** | rv2_18 best (LB~1.044); no retrain — `scripts/block10_eval.py` |
 
 **Recommended execution order:** 1 → 2 → 3 → (4 if gate passes) → 5 → 6. **Blocks 1–6 complete;** apo scaling ladder **stopped** at 524; epoch sweep **stopped** at 10ep; geometry **locked** at horiz_parallel.
 
@@ -527,7 +557,7 @@ Artifacts: `tmp/kaggle-output/calibration-sweep/sweep_results.csv`, `sweep_summa
 
 | Date | Change |
 |------|--------|
-| 2026-06-17 | **Block 2 train complete.** `TRAIN_RUN=7` v9: 200×5ep, stratified val (manual per-cohort fallback), val Dice **0.3838**, 0.057 s/pair/ep. Model: `apo_gray55_line_200.pkl`. Val Dice below micro 0.518 — test geometry TBD in Block 3. |
+| 2026-06-22 | **Block 10 complete.** Re-ranked 12 Block 7/8 encoders with s2 calibration on saved debug geometry. **resnetv2_18** beats maxvit (track_s2 0.630 vs 0.654; LB~1.044 vs 1.068). No retrain needed. Script: `scripts/block10_eval.py`. |
 | 2026-06-17 | **Block 2 prep complete.** `PREP_RUN=2` v3 → dataset `umud-aligned-apo-gray55-line-timing-200` (manifest includes `img_h`, `img_w`, `resolution_cohort`). |
 | 2026-06-18 | **Block 3 complete.** 200-tier apo: `mt_ok` 100%, 0% NaN (val Dice 0.384 did **not** predict test regression). Leaderboard: **2.063** (MM=0.09), 2.201 (MM=0.098). |
 | 2026-06-21 | **Block 7b leaderboard scored.** **r18 → 1.86662** (new prod); regnet **1.87201**; r50 **1.87312**; enb1 **1.88316**; mnv3 **1.91682**. Val UMUD did not predict LB rank. |
