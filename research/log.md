@@ -10,7 +10,7 @@ _Last updated: 2026-06-22 — **Block 9 WON. Best LB 1.06757** (from 1.82151, �
 |--------|--------|-----------|---------|
 | block8-maxvit | maxvit apo, MM=0.075 (no calibration) | 1.82151 | (prior prod) |
 | **block9-s1** (v31) | maxvit geom + **PA→13, FL→77, MT→19.8+shrink.5**, NaN→center | **1.07757** | −0.744 |
-| **block9-s2** (v32) | **PA→18, FL→74.5, MT→21.5+shrink.45** | **1.06757** | **−0.010 (best)** |
+| **block9-s2** (v32) | **PA→18, FL→74.5, MT→21.5+shrink.45** | **1.06757** CSV / **1.06750** notebook | **−0.010 (best)** |
 
 **Confirmed:** score was **calibration-bound, not segmentation-bound**. PA was the dominant wasted term (predicted ~3°, true ~14–18°). FL ~14mm low. The offline-unidentifiable PA bet paid off (1.077 ≪ FL+MT-only floor ~1.5).
 
@@ -21,6 +21,8 @@ _Last updated: 2026-06-22 — **Block 9 WON. Best LB 1.06757** (from 1.82151, �
 **Private-LB note:** CSV submits score the public set; for the private (2×) LB submit the **notebook** (v31=s1, v32=s2 — both re-run on hidden test with NaN-fallback). Private score revealed only post-competition. See [[umud-private-lb-needs-nan-fallback]].
 
 **Scheduled submit:** launchd one-shot (`scripts/submit_s2_scheduled.sh`) fired 00:07 UTC at quota reset → s2 1.06757; self-removed.
+
+**Submission method (next time use the CLI notebook submit):** this is a CODE competition. `kaggle competitions submit -k ucheozoemena/umud-submission-phase-3 -v <V> -f submission.csv -m "..."` submits the output **version V already produced** (not a local upload, no re-run); the notebook re-runs on hidden 2× data for the private LB at close. Full procedure + fallback in `AGENTS.md` → Kaggle Workflow Rules → Leaderboard submission. v32 notebook scored **1.06750** vs the CSV 1.06757.
 
 ### Block 9 — output calibration + tracking metric (2026-06-21)
 

@@ -64,12 +64,48 @@
 - `kernel-metadata.json` `model_sources` may be enough on a first push (no stale sidebar entry). Only ask the user to update the Kaggle UI sidebar if submission fails with a model path `FileNotFoundError`.
 - If a notebook fails because a model version, dataset, or other input is missing or wrong in the sidebar, ask the user to fix it in the Kaggle UI first — do not restructure notebook code to work around a missing input.
 
+**Leaderboard submission — this is a CODE competition (try CLI first, manual UI as fallback):**
+
+This competition scores a *notebook's output*, not an uploaded CSV, and re-runs the
+notebook on a hidden ~2× test set for the **private** leaderboard. There are two ways
+to submit a notebook version; **prefer the CLI**, fall back to the manual UI only if
+the CLI route fails.
+
+1. **CLI notebook submit (preferred).** After `kaggle kernels push` finishes and
+   `kaggle kernels status <kernel>` shows `COMPLETE` (the version has run and produced
+   its output), submit that version's output file:
+   ```bash
+   export KAGGLE_API_TOKEN=$(.venv/bin/kaggle auth print-access-token)
+   .venv/bin/kaggle competitions submit \
+     -c umud-challenge-muscle-architecture-in-ultrasound-data \
+     -k ucheozoemena/umud-submission-phase-3 -v <VERSION> \
+     -f submission.csv -m "block9-sN ..."
+   ```
+   **What this command means (verified against CLI `--help` and Kaggle docs):** with
+   `-k`/`-v` set, `-f` is **not a local upload** — it names the output file
+   (`submission.csv`) that *version V of the kernel already produced when it ran*. The
+   command does **not** re-run the notebook; it submits that already-produced output
+   for scoring. (`-f`'s help: "File for upload (full path), or the name of the output
+   file produced by a kernel (for code competitions).") The hidden-test re-run for the
+   private LB happens at competition close, independent of this command. The Kaggle UI
+   prints this exact command when you submit a notebook manually.
+   - Requires the version's run to have succeeded (output exists). Counts against the
+     daily submission quota (5/day). Confirm with `kaggle competitions submissions <comp>`.
+2. **Manual UI submit (fallback only).** If the CLI route errors, the user opens the
+   notebook version on kaggle.com and clicks **Submit to Competition** → selects its
+   `submission.csv` output. Equivalent result, just manual.
+- The raw `-f <local.csv>` *without* `-k`/`-v` uploads a static CSV — this scores the
+  **public** set but does **not** wire up the notebook for the private re-run, so use
+  it only for quick public-score probes, never as the final private entry.
+
 ## Lessons Learned
 
 _This section is updated whenever a new lesson is discovered. Any AI agent working on this repo should add entries here proactively — do not wait to be asked._
 
 | Date | Lesson |
 |------|--------|
+| 2026-06-22 | **Code-competition submit:** `kaggle competitions submit -k <kernel> -v <V> -f submission.csv` submits the output file **version V already produced** (does NOT upload a local file, does NOT re-run the kernel). Prefer this CLI route over manual UI; see Kaggle Workflow Rules → Leaderboard submission. The notebook re-runs on hidden 2× data for the private LB at competition close. |
+| 2026-06-22 | Notebook submit can differ slightly from the equivalent CSV: v32 notebook scored **1.06750** vs CSV **1.06757** (geometry recomputed on Kaggle → tiny float drift, here a hair better). Submit the notebook, not the static CSV, for the private-eligible entry. |
 | 2026-06 | Kaggle auto-extracts dataset zips; `glob('*.zip')` finds nothing. Use `rglob` and a filename→path lookup instead. |
 | 2026-06 | Add Python deps with `uv add`, never `uv pip install` or bare `pip`. |
 | 2026-06 | Every Kaggle kernel push needs a matching git commit on `main` (notebook + metadata + log) **before** the push; then `git push` to origin. Never Kaggle-ahead-of-uncommitted-git. |
