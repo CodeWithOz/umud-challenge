@@ -1,11 +1,11 @@
 """Generate notebooks/submission-blend-qdc-cxs/submission-blend-qdc-cxs.ipynb.
 
-Block 15 candidate: hidden-safe blend of production cxs-s2 segment geometry and
-calibrated quick-dirty image geometry. The notebook first runs the normal
-production submission pipeline, then computes quick-dirty on the same mounted
-test images and overwrites submission.csv with:
+Block 15 candidate: hidden-safe blend of currently mountable cxs8 segment
+geometry and calibrated quick-dirty image geometry. The notebook first runs the
+normal submission pipeline with the cxs8 apo model, then computes quick-dirty on
+the same mounted test images and overwrites submission.csv with:
 
-    blend = 0.70 * quickdirty_cal + 0.30 * cxs_s2
+    blend = 0.70 * quickdirty_cal + 0.30 * cxs8_s2
 """
 from __future__ import annotations
 
@@ -34,14 +34,23 @@ def code(source: str) -> dict:
 
 
 cells = copy.deepcopy(prod.cells)
+for cell in cells:
+    if cell.get("cell_type") in {"code", "markdown"}:
+        cell["source"] = [
+            line.replace("apo_gray55_line_200_cxs.pkl", "apo_gray55_line_200_cxs8.pkl")
+            .replace("convnext_small + Block 9 s2 (LB 1.04862)", "convnext_small 8ep + Block 9 s2")
+            .replace("production cxs-s2", "cxs8-s2")
+            .replace("cxs-s2", "cxs8-s2")
+            for line in cell["source"]
+        ]
 cells[0] = md(
-    """# UMUD — Submission Blend QuickDirtyCal + CXS-S2
+    """# UMUD — Submission Blend QuickDirtyCal + CXS8-S2
 
-GPU notebook. Runs the production cxs-s2 segment-then-measure pipeline, then
+GPU notebook. Runs the currently mountable cxs8-s2 segment-then-measure pipeline, then
 computes calibrated quick-dirty image geometry on the same mounted test images
 and overwrites `submission.csv` with a fixed blend:
 
-`0.70 * quickdirty_cal + 0.30 * cxs_s2`.
+`0.70 * quickdirty_cal + 0.30 * cxs8_s2`.
 
 This is a real inference path, not a public-test CSV lookup: both components are
 computed from the images present in `/kaggle/input/competitions/...`."""
@@ -53,7 +62,7 @@ cells.extend(
         code(MODULE_SRC),
         md("## Blend production cxs-s2 with calibrated quickdirty"),
         code(
-            f"""# pred_df currently contains the calibrated production cxs-s2 output from the prior cells.
+            f"""# pred_df currently contains the calibrated cxs8-s2 output from the prior cells.
 cxs_df = pred_df[["image_id", "pa_deg", "fl_mm", "mt_mm"]].copy()
 cxs_df = cxs_df.rename(columns={{
     "pa_deg": "pa_cxs",
@@ -112,7 +121,7 @@ def main() -> None:
     (out / "submission-blend-qdc-cxs.ipynb").write_text(json.dumps(nb, indent=1))
     meta = {
         "id": "ucheozoemena/umud-submission-blend-qdc-cxs",
-        "title": "UMUD Submission Blend QDC CXS",
+        "title": "UMUD Submission Blend QDC CXS8",
         "code_file": "submission-blend-qdc-cxs.ipynb",
         "language": "python",
         "kernel_type": "notebook",
