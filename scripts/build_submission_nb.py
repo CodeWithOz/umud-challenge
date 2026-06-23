@@ -3,9 +3,9 @@ import json
 from pathlib import Path
 
 # Production maxvit-nano (Block 8 — score 1.822 beats rv2 1.842)
-BUILD_APO_MODEL_FILE = "apo_gray55_line_200_maxvit_nano.pkl"
-BUILD_APO_KERNEL_SLUG = "umud-train-encoder-maxvit-nano-phase-3"
-BUILD_SUBMISSION_LABEL = "Phase 4 Block 9 s2 — maxvit geometry + calibration (PA18)"
+BUILD_APO_MODEL_FILE = "apo_gray55_line_200_cxs.pkl"
+BUILD_APO_KERNEL_SLUG = "umud-train-apo-gray55-phase-3"
+BUILD_SUBMISSION_LABEL = "Block 10 — convnext_small + Block 9 s2 calibration"
 BUILD_MM_PER_PIXEL = 0.075
 BUILD_IMG_SIZE = 256
 

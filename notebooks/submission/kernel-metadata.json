@@ -14,7 +14,7 @@
   "dataset_sources": [],
   "kernel_sources": [
     "ucheozoemena/umud-train-mounted-phase-3",
-    "ucheozoemena/umud-train-encoder-maxvit-nano-phase-3"
+    "ucheozoemena/umud-train-apo-gray55-phase-3"
   ],
   "competition_sources": [
     "umud-challenge-muscle-architecture-in-ultrasound-data"

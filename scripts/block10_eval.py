@@ -44,8 +44,9 @@ class ArchSpec:
 # All Block 7/8 architectures with saved test debug geometry.
 ARCHITECTURES: tuple[ArchSpec, ...] = (
     # Block 8
-    ArchSpec("8", "maxvit_nano", "data/kaggle-outputs/block8/maxvit-nano/submit/submission_debug.csv", 1.82151),
     ArchSpec("8", "resnetv2_18", "data/kaggle-outputs/block8/resnetv2-18/submit/submission_debug.csv", 1.84197),
+    ArchSpec("8", "resnetv2_18_s2", "data/kaggle-outputs/block10/rv2-s2/submission_debug.csv", None, "Block 10 rv2 + s2 cal submit v33"),
+    ArchSpec("8", "maxvit_nano", "data/kaggle-outputs/block8/maxvit-nano/submit/submission_debug.csv", 1.82151),
     ArchSpec("8", "levit128s", "data/kaggle-outputs/block8/levit128s/submit/submission_debug.csv", 1.91255),
     ArchSpec("8", "efficientnetv2_rw_t", "data/kaggle-outputs/block8/efficientnetv2-rw-t/submit/submission_debug.csv", 1.98186),
     ArchSpec("8", "convnextv2_atto", "data/kaggle-outputs/block8/convnextv2-atto/submit/submission_debug.csv", None, "94% mt_ok — not LB submitted"),
@@ -57,6 +58,10 @@ ARCHITECTURES: tuple[ArchSpec, ...] = (
     ArchSpec("7", "mobilenetv3_small_100", "data/kaggle-outputs/block7-test-eval/run18-mobilenetv3_small_100/submission_debug.csv", 1.91682),
     ArchSpec("7", "efficientnet_b0", "data/kaggle-outputs/block7-test-eval/run16-efficientnet_b0/submission_debug.csv", None, "74% mt_ok — rejected"),
     ArchSpec("7", "convnext_tiny", "data/kaggle-outputs/block7-cxt-submit/submission_debug.csv", None, "71% mt_ok — rejected"),
+    # Block 10 debug runs (notebook only — no LB submit)
+    ArchSpec("6", "resnet50", "data/kaggle-outputs/block10/r50-debug/submission_debug.csv", 1.87312, "Block 10 debug"),
+    ArchSpec("6", "resnet34", "data/kaggle-outputs/block10/r34-debug/submission_debug.csv", 1.91296, "Block 10 debug"),
+    ArchSpec("7", "convnext_small", "data/kaggle-outputs/block10/cxs-debug/submission_debug.csv", None, "Block 10 debug — first train"),
 )
 
 

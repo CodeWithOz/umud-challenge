@@ -2,7 +2,30 @@
 
 ## Current focus
 
-_Last updated: 2026-06-22 — **Block 10 complete.** Re-ranked all Block 7/8 encoders with Block 9 s2 calibration + tracking metric (no retrain). **Surprise: resnetv2_18 beats maxvit** (LB~s2 **1.044** vs **1.068**; track_s2 0.630 vs 0.654). Next: optional Kaggle submit rv2+s2 to confirm; or Block 11 model work if calibration exhausted._
+_Last updated: 2026-06-22 — **rv2+s2 scored 1.08457** (worse than maxvit s2 **1.06757**). Submitting **convnext_small+s2** next. Debug runs complete for r50/r34/cxs (no slot used)._
+
+### Block 10 Kaggle runs (2026-06-22)
+
+| Job | Type | Kernel v | mt_ok | Public LB |
+|-----|------|----------|-------|-----------|
+| **rv2-s2** | graded | submit **v33** | 100% | **1.08457** (worse than maxvit s2) |
+| cxs-s2 | graded (pending) | — | 100% (debug) | — |
+| r50-debug | notebook only | submit v35 | 100% | — |
+| r34-debug | notebook only | submit v36 | 100% | — |
+| cxs-debug | notebook only | submit v37 | 100% | — |
+
+**Confirmed:** Kaggle notebook runs produce `submission.csv` + `submission_debug.csv` without using a competition submission slot. Only `competitions submit` counts against the daily quota.
+
+**Updated Block 10 s2 ranking** (incl. new debug CSVs — `scripts/block10_eval.py`):
+
+| Rank | Encoder | track_s2 | LB~s2 |
+|------|---------|----------|-------|
+| **1** | **resnetv2_18** | **0.630** | **~1.044** |
+| 2 | convnext_small | 0.654 | ~1.067 |
+| 3 | maxvit_nano | 0.654 | ~1.068 |
+| … | resnet50 | 0.716 | ~1.130 | (worst of new batch)
+
+**rv2 public LB:** **1.08457** — tracking overestimated (~1.044 pred); **worse than maxvit s2 (1.06757)**. convnext_small tracking ~1.067 → submit next.
 
 ### Block 10 — encoder re-rank with Block 9 calibration (2026-06-22)
 

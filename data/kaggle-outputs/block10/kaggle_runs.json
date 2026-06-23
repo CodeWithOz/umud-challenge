@@ -1,0 +1,52 @@
+[
+  {
+    "slug": "rv2-s2",
+    "arch": "resnetv2_18",
+    "pkl": "apo_gray55_line_200_rv2_18.pkl",
+    "submit_version": 33,
+    "n": 309,
+    "mt_ok": 309,
+    "mt_ok_pct": 100.0,
+    "fail_reasons": {},
+    "status": "ok",
+    "lb_submitted": true,
+    "lb_msg": "block10-rv2-s2"
+  },
+  {
+    "slug": "r50-debug",
+    "arch": "resnet50",
+    "pkl": "apo_gray55_line_200_r50.pkl",
+    "train_version": 32,
+    "submit_version": 35,
+    "n": 309,
+    "mt_ok": 309,
+    "mt_ok_pct": 100.0,
+    "fail_reasons": {},
+    "status": "ok"
+  },
+  {
+    "slug": "r34-debug",
+    "arch": "resnet34",
+    "pkl": "apo_gray55_line_200.pkl",
+    "train_version": 33,
+    "submit_version": 36,
+    "n": 309,
+    "mt_ok": 309,
+    "mt_ok_pct": 100.0,
+    "fail_reasons": {},
+    "status": "ok"
+  },
+  {
+    "slug": "cxs-debug",
+    "arch": "convnext_small",
+    "pkl": "apo_gray55_line_200_cxs.pkl",
+    "train_version": 34,
+    "submit_version": 37,
+    "n": 309,
+    "mt_ok": 309,
+    "mt_ok_pct": 100.0,
+    "fail_reasons": {},
+    "status": "ok",
+    "note": "First train (TRAIN_RUN=15); skipped in original Block 7 sweep"
+  }
+]
