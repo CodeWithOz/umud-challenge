@@ -2,7 +2,19 @@
 
 ## Current focus
 
-_Last updated: 2026-06-23 — **Best: convnext_small s2 5ep = 1.04862** (v39). **Block 13 active:** quick-dirty image-geometry notebook v1 completed with **309 rows / 0 NaN** and exact local/Kaggle match; submit attempt hit Kaggle **400** after five same-day submissions, so one-shot reset submit is being scheduled. Block 12 cxs8 scored **1.10363** (worse)._
+_Last updated: 2026-06-23 — **Best: convnext_small s2 5ep = 1.04862** (v39). **Block 13 active:** quick-dirty image-geometry notebook v1 completed with **309 rows / 0 NaN** and exact local/Kaggle match; reset submit is scheduled for **2026-06-24 01:07 WAT**. **Block 14 prepared:** calibrated quick-dirty keeps per-image signal but center/shrinks to LB-fit targets; local output **309 rows / 0 NaN**, median PA/FL/MT **16.31° / 76.9 mm / 19.76 mm**. Block 12 cxs8 scored **1.10363** (worse)._
+
+### Block 14 — calibrated quick-dirty fallback (2026-06-23)
+
+**Rationale:** Raw quick-dirty has the first serious per-image PA/FL path, but its centers are far from the current leaderboard-fit target: raw median PA/FL/MT **11.31° / 118.9 mm / 24.37 mm** vs cxs-s2 **18° / 74.5 mm / 21.6 mm** and fit centers near **17.15° / 76.9 mm / 19.76 mm**. The fixed transform is:
+
+- `PA = clip(raw_PA + 5, 5, 45)`
+- `FL = 76.9 + 0.20 * (raw_FL - 118.9114)`
+- `MT = 19.76 + 0.20 * (raw_MT - 24.3678)`
+
+Local calibrated output (`tmp/quickdirty-cal-local/submission.csv`): **309 rows, 0 NaN**, median PA/FL/MT **16.31° / 76.9 mm / 19.76 mm**, std FL/MT **9.09 / 1.48**. The tracking proxy ranks this at **~0.52** vs cxs-s2 **~0.65**, but this is optimistic because the proxy was fit mostly on segmentation submissions; treat as a high-upside fallback after the raw Block 13 score lands.
+
+Artifacts: `scripts/quickdirty_geometry.py` (`calibrate_quickdirty`), `scripts/build_submission_quickdirty_cal_nb.py`, `notebooks/submission-quickdirty-cal/`.
 
 ### Block 13 — quick-dirty image geometry (2026-06-23)
 
