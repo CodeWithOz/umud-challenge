@@ -2,7 +2,7 @@
 
 ## Current focus
 
-_Last updated: 2026-06-23 — **Best: convnext_small s2 5ep = 1.04862** (v39). **Block 13 active:** quick-dirty image-geometry notebook v1 completed with **309 rows / 0 NaN** and exact local/Kaggle match; reset submit is scheduled for **2026-06-24 01:07 WAT**. **Block 14 ready:** calibrated quick-dirty kernel v1 completed with **309 rows / 0 NaN** and exact local/Kaggle match; median PA/FL/MT **16.31° / 76.9 mm / 19.76 mm**. Block 12 cxs8 scored **1.10363** (worse)._
+_Last updated: 2026-06-23 — **Best: convnext_small s2 5ep = 1.04862** (v39). **Block 13 active:** quick-dirty image-geometry notebook v1 completed with **309 rows / 0 NaN** and exact local/Kaggle match; reset submit is scheduled for **2026-06-24 01:07 WAT**. **Block 14 ready:** calibrated quick-dirty kernel v1 completed with **309 rows / 0 NaN** and exact local/Kaggle match; guarded reset submit is scheduled for **2026-06-24 01:25 WAT** and skips if any score is already <0.6. Block 12 cxs8 scored **1.10363** (worse)._
 
 ### Block 14 — calibrated quick-dirty fallback (2026-06-23)
 
@@ -13,6 +13,8 @@ _Last updated: 2026-06-23 — **Best: convnext_small s2 5ep = 1.04862** (v39). *
 - `MT = 19.76 + 0.20 * (raw_MT - 24.3678)`
 
 Local calibrated output (`tmp/quickdirty-cal-local/submission.csv`): **309 rows, 0 NaN**, median PA/FL/MT **16.31° / 76.9 mm / 19.76 mm**, std FL/MT **9.09 / 1.48**. Kaggle kernel `umud-submission-quickdirty-cal` **v1 COMPLETE**; output at `data/kaggle-outputs/block14-quickdirty-cal/` matches local (max deltas: PA **0**, FL **1.4e-14**, MT **3.6e-15**). The tracking proxy ranks this at **~0.52** vs cxs-s2 **~0.65**, but this is optimistic because the proxy was fit mostly on segmentation submissions; treat as a high-upside fallback after the raw Block 13 score lands.
+
+Reset submit: LaunchAgent `com.uche.umud-block14-submit` loaded for **2026-06-24 01:25 WAT**. Script `scripts/submit_block14_scheduled.sh` submits `-k ucheozoemena/umud-submission-quickdirty-cal -v 1 -f submission.csv -m block14-quickdirty-cal`, but first skips if `block14-quickdirty-cal` already exists or any completed public score is below **0.6**.
 
 Artifacts: `scripts/quickdirty_geometry.py` (`calibrate_quickdirty`), `scripts/build_submission_quickdirty_cal_nb.py`, `notebooks/submission-quickdirty-cal/`.
 
