@@ -2,7 +2,21 @@
 
 ## Current focus
 
-_Last updated: 2026-06-23 — **Best: convnext_small s2 5ep = 1.04862** (v39). **Block 13 active:** quick-dirty image-geometry notebook v1 completed with **309 rows / 0 NaN** and exact local/Kaggle match; reset submit is scheduled for **2026-06-24 01:07 WAT**. **Block 14 ready:** calibrated quick-dirty kernel v1 completed with **309 rows / 0 NaN** and exact local/Kaggle match; guarded reset submit is scheduled for **2026-06-24 01:25 WAT** and skips if any score is already <0.6. Block 12 cxs8 scored **1.10363** (worse)._
+_Last updated: 2026-06-23 — **Best: convnext_small s2 5ep = 1.04862** (v39). **Block 13 active:** quick-dirty image-geometry notebook v1 completed with **309 rows / 0 NaN** and exact local/Kaggle match; reset submit is scheduled for **2026-06-24 01:07 WAT**. **Block 14 ready:** calibrated quick-dirty kernel v1 completed with **309 rows / 0 NaN** and exact local/Kaggle match; guarded reset submit is scheduled for **2026-06-24 01:25 WAT** and skips if any score is already <0.6. **Block 15 prepared:** hidden-safe blend notebook `0.70*qdc + 0.30*cxs-s2`; proxy ranks it **~0.475**. Block 12 cxs8 scored **1.10363** (worse)._
+
+### Block 15 — hidden-safe blend: quickdirty-cal + cxs-s2 (2026-06-23)
+
+**Rationale:** Block 14 qdc is the highest-upside standalone path, but the existing cxs-s2 stack has proven leaderboard signal. A fixed blend can keep qdc's per-image PA/FL path while retaining some cxs-s2 segmentation stability. Tracking proxy on public outputs:
+
+| Candidate | Proxy track | Notes |
+|-----------|-------------|-------|
+| cxs-s2 | ~0.654 | Current best public LB **1.04862** |
+| qdc tight (Block 14) | ~0.519 | Median PA/FL/MT **16.31° / 76.9 / 19.76** |
+| **0.70 qdc + 0.30 cxs-s2** | **~0.475** | Best tested blend weight |
+
+Notebook design is hidden-safe: it runs the normal production cxs-s2 segmentation inference for mounted test images, then computes calibrated quick-dirty from the same mounted images, then overwrites `submission.csv` with `0.70 * qdc + 0.30 * cxs-s2`. It does **not** embed public-test predictions.
+
+Artifacts: `scripts/build_submission_blend_nb.py`, `notebooks/submission-blend-qdc-cxs/`.
 
 ### Block 14 — calibrated quick-dirty fallback (2026-06-23)
 
