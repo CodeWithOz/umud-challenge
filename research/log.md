@@ -2,7 +2,22 @@
 
 ## Current focus
 
-_Last updated: 2026-06-23 — **Best: convnext_small s2 5ep = 1.04862** (v39). **Block 12:** cxs **8ep** graded submit v43 `block12-cxs8-s2` (LB pending; train val UMUD **0.93** but **54%** val mt_ok). Block 11: cnxb **1.07134**, maxvit-tiny **1.09715**._
+_Last updated: 2026-06-23 — **Best: convnext_small s2 5ep = 1.04862** (v39). **Block 13 active:** quick-dirty image-geometry notebook (public AmbrosM-style scale + brightness apo + texture PA) generated locally; 309 rows / 0 NaN; Kaggle run next. Block 12 cxs8 scored **1.10363** (worse)._
+
+### Block 13 — quick-dirty image geometry (2026-06-23)
+
+**Rationale:** Public LB has DLTrack benchmark **0.67944** and multiple teams below **0.6**. Current segmentation stack is stuck because PA is constant and FL is frozen from the weak fascicle PCA path. AmbrosM's public `umud-quick-and-dirty` notebook attacks exactly that gap: recover real per-image scale, estimate apo depths from brightness, estimate PA from texture correlation, and derive **FL = MT / sin(PA)**.
+
+| Step | Status | Notes |
+|------|--------|-------|
+| Pull public notebook | Done | `tmp/public-kernels/ambrosm-umud-quick-and-dirty/` (reference only; not committed) |
+| Local port | Done | `scripts/quickdirty_geometry.py` |
+| Kaggle builder | Done | `scripts/build_submission_quickdirty_nb.py` → `notebooks/submission-quickdirty/` |
+| Local test | Done | `tmp/quickdirty-local/submission.csv`: **309 rows, 0 NaN** |
+| Kaggle run | Pending | Commit + push repo first, then `kaggle kernels push` |
+| Graded submit | Pending | Quota may be exhausted on 2026-06-23; use CLI notebook submit when available |
+
+Local quick-dirty distribution: PA median **11.31°**, FL median **118.9 mm**, MT median **24.37 mm**, per-image `mm_per_px` median **0.067**. This is intentionally very different from cxs-s2 (PA **18 constant**, FL median **74.5**, MT median **21.6**) and is the first serious PA/FL measurement-path change after Block 9.
 
 ### Block 10 Kaggle runs (2026-06-22/23)
 
@@ -32,7 +47,7 @@ Runner: `scripts/run_block11.py` — parallel train pushes, sequential idempoten
 | Step | Kernel v | Notes |
 |------|----------|-------|
 | Train TRAIN_RUN=21 | gray55 **v37** | 200×8ep, val Dice **0.592**, val UMUD **0.93**, val mt_ok **54%** (22/41) |
-| Graded submit s2 | submission **v43** | `block12-cxs8-s2` → `apo_gray55_line_200_cxs8.pkl` (LB pending) |
+| Graded submit s2 | submission **v43** | `block12-cxs8-s2` → `apo_gray55_line_200_cxs8.pkl` scored **1.10363** — worse than cxs 5ep **1.04862** |
 
 Runner: `scripts/run_cxs8_kaggle.py`
 
