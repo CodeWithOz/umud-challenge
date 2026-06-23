@@ -1,19 +1,9 @@
 [
   {
     "slug": "maxvit-tiny",
-    "train_version": 1,
-    "train_status": "error"
-  },
-  {
-    "slug": "convnext-base",
-    "train_version": 35,
-    "train_status": "complete"
-  },
-  {
-    "slug": "convnext-base",
     "status": "ok",
-    "submit_version": 40,
+    "submit_version": 42,
     "lb_submitted": true,
-    "lb_msg": "block11-cnxb-s2"
+    "lb_msg": "block11-maxvit-tiny-s2"
   }
 ]
