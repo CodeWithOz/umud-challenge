@@ -2,30 +2,30 @@
 
 ## Current focus
 
-_Last updated: 2026-06-22 — **rv2+s2 scored 1.08457** (worse than maxvit s2 **1.06757**). Submitting **convnext_small+s2** next. Debug runs complete for r50/r34/cxs (no slot used)._
+_Last updated: 2026-06-23 — **New best: convnext_small s2 = 1.04862** (notebook v39). Prior best maxvit s2 **notebook 1.06750** / CSV 1.06757. **Block 11 active:** parallel train maxvit-tiny + convnext_base → graded s2 submits._
 
-### Block 10 Kaggle runs (2026-06-22)
+### Block 10 Kaggle runs (2026-06-22/23)
 
-| Job | Type | Kernel v | mt_ok | Public LB |
-|-----|------|----------|-------|-----------|
-| **rv2-s2** | graded | submit **v33** | 100% | **1.08457** (worse than maxvit s2) |
-| cxs-s2 | graded (pending) | — | 100% (debug) | — |
-| r50-debug | notebook only | submit v35 | 100% | — |
-| r34-debug | notebook only | submit v36 | 100% | — |
-| cxs-debug | notebook only | submit v37 | 100% | — |
+| Job | Type | Kernel v | mt_ok | Public LB | Notes |
+|-----|------|----------|-------|-----------|-------|
+| **cxs-s2** | graded notebook | **v39** | 100% | **1.04862** | **Current best** |
+| maxvit s2 | graded notebook | **v32** | 100% | **1.06750** | Prior best (notebook) |
+| maxvit s2 | graded CSV | — | — | 1.06757 | CSV probe only |
+| rv2-s2 | graded | v33 | 100% | 1.08457 | Tracking overestimated |
+| r50/r34/cxs-debug | notebook only | v35–37 | 100% | — | No submission slot |
 
-**Confirmed:** Kaggle notebook runs produce `submission.csv` + `submission_debug.csv` without using a competition submission slot. Only `competitions submit` counts against the daily quota.
+**Mistake logged:** `block10-cxs-s2` was submitted twice (duplicate CLI call) — wasted one daily slot. `run_block11.py` now checks `competitions submissions` before submit.
 
-**Updated Block 10 s2 ranking** (incl. new debug CSVs — `scripts/block10_eval.py`):
+**Production stack:** fasc full + **`apo_gray55_line_200_cxs.pkl`** (convnext_small 5ep) + horiz_parallel + **Block 9 s2 calibration** → **1.04862**.
 
-| Rank | Encoder | track_s2 | LB~s2 |
-|------|---------|----------|-------|
-| **1** | **resnetv2_18** | **0.630** | **~1.044** |
-| 2 | convnext_small | 0.654 | ~1.067 |
-| 3 | maxvit_nano | 0.654 | ~1.068 |
-| … | resnet50 | 0.716 | ~1.130 | (worst of new batch)
+### Block 11 — next-tier encoders (2026-06-23)
 
-**rv2 public LB:** **1.08457** — tracking overestimated (~1.044 pred); **worse than maxvit s2 (1.06757)**. convnext_small tracking ~1.067 → submit next.
+| Family | Previous | Next (training) | Export |
+|--------|----------|-----------------|--------|
+| ConvNeXt | small (1.04862) | **convnext_base** | `apo_gray55_line_200_cnxb.pkl` |
+| MaxViT | nano (1.06750 nb) | **maxvit_tiny_rw_256** | `apo_gray55_line_200_maxvit_tiny.pkl` |
+
+Runner: `scripts/run_block11.py` — parallel train pushes, then sequential idempotent graded submits.
 
 ### Block 10 — encoder re-rank with Block 9 calibration (2026-06-22)
 

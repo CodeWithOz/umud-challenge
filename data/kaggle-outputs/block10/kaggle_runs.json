@@ -10,7 +10,8 @@
     "fail_reasons": {},
     "status": "ok",
     "lb_submitted": true,
-    "lb_msg": "block10-rv2-s2"
+    "lb_msg": "block10-rv2-s2",
+    "lb_score": 1.08457
   },
   {
     "slug": "r50-debug",
@@ -48,5 +49,18 @@
     "fail_reasons": {},
     "status": "ok",
     "note": "First train (TRAIN_RUN=15); skipped in original Block 7 sweep"
+  },
+  {
+    "slug": "cxs-s2",
+    "arch": "convnext_small",
+    "pkl": "apo_gray55_line_200_cxs.pkl",
+    "submit_version": 39,
+    "n": 309,
+    "mt_ok": 309,
+    "mt_ok_pct": 100.0,
+    "status": "ok",
+    "lb_submitted": true,
+    "lb_msg": "block10-cxs-s2",
+    "lb_score": 1.04862
   }
 ]

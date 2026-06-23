@@ -90,6 +90,14 @@ BLOCK8_ENCODERS: tuple[EncoderSpec, ...] = (
         params_m=23.0,
         note="MaxXViT V2 Nano RW @256 (timm maxxvitv2)",
     ),
+    EncoderSpec(
+        slug="maxvit-tiny",
+        family="MaxViT",
+        arch="maxvit_tiny_rw_256",
+        export_name="apo_gray55_line_200_maxvit_tiny.pkl",
+        params_m=28.0,
+        note="MaxViT Tiny RW @256 — next size up from nano (Block 11)",
+    ),
 )
 
 

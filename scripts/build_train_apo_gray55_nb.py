@@ -2,7 +2,7 @@
 import json
 from pathlib import Path
 
-BUILD_TRAIN_RUN = 15
+BUILD_TRAIN_RUN = 20
 
 FASTAI_RESNETS = frozenset({"resnet18", "resnet34", "resnet50"})
 
@@ -26,6 +26,7 @@ DATASET_SLUG_BY_RUN = {
     17: "ucheozoemena/umud-aligned-apo-gray55-line-timing-200",
     18: "ucheozoemena/umud-aligned-apo-gray55-line-timing-200",
     19: "ucheozoemena/umud-aligned-apo-gray55-line-timing-200",
+    20: "ucheozoemena/umud-aligned-apo-gray55-line-timing-200",
 }
 
 EXTRA_DATASET_SOURCES_BY_RUN: dict[int, list[str]] = {
@@ -70,7 +71,7 @@ cells: list[dict] = [
     code(
         """# --- Parameters you can change ---
 RANDOM_SEED = 42
-TRAIN_RUN = 15  # Block 7 encoder sweep — see TRAIN_PROFILES
+TRAIN_RUN = 20  # Block 7 encoder sweep — see TRAIN_PROFILES
 
 VALID_PCT = 0.20
 STRATIFY_VAL_BY_RESOLUTION = True  # uses manifest resolution_cohort when True
@@ -208,6 +209,13 @@ TRAIN_PROFILES = {
         "arch": "regnetx_004",
         "label": "GAT19 Block7 regnetx_004 200×5ep",
         "export_name": "apo_gray55_line_200_rgx004.pkl",
+    },
+    20: {
+        "dataset_slug": "ucheozoemena/umud-aligned-apo-gray55-line-timing-200",
+        "epochs": 5,
+        "arch": "convnext_base",
+        "label": "GAT20 Block11 convnext_base 200×5ep",
+        "export_name": "apo_gray55_line_200_cnxb.pkl",
     },
 }
 
