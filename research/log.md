@@ -2,7 +2,7 @@
 
 ## Current focus
 
-_Last updated: 2026-06-23 — **New best: convnext_small s2 = 1.04862** (v39). **Block 11 graded submits:** convnext_base v40 `block11-cnxb-s2` (LB pending); maxvit_rmlp_tiny v42 `block11-maxvit-tiny-s2` (LB pending). Prior maxvit nano s2 notebook **1.06750**._
+_Last updated: 2026-06-23 — **Best: convnext_small s2 = 1.04862** (v39, 5ep). **Block 11:** cnxb v40 **1.07134**; maxvit_rmlp_tiny v42 **1.09715** — both worse than cxs. **Block 12 active:** convnext_small **8ep** graded s2 submit (`block12-cxs8-s2`)._
 
 ### Block 10 Kaggle runs (2026-06-22/23)
 
@@ -22,8 +22,8 @@ _Last updated: 2026-06-23 — **New best: convnext_small s2 = 1.04862** (v39). *
 
 | Family | Previous | Next | Export | Status |
 |--------|----------|------|--------|--------|
-| ConvNeXt | small (1.04862) | **convnext_base** | `apo_gray55_line_200_cnxb.pkl` | train v35 → submit **v40** `block11-cnxb-s2` (LB pending) |
-| MaxViT | nano (1.06750 nb) | **maxvit_rmlp_tiny_rw_256** | `apo_gray55_line_200_maxvit_tiny.pkl` | train v2 OK (val UMUD 2.63) → submit **v42** `block11-maxvit-tiny-s2` (LB pending) |
+| ConvNeXt | small (1.04862) | **convnext_base** | `apo_gray55_line_200_cnxb.pkl` | train v35 → submit v40 **1.07134** |
+| MaxViT | nano (1.06750 nb) | **maxvit_rmlp_tiny_rw_256** | `apo_gray55_line_200_maxvit_tiny.pkl` | train v2 → submit v42 **1.09715** |
 
 Runner: `scripts/run_block11.py` — parallel train pushes, sequential idempotent graded submits. `restore_prod()` now local-only (no stray prod kernel push).
 
