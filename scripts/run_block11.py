@@ -262,9 +262,13 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--train-only", action="store_true")
     parser.add_argument("--submit-only", action="store_true")
+    parser.add_argument("--slug", action="append", help="Limit to job slug(s), e.g. maxvit-tiny")
     args = parser.parse_args()
     env = kaggle_env()
     OUT_ROOT.mkdir(parents=True, exist_ok=True)
+    jobs = [j for j in JOBS if not args.slug or j.slug in args.slug]
+    if not jobs:
+        raise SystemExit(f"No jobs match slug filter: {args.slug}")
     results: list[dict] = []
 
     if not args.submit_only:
@@ -272,7 +276,7 @@ def main() -> None:
         import concurrent.futures
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:
-            futs = {pool.submit(push_train, job, env): job for job in JOBS}
+            futs = {pool.submit(push_train, job, env): job for job in jobs}
             for fut in concurrent.futures.as_completed(futs):
                 job = futs[fut]
                 try:
@@ -283,7 +287,7 @@ def main() -> None:
 
     if not args.train_only:
         print("\n=== Block 11: sequential graded submits (idempotent) ===", flush=True)
-        for job in JOBS:
+        for job in jobs:
             tr = next((r for r in results if r.get("slug") == job.slug), None)
             if tr and tr.get("train_status") not in (None, "complete") and not args.submit_only:
                 print(f"  skip submit {job.slug}: train {tr.get('train_status')}", flush=True)
