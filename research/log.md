@@ -2,7 +2,7 @@
 
 ## Current focus
 
-_Last updated: 2026-06-23 — **Best: convnext_small s2 = 1.04862** (v39, 5ep). **Block 11:** cnxb v40 **1.07134**; maxvit_rmlp_tiny v42 **1.09715** — both worse than cxs. **Block 12 active:** convnext_small **8ep** graded s2 submit (`block12-cxs8-s2`)._
+_Last updated: 2026-06-23 — **Best: convnext_small s2 5ep = 1.04862** (v39). **Block 12:** cxs **8ep** graded submit v43 `block12-cxs8-s2` (LB pending; train val UMUD **0.93** but **54%** val mt_ok). Block 11: cnxb **1.07134**, maxvit-tiny **1.09715**._
 
 ### Block 10 Kaggle runs (2026-06-22/23)
 
@@ -26,6 +26,15 @@ _Last updated: 2026-06-23 — **Best: convnext_small s2 = 1.04862** (v39, 5ep). 
 | MaxViT | nano (1.06750 nb) | **maxvit_rmlp_tiny_rw_256** | `apo_gray55_line_200_maxvit_tiny.pkl` | train v2 → submit v42 **1.09715** |
 
 Runner: `scripts/run_block11.py` — parallel train pushes, sequential idempotent graded submits. `restore_prod()` now local-only (no stray prod kernel push).
+
+### Block 12 — convnext_small 8ep (2026-06-23)
+
+| Step | Kernel v | Notes |
+|------|----------|-------|
+| Train TRAIN_RUN=21 | gray55 **v37** | 200×8ep, val Dice **0.592**, val UMUD **0.93**, val mt_ok **54%** (22/41) |
+| Graded submit s2 | submission **v43** | `block12-cxs8-s2` → `apo_gray55_line_200_cxs8.pkl` (LB pending) |
+
+Runner: `scripts/run_cxs8_kaggle.py`
 
 ### Block 10 — encoder re-rank with Block 9 calibration (2026-06-22)
 
