@@ -120,7 +120,7 @@ def main() -> None:
     }
     (out / "submission-blend-qdc-cxs.ipynb").write_text(json.dumps(nb, indent=1))
     meta = {
-        "id": "ucheozoemena/umud-submission-blend-qdc-cxs",
+        "id": "ucheozoemena/umud-submission-blend-qdc-cxs8",
         "title": "UMUD Submission Blend QDC CXS8",
         "code_file": "submission-blend-qdc-cxs.ipynb",
         "language": "python",
