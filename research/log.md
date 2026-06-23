@@ -2,7 +2,7 @@
 
 ## Current focus
 
-_Last updated: 2026-06-23 — **Best: convnext_small s2 5ep = 1.04862** (v39). **Block 13 active:** quick-dirty image-geometry notebook (public AmbrosM-style scale + brightness apo + texture PA) generated locally; 309 rows / 0 NaN; Kaggle run next. Block 12 cxs8 scored **1.10363** (worse)._
+_Last updated: 2026-06-23 — **Best: convnext_small s2 5ep = 1.04862** (v39). **Block 13 active:** quick-dirty image-geometry notebook v1 completed with **309 rows / 0 NaN** and exact local/Kaggle match; submit attempt hit Kaggle **400** after five same-day submissions, so one-shot reset submit is being scheduled. Block 12 cxs8 scored **1.10363** (worse)._
 
 ### Block 13 — quick-dirty image geometry (2026-06-23)
 
@@ -14,8 +14,10 @@ _Last updated: 2026-06-23 — **Best: convnext_small s2 5ep = 1.04862** (v39). *
 | Local port | Done | `scripts/quickdirty_geometry.py` |
 | Kaggle builder | Done | `scripts/build_submission_quickdirty_nb.py` → `notebooks/submission-quickdirty/` |
 | Local test | Done | `tmp/quickdirty-local/submission.csv`: **309 rows, 0 NaN** |
-| Kaggle run | Pending | Commit + push repo first, then `kaggle kernels push` |
-| Graded submit | Pending | Quota may be exhausted on 2026-06-23; use CLI notebook submit when available |
+| Kaggle run | Done | Kernel `umud-submission-quickdirty` **v1 COMPLETE**; output at `data/kaggle-outputs/block13-quickdirty/` |
+| Output verification | Done | Kaggle `submission.csv` shape **(309, 4)**, 0 NaN, exact match to local (max FL delta ~7e-15) |
+| Graded submit | Waiting quota | CLI notebook-output submit returned **400 Bad Request** after five 2026-06-23 submissions; no duplicate created |
+| Reset submit | Scheduled | LaunchAgent `com.uche.umud-block13-submit` loaded for **2026-06-24 01:07 WAT** (00:07 UTC); script submits `-k ucheozoemena/umud-submission-quickdirty -v 1 -f submission.csv -m block13-quickdirty` |
 
 Local quick-dirty distribution: PA median **11.31°**, FL median **118.9 mm**, MT median **24.37 mm**, per-image `mm_per_px` median **0.067**. This is intentionally very different from cxs-s2 (PA **18 constant**, FL median **74.5**, MT median **21.6**) and is the first serious PA/FL measurement-path change after Block 9.
 
