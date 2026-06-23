@@ -104,6 +104,9 @@ _This section is updated whenever a new lesson is discovered. Any AI agent worki
 
 | Date | Lesson |
 |------|--------|
+| 2026-06-23 | **MaxViT next tier:** `maxvit_tiny_rw_256` has no ImageNet pretrained weights on Kaggle timm; use **`maxvit_rmlp_tiny_rw_256`** (~28.6M, pretrained @256) as the step up from nano. |
+| 2026-06-23 | **`run_block11 restore_prod`:** regenerate local prod submission notebook only — do **not** auto-push to Kaggle (avoids stray prod kernel versions after block runs). |
+| 2026-06-23 | **Duplicate submit guard:** always `grep` / check `kaggle competitions submissions` for the message string before `competitions submit` — duplicate CLI calls waste daily slots (block10-cxs-s2 submitted twice). |
 | 2026-06-22 | **Code-competition submit:** `kaggle competitions submit -k <kernel> -v <V> -f submission.csv` submits the output file **version V already produced** (does NOT upload a local file, does NOT re-run the kernel). Prefer this CLI route over manual UI; see Kaggle Workflow Rules → Leaderboard submission. The notebook re-runs on hidden 2× data for the private LB at competition close. |
 | 2026-06-22 | Notebook submit can differ slightly from the equivalent CSV: v32 notebook scored **1.06750** vs CSV **1.06757** (geometry recomputed on Kaggle → tiny float drift, here a hair better). Submit the notebook, not the static CSV, for the private-eligible entry. |
 | 2026-06 | Kaggle auto-extracts dataset zips; `glob('*.zip')` finds nothing. Use `rglob` and a filename→path lookup instead. |

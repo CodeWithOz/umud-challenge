@@ -93,10 +93,10 @@ BLOCK8_ENCODERS: tuple[EncoderSpec, ...] = (
     EncoderSpec(
         slug="maxvit-tiny",
         family="MaxViT",
-        arch="maxvit_tiny_rw_256",
+        arch="maxvit_rmlp_tiny_rw_256",
         export_name="apo_gray55_line_200_maxvit_tiny.pkl",
-        params_m=28.0,
-        note="MaxViT Tiny RW @256 — next size up from nano (Block 11)",
+        params_m=28.6,
+        note="MaxViT RMLP Tiny RW @256 — next pretrained tier above nano (Block 11)",
     ),
 )
 

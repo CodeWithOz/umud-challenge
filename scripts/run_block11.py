@@ -54,7 +54,7 @@ class Block11Job:
 JOBS: tuple[Block11Job, ...] = (
     Block11Job(
         slug="maxvit-tiny",
-        arch="maxvit_tiny_rw_256",
+        arch="maxvit_rmlp_tiny_rw_256",
         pkl="apo_gray55_line_200_maxvit_tiny.pkl",
         apo_kernel="umud-train-encoder-maxvit-tiny-phase-3",
         lb_msg="block11-maxvit-tiny-s2",
@@ -152,7 +152,24 @@ def patch_submission(job: Block11Job) -> None:
     (SUBMIT_DIR / "kernel-metadata.json").write_text(json.dumps(meta, indent=2) + "\n")
 
 
+def api_token(env: dict[str, str]) -> str | None:
+    tok = subprocess.run(
+        [str(KAGGLE), "auth", "print-access-token"],
+        capture_output=True,
+        text=True,
+        env=env,
+    )
+    if tok.returncode != 0:
+        return None
+    for line in reversed(tok.stdout.splitlines()):
+        line = line.strip()
+        if line and not line.startswith("Warning:"):
+            return line
+    return None
+
+
 def restore_prod() -> None:
+    """Regenerate local prod submission notebook only — no Kaggle push (avoids stray v41-style runs)."""
     text = SUBMIT_BUILD.read_text()
     text = re.sub(r'^BUILD_APO_MODEL_FILE = ".*?"', f'BUILD_APO_MODEL_FILE = "{PROD_MODEL}"', text, count=1, flags=re.M)
     text = re.sub(r'^BUILD_APO_KERNEL_SLUG = ".*?"', f'BUILD_APO_KERNEL_SLUG = "{PROD_KERNEL}"', text, count=1, flags=re.M)
@@ -211,9 +228,9 @@ def submit_job(job: Block11Job, env: dict[str, str]) -> dict:
         return {"slug": job.slug, "status": "lb_skipped_duplicate", "submit_version": submit_ver}
 
     token_env = env.copy()
-    tok = subprocess.run([str(KAGGLE), "auth", "print-access-token"], capture_output=True, text=True, env=env)
-    if tok.returncode == 0 and tok.stdout.strip():
-        token_env["KAGGLE_API_TOKEN"] = tok.stdout.strip()
+    token = api_token(env)
+    if token:
+        token_env["KAGGLE_API_TOKEN"] = token
     run(
         [
             str(KAGGLE),
@@ -280,7 +297,6 @@ def main() -> None:
     (OUT_ROOT / "block11_runs.json").write_text(json.dumps(results, indent=2))
     print(f"\nWrote {OUT_ROOT / 'block11_runs.json'}", flush=True)
     restore_prod()
-    run([str(KAGGLE), "kernels", "push", "-p", str(SUBMIT_DIR), "--accelerator", "NvidiaTeslaT4"], env=env)
 
 
 if __name__ == "__main__":
