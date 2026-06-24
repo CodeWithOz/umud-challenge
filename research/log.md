@@ -2,7 +2,7 @@
 
 ## Current focus
 
-_Last updated: 2026-06-24 — **Best: block15-qdc-cxs8-blend = 0.93837**. June 24 manual submits recovered the failed launchd reset jobs (all three had fired but exited before submit because Kaggle access-token minting returned HTTP 429). **Block 13:** raw quick-dirty image geometry scored **1.87066**. **Block 14:** calibrated quick-dirty scored **0.96243**, improving the previous best **1.04862**. **Block 15:** hidden-safe `0.70*qdc + 0.30*cxs8-s2` blend scored **0.93837**, the new best but still above the **0.6** target. **Block 16 active:** tighter quick-dirty calibration to test whether the remaining Block 14 per-image movement is still too noisy; local output has **309 rows / 0 NaN** and medians **18.0° / 75.2 mm / 20.4 mm**._
+_Last updated: 2026-06-24 — **Best: block15-qdc-cxs8-blend = 0.93837**. June 24 manual submits recovered the failed launchd reset jobs (all three had fired but exited before submit because Kaggle access-token minting returned HTTP 429). **Block 13:** raw quick-dirty image geometry scored **1.87066**. **Block 14:** calibrated quick-dirty scored **0.96243**, improving the previous best **1.04862**. **Block 15:** hidden-safe `0.70*qdc + 0.30*cxs8-s2` blend scored **0.93837**, the new best but still above the **0.6** target. **Block 16:** tighter quick-dirty calibration scored **1.01521** (regressed), showing that over-shrinking Block 14's per-image movement hurts. Next focus: avoid tiny qdc/cxs8 blend retunes; pursue a genuinely different signal source or a better hidden-safe way to blend qdc with the stronger cxs5 artifact._
 
 ### Block 16 — tight quick-dirty calibration (2026-06-24)
 
@@ -14,7 +14,7 @@ Block 16 instead tests whether quick-dirty's remaining per-image variation is st
 - `FL = 75.2 + 0.10 * (raw_FL - raw_FL_median)`
 - `MT = 20.4 + 0.10 * (raw_MT - raw_MT_median)`
 
-Local output from downloaded Block 13 raw debug: **309 rows / 0 NaN**, medians PA/FL/MT **18.0° / 75.2 mm / 20.4 mm**, std **0.87 / 4.55 / 0.74**. This is intentionally a high-shrink probe: if it beats Block 15, the direct-geometry movement should be trusted less; if it regresses, Block 14/15's retained variation is carrying useful per-image signal.
+Local output from downloaded Block 13 raw debug: **309 rows / 0 NaN**, medians PA/FL/MT **18.0° / 75.2 mm / 20.4 mm**, std **0.87 / 4.55 / 0.74**. Kaggle kernel `umud-submission-quickdirty-tight` v1 completed and exactly matched local output. Public score: **1.01521** (`block16-quickdirty-tight`) — worse than Block 15 **0.93837** and Block 14 **0.96243**. Lesson: the retained Block 14/15 per-image movement is useful enough that aggressive shrink loses signal; do not spend another slot on tighter qd-only shrink without new evidence.
 
 Artifacts: `scripts/build_submission_quickdirty_tight_nb.py`, `notebooks/submission-quickdirty-tight/`.
 
