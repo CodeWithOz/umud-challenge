@@ -2,7 +2,7 @@
 
 ## Current focus
 
-_Last updated: 2026-06-23 — **Best: convnext_small s2 5ep = 1.04862** (v39). **Block 13 active:** quick-dirty image-geometry notebook v1 completed with **309 rows / 0 NaN** and exact local/Kaggle match; reset submit is scheduled for **2026-06-24 01:07 WAT**. **Block 14 ready:** calibrated quick-dirty kernel v1 completed with **309 rows / 0 NaN** and exact local/Kaggle match; guarded reset submit is scheduled for **2026-06-24 01:25 WAT** and skips if any score is already <0.6. **Block 15 ready:** hidden-safe `0.70*qdc + 0.30*cxs8-s2` blend kernel v2 completed with **309 rows / 0 NaN**, proxy **~0.485**; guarded reset submit is being scheduled. Block 12 cxs8 scored **1.10363** (worse)._
+_Last updated: 2026-06-24 — **Best: block15-qdc-cxs8-blend = 0.93837**. June 24 manual submits recovered the failed launchd reset jobs (all three had fired but exited before submit because Kaggle access-token minting returned HTTP 429). **Block 13:** raw quick-dirty image geometry scored **1.87066**. **Block 14:** calibrated quick-dirty scored **0.96243**, improving the previous best **1.04862**. **Block 15:** hidden-safe `0.70*qdc + 0.30*cxs8-s2` blend scored **0.93837**, the new best but still above the **0.6** target. Next focus: use the Block 14/15 scores to refit/diagnose quickdirty calibration and blend weights; the old proxy was directionally useful but over-optimistic._
 
 ### Block 15 — hidden-safe blend: quickdirty-cal + cxs8-s2 (2026-06-23)
 
@@ -18,7 +18,7 @@ Notebook design is hidden-safe: it runs cxs8 segmentation inference for mounted 
 
 Kaggle kernel `umud-submission-blend-qdc-cxs8` **v2 COMPLETE**; output at `data/kaggle-outputs/block15-blend-qdc-cxs8/` has **309 rows / 0 NaN**. Downloaded `submission.csv` exactly matches `0.70*qdc + 0.30*cxs8` from downloaded component debug files (max deltas <3e-14). Final medians PA/FL/MT **16.82° / 75.15 mm / 20.41 mm**, proxy **0.4846**.
 
-Reset submit: `scripts/submit_block15_scheduled.sh` targets `-k ucheozoemena/umud-submission-blend-qdc-cxs8 -v 2 -f submission.csv -m block15-qdc-cxs8-blend`, with the same duplicate and `<0.6` best-score guards as Block 14.
+Result: manual CLI notebook-output submit on **2026-06-24** scored **0.93837** (`block15-qdc-cxs8-blend`), the new best but still above the **0.6** target. The scheduled `scripts/submit_block15_scheduled.sh` launchd job fired at quota reset but exited before submit because `kaggle auth print-access-token` returned HTTP **429**.
 
 Artifacts: `scripts/build_submission_blend_nb.py`, `notebooks/submission-blend-qdc-cxs/`.
 
@@ -32,7 +32,7 @@ Artifacts: `scripts/build_submission_blend_nb.py`, `notebooks/submission-blend-q
 
 Local calibrated output (`tmp/quickdirty-cal-local/submission.csv`): **309 rows, 0 NaN**, median PA/FL/MT **16.31° / 76.9 mm / 19.76 mm**, std FL/MT **9.09 / 1.48**. Kaggle kernel `umud-submission-quickdirty-cal` **v1 COMPLETE**; output at `data/kaggle-outputs/block14-quickdirty-cal/` matches local (max deltas: PA **0**, FL **1.4e-14**, MT **3.6e-15**). The tracking proxy ranks this at **~0.52** vs cxs-s2 **~0.65**, but this is optimistic because the proxy was fit mostly on segmentation submissions; treat as a high-upside fallback after the raw Block 13 score lands.
 
-Reset submit: LaunchAgent `com.uche.umud-block14-submit` loaded for **2026-06-24 01:25 WAT**. Script `scripts/submit_block14_scheduled.sh` submits `-k ucheozoemena/umud-submission-quickdirty-cal -v 1 -f submission.csv -m block14-quickdirty-cal`, but first skips if `block14-quickdirty-cal` already exists or any completed public score is below **0.6**.
+Result: manual CLI notebook-output submit on **2026-06-24** scored **0.96243** (`block14-quickdirty-cal`), a new best but still above the **0.6** target. The scheduled LaunchAgent `com.uche.umud-block14-submit` fired at quota reset but exited before submit because `kaggle auth print-access-token` returned HTTP **429**.
 
 Artifacts: `scripts/quickdirty_geometry.py` (`calibrate_quickdirty`), `scripts/build_submission_quickdirty_cal_nb.py`, `notebooks/submission-quickdirty-cal/`.
 
@@ -48,8 +48,8 @@ Artifacts: `scripts/quickdirty_geometry.py` (`calibrate_quickdirty`), `scripts/b
 | Local test | Done | `tmp/quickdirty-local/submission.csv`: **309 rows, 0 NaN** |
 | Kaggle run | Done | Kernel `umud-submission-quickdirty` **v1 COMPLETE**; output at `data/kaggle-outputs/block13-quickdirty/` |
 | Output verification | Done | Kaggle `submission.csv` shape **(309, 4)**, 0 NaN, exact match to local (max FL delta ~7e-15) |
-| Graded submit | Waiting quota | CLI notebook-output submit returned **400 Bad Request** after five 2026-06-23 submissions; no duplicate created |
-| Reset submit | Scheduled | LaunchAgent `com.uche.umud-block13-submit` loaded for **2026-06-24 01:07 WAT** (00:07 UTC); script submits `-k ucheozoemena/umud-submission-quickdirty -v 1 -f submission.csv -m block13-quickdirty` |
+| Graded submit | Done | Manual CLI notebook-output submit on **2026-06-24** scored **1.87066** (`block13-quickdirty`); worse than current best. |
+| Reset submit | Failed | LaunchAgent `com.uche.umud-block13-submit` fired at the quota reset but exited before submit because `kaggle auth print-access-token` returned HTTP **429**. |
 
 Local quick-dirty distribution: PA median **11.31°**, FL median **118.9 mm**, MT median **24.37 mm**, per-image `mm_per_px` median **0.067**. This is intentionally very different from cxs-s2 (PA **18 constant**, FL median **74.5**, MT median **21.6**) and is the first serious PA/FL measurement-path change after Block 9.
 
