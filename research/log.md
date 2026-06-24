@@ -2,7 +2,7 @@
 
 ## Current focus
 
-_Last updated: 2026-06-24 - **Best public score: block17-qdc-cxs5-static-probe = 0.92273** (**static probe only, not private-final eligible**). Best hidden-safe notebook remains **block15-qdc-cxs8-blend = 0.93837**. June 24 manual submits recovered the failed launchd reset jobs (all three had fired but exited before submit because Kaggle access-token minting returned HTTP 429). **Block 13:** raw quick-dirty scored **1.87066**. **Block 14:** calibrated quick-dirty scored **0.96243**. **Block 15:** hidden-safe `0.70*qdc + 0.30*cxs8-s2` scored **0.93837**. **Block 16:** tighter quick-dirty scored **1.01521** (over-shrink regressed). **Block 17:** static `0.72*qdc + 0.28*cxs5-s2` scored **0.92273**, but CSV probes are now fallback-only because they are public-only. **Block 18:** hidden-safe `smooth5_mean(0.70*qdc + 0.30*cxs8)` notebook v1 completed with **309 rows / 0 NaN**, exactly matching local rolling-5 mean; notebook-output submit is scheduled via launchd for **2026-06-25 01:08 WAT**. **Block 19:** hidden-safe `0.72*qdc + 0.28*cxs5-refresh` notebook v1 completed with **309 rows / 0 NaN**; notebook-output submit is scheduled via launchd for **2026-06-25 01:18 WAT**. **Block 20:** queued hidden-safe SMP U-Net++ geometry notebook to test a materially different learned-mask path for PA/FL, not another blend/shrink retune._
+_Last updated: 2026-06-24 - **Best public score: block17-qdc-cxs5-static-probe = 0.92273** (**static probe only, not private-final eligible**). Best hidden-safe notebook remains **block15-qdc-cxs8-blend = 0.93837**. June 24 manual submits recovered the failed launchd reset jobs (all three had fired but exited before submit because Kaggle access-token minting returned HTTP 429). **Block 13:** raw quick-dirty scored **1.87066**. **Block 14:** calibrated quick-dirty scored **0.96243**. **Block 15:** hidden-safe `0.70*qdc + 0.30*cxs8-s2` scored **0.93837**. **Block 16:** tighter quick-dirty scored **1.01521** (over-shrink regressed). **Block 17:** static `0.72*qdc + 0.28*cxs5-s2` scored **0.92273**, but CSV probes are now fallback-only because they are public-only. **Block 18:** hidden-safe `smooth5_mean(0.70*qdc + 0.30*cxs8)` notebook v1 completed with **309 rows / 0 NaN**, exactly matching local rolling-5 mean; notebook-output submit is scheduled via launchd for **2026-06-25 01:08 WAT**. **Block 19:** hidden-safe `0.72*qdc + 0.28*cxs5-refresh` notebook v1 completed with **309 rows / 0 NaN**; notebook-output submit is scheduled via launchd for **2026-06-25 01:18 WAT**. **Block 20:** full SMP U-Net++ v1 is a timing-risk run, not a validated path; same-architecture benchmark projects **~12.2h** for 30+30 epochs, so the next viable SMP attempt must reduce runtime first._
 
 ### Block 20 - SMP U-Net++ geometry notebook (2026-06-24)
 
@@ -25,6 +25,15 @@ Correction:
 - Benchmark uses the same expensive ingredients (`efficientnet-b7`, U-Net++, 512x768, BCE+Dice, Ranger) but caps each target to 80 samples and 1 epoch.
 - It writes `timing_report.csv` with seconds per pair per epoch and projected full 30-epoch runtime for fascicle and aponeurosis.
 - Do not launch another full SMP submission run until this benchmark completes and the projected runtime is acceptable.
+
+Benchmark result:
+
+| Target | Samples | Train sec | sec/pair/epoch | Projected 30ep full |
+|--------|--------:|----------:|---------------:|--------------------:|
+| Fascicle | 80 | 32.3 | 0.404 | 9.25 h |
+| Aponeurosis | 80 | 27.0 | 0.338 | 2.95 h |
+
+Projected total is **12.2 h**, before dependency install, model download, inference, and notebook packaging. This is too close to Kaggle session limits and should be treated as infeasible as written. Next SMP variants should cut one or more of: backbone size, resolution, epochs, or train both models outside the submission notebook and mount outputs.
 
 ### Block 19 — hidden-safe qdc + refreshed cxs5 (2026-06-24)
 
