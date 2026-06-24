@@ -2,7 +2,19 @@
 
 ## Current focus
 
-_Last updated: 2026-06-24 — **Best public score: block17-qdc-cxs5-static-probe = 0.92273** (**static probe only, not private-final eligible**). Best hidden-safe notebook remains **block15-qdc-cxs8-blend = 0.93837**. June 24 manual submits recovered the failed launchd reset jobs (all three had fired but exited before submit because Kaggle access-token minting returned HTTP 429). **Block 13:** raw quick-dirty scored **1.87066**. **Block 14:** calibrated quick-dirty scored **0.96243**. **Block 15:** hidden-safe `0.70*qdc + 0.30*cxs8-s2` scored **0.93837**. **Block 16:** tighter quick-dirty scored **1.01521** (over-shrink regressed). **Block 17:** static `0.72*qdc + 0.28*cxs5-s2` scored **0.92273**, but CSV probes are now fallback-only because they are public-only. **Block 18:** hidden-safe `smooth5_mean(0.70*qdc + 0.30*cxs8)` notebook v1 completed with **309 rows / 0 NaN**, exactly matching local rolling-5 mean; notebook-output submit is scheduled via launchd for **2026-06-25 01:08 WAT**._
+_Last updated: 2026-06-24 — **Best public score: block17-qdc-cxs5-static-probe = 0.92273** (**static probe only, not private-final eligible**). Best hidden-safe notebook remains **block15-qdc-cxs8-blend = 0.93837**. June 24 manual submits recovered the failed launchd reset jobs (all three had fired but exited before submit because Kaggle access-token minting returned HTTP 429). **Block 13:** raw quick-dirty scored **1.87066**. **Block 14:** calibrated quick-dirty scored **0.96243**. **Block 15:** hidden-safe `0.70*qdc + 0.30*cxs8-s2` scored **0.93837**. **Block 16:** tighter quick-dirty scored **1.01521** (over-shrink regressed). **Block 17:** static `0.72*qdc + 0.28*cxs5-s2` scored **0.92273**, but CSV probes are now fallback-only because they are public-only. **Block 18:** hidden-safe `smooth5_mean(0.70*qdc + 0.30*cxs8)` notebook v1 completed with **309 rows / 0 NaN**, exactly matching local rolling-5 mean; notebook-output submit is scheduled via launchd for **2026-06-25 01:08 WAT**. **Block 19:** queued hidden-safe `0.72*qdc + 0.28*cxs5-refresh` path using a separate cxs5-refresh training kernel so the original cxs8 source is not overwritten._
+
+### Block 19 — hidden-safe qdc + refreshed cxs5 (2026-06-24)
+
+**Rationale:** Block 17 showed the best public score so far (**0.92273**) by replacing cxs8 with the stronger cxs5 public-test output in the qdc blend. That static CSV cannot be final/private-eligible. Attempted recovery of `apo_gray55_line_200_cxs.pkl` from old training kernel version 34 only exposed the current/latest cxs8 output through Kaggle CLI, so the practical hidden-safe path is to regenerate cxs5.
+
+Implementation plan:
+
+- Train cxs5 again in a **separate** Kaggle kernel, `umud-train-apo-gray55-cxs5-refresh`, using `TRAIN_RUN=15` / convnext_small 200×5ep. This avoids overwriting the original `umud-train-apo-gray55-phase-3` latest output that Block15/18 cxs8 notebooks depend on.
+- Run submission kernel `umud-submission-blend-qdc-cxs5`, which mounts the refreshed cxs5 kernel and computes both components from mounted competition images.
+- Write `submission.csv = 0.72 * quickdirty_cal + 0.28 * refreshed_cxs5_s2`, matching the Block17 public probe weight while keeping the submission notebook-private eligible.
+
+Artifacts queued: `scripts/build_train_apo_gray55_cxs5_refresh_nb.py`, `notebooks/train-apo-gray55-cxs5-refresh/`, `scripts/build_submission_blend_cxs5_nb.py`, `notebooks/submission-blend-qdc-cxs5/`.
 
 ### Block 18 — sequence smoothing probes (2026-06-24)
 
