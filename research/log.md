@@ -2,7 +2,15 @@
 
 ## Current focus
 
-_Last updated: 2026-06-24 — **Best public score: block17-qdc-cxs5-static-probe = 0.92273** (**static probe only, not private-final eligible**). Best hidden-safe notebook remains **block15-qdc-cxs8-blend = 0.93837**. June 24 manual submits recovered the failed launchd reset jobs (all three had fired but exited before submit because Kaggle access-token minting returned HTTP 429). **Block 13:** raw quick-dirty scored **1.87066**. **Block 14:** calibrated quick-dirty scored **0.96243**. **Block 15:** hidden-safe `0.70*qdc + 0.30*cxs8-s2` scored **0.93837**. **Block 16:** tighter quick-dirty scored **1.01521** (over-shrink regressed). **Block 17:** static `0.72*qdc + 0.28*cxs5-s2` scored **0.92273**, confirming cxs5 is worth recovering for a hidden-safe notebook but still far above the **0.6** target._
+_Last updated: 2026-06-24 — **Best public score: block17-qdc-cxs5-static-probe = 0.92273** (**static probe only, not private-final eligible**). Best hidden-safe notebook remains **block15-qdc-cxs8-blend = 0.93837**. June 24 manual submits recovered the failed launchd reset jobs (all three had fired but exited before submit because Kaggle access-token minting returned HTTP 429). **Block 13:** raw quick-dirty scored **1.87066**. **Block 14:** calibrated quick-dirty scored **0.96243**. **Block 15:** hidden-safe `0.70*qdc + 0.30*cxs8-s2` scored **0.93837**. **Block 16:** tighter quick-dirty scored **1.01521** (over-shrink regressed). **Block 17:** static `0.72*qdc + 0.28*cxs5-s2` scored **0.92273**. **Block 18 active:** sequence smoothing probes generated; hidden-safe `smooth5_mean(0.70*qdc + 0.30*cxs8)` notebook ready to run._
+
+### Block 18 — sequence smoothing probes (2026-06-24)
+
+**Rationale:** Public baseline notebooks mention that the test set includes 5-frame sequences, and local filenames are consecutive `IMG_00001` through `IMG_00309` with no gaps. Blocks 14-17 show quick-dirty has useful but noisy per-image movement. Smoothing adjacent predictions may reduce frame-level noise while preserving between-sequence differences, which is a different hypothesis from global shrink (Block 16).
+
+Static probe files generated at `data/kaggle-outputs/block18-sequence-smoothing-probes/` for Block 17, Block 15, and Block 14 bases with `roll5_mean`, `roll5_median`, `group5_mean`, and `group5_median`. These are public-test probes only where the base is static cxs5.
+
+Hidden-safe notebook: `notebooks/submission-seq-smooth/` computes cxs8 and quickdirty from mounted images, blends as Block 15, then writes `submission.csv = rolling-5 mean` by numeric image order. It also writes unsmoothed blend and rolling-5 median debug CSVs. This is ready for Kaggle run; public submit likely must wait for daily quota reset because June 24 already used five submissions.
 
 ### Block 17 — static public probe: qdc + cxs5-s2 (2026-06-24)
 
