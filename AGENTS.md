@@ -95,8 +95,13 @@ the CLI route fails.
    notebook version on kaggle.com and clicks **Submit to Competition** → selects its
    `submission.csv` output. Equivalent result, just manual.
 - The raw `-f <local.csv>` *without* `-k`/`-v` uploads a static CSV — this scores the
-  **public** set but does **not** wire up the notebook for the private re-run, so use
-  it only for quick public-score probes, never as the final private entry.
+  **public** set but does **not** wire up the notebook for the private re-run. For
+  this notebook/code competition, treat static CSV submits as a fallback diagnostic
+  only when notebook submission is blocked or broken. Do **not** use CSVs as the
+  normal experiment path, because any strong CSV result must then be recreated as an
+  equivalent notebook submission for private eligibility, wasting a daily slot.
+  If a CSV probe is unavoidable, label it clearly as `static` / `public probe` in
+  the submission message and immediately prioritize the matching hidden-safe notebook.
 
 ## Lessons Learned
 
@@ -104,6 +109,7 @@ _This section is updated whenever a new lesson is discovered. Any AI agent worki
 
 | Date | Lesson |
 |------|--------|
+| 2026-06-24 | **Notebook competitions:** submit notebook outputs by default. Static CSV submits are public-only diagnostics/fallbacks, not private-final candidates; any strong CSV needs an equivalent notebook, so avoid CSV probes unless notebook submission is blocked. |
 | 2026-06-23 | **MaxViT next tier:** `maxvit_tiny_rw_256` has no ImageNet pretrained weights on Kaggle timm; use **`maxvit_rmlp_tiny_rw_256`** (~28.6M, pretrained @256) as the step up from nano. |
 | 2026-06-23 | **`run_block11 restore_prod`:** regenerate local prod submission notebook only — do **not** auto-push to Kaggle (avoids stray prod kernel versions after block runs). |
 | 2026-06-23 | **Duplicate submit guard:** always `grep` / check `kaggle competitions submissions` for the message string before `competitions submit` — duplicate CLI calls waste daily slots (block10-cxs-s2 submitted twice). |

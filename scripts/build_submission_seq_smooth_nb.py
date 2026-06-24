@@ -147,7 +147,7 @@ def main() -> None:
     }
     (out / "submission-seq-smooth.ipynb").write_text(json.dumps(nb, indent=1))
     meta = {
-        "id": "ucheozoemena/umud-submission-seq-smooth",
+        "id": "ucheozoemena/umud-submission-sequence-smooth",
         "title": "UMUD Submission Sequence Smooth",
         "code_file": "submission-seq-smooth.ipynb",
         "language": "python",

@@ -2,7 +2,7 @@
 
 ## Current focus
 
-_Last updated: 2026-06-24 — **Best public score: block17-qdc-cxs5-static-probe = 0.92273** (**static probe only, not private-final eligible**). Best hidden-safe notebook remains **block15-qdc-cxs8-blend = 0.93837**. June 24 manual submits recovered the failed launchd reset jobs (all three had fired but exited before submit because Kaggle access-token minting returned HTTP 429). **Block 13:** raw quick-dirty scored **1.87066**. **Block 14:** calibrated quick-dirty scored **0.96243**. **Block 15:** hidden-safe `0.70*qdc + 0.30*cxs8-s2` scored **0.93837**. **Block 16:** tighter quick-dirty scored **1.01521** (over-shrink regressed). **Block 17:** static `0.72*qdc + 0.28*cxs5-s2` scored **0.92273**. **Block 18 active:** sequence smoothing probes generated; hidden-safe `smooth5_mean(0.70*qdc + 0.30*cxs8)` notebook ready to run._
+_Last updated: 2026-06-24 — **Best public score: block17-qdc-cxs5-static-probe = 0.92273** (**static probe only, not private-final eligible**). Best hidden-safe notebook remains **block15-qdc-cxs8-blend = 0.93837**. June 24 manual submits recovered the failed launchd reset jobs (all three had fired but exited before submit because Kaggle access-token minting returned HTTP 429). **Block 13:** raw quick-dirty scored **1.87066**. **Block 14:** calibrated quick-dirty scored **0.96243**. **Block 15:** hidden-safe `0.70*qdc + 0.30*cxs8-s2` scored **0.93837**. **Block 16:** tighter quick-dirty scored **1.01521** (over-shrink regressed). **Block 17:** static `0.72*qdc + 0.28*cxs5-s2` scored **0.92273**, but CSV probes are now fallback-only because they are public-only. **Block 18:** hidden-safe `smooth5_mean(0.70*qdc + 0.30*cxs8)` notebook v1 completed with **309 rows / 0 NaN**, exactly matching local rolling-5 mean; submit notebook output after quota reset._
 
 ### Block 18 — sequence smoothing probes (2026-06-24)
 
@@ -10,13 +10,15 @@ _Last updated: 2026-06-24 — **Best public score: block17-qdc-cxs5-static-probe
 
 Static probe files generated at `data/kaggle-outputs/block18-sequence-smoothing-probes/` for Block 17, Block 15, and Block 14 bases with `roll5_mean`, `roll5_median`, `group5_mean`, and `group5_median`. These are public-test probes only where the base is static cxs5.
 
-Hidden-safe notebook: `notebooks/submission-seq-smooth/` computes cxs8 and quickdirty from mounted images, blends as Block 15, then writes `submission.csv = rolling-5 mean` by numeric image order. It also writes unsmoothed blend and rolling-5 median debug CSVs. This is ready for Kaggle run; public submit likely must wait for daily quota reset because June 24 already used five submissions.
+Hidden-safe notebook: `notebooks/submission-seq-smooth/` computes cxs8 and quickdirty from mounted images, blends as Block 15, then writes `submission.csv = rolling-5 mean` by numeric image order. It also writes unsmoothed blend and rolling-5 median debug CSVs. Kaggle kernel `umud-submission-sequence-smooth` v1 **COMPLETE**; downloaded output at `data/kaggle-outputs/block18-sequence-smooth/` has **309 rows / 0 NaN** and exactly matches local rolling-5 mean of Block 15 (max deltas <1.5e-14). Submit notebook output after quota reset because June 24 already used five submissions.
 
 ### Block 17 — static public probe: qdc + cxs5-s2 (2026-06-24)
 
 **Rationale:** Block 15 used cxs8 because the latest mutable Kaggle training-kernel source no longer exposed the stronger cxs5 artifact. But cxs5-s2 scored **1.04862** vs cxs8-s2 **1.10363**, so replacing cxs8 with cxs5 in the qdc blend may improve. This probe blends saved public-test predictions only, so it is **not hidden-safe** and must not be treated as a private-final submission. It is a cheap public LB diagnostic: if it improves meaningfully, invest in recovering/mounting the old cxs5 model output for a real notebook; if it barely moves, drop this path.
 
 Candidate: `0.72 * block14-qdc + 0.28 * cxs5-s2`, using saved `data/kaggle-outputs/block14-quickdirty-cal/submission.csv` and `data/kaggle-outputs/block10/cxs-s2/submission.csv`. Public CSV probe scored **0.92273**, improving Block 15 by **0.01564**. This confirms the cxs5 artifact is the better blend partner, but the gain is modest; recovering a hidden-safe cxs5 notebook is worthwhile for private eligibility, not sufficient for the sub-0.6 goal by itself.
+
+**Decision after user clarification:** for this notebook/code competition, static CSV submits are fallback diagnostics only. They are public-only and cannot be used for the private re-run. Serious candidates should be notebook-output submissions by default; if a CSV probe is ever unavoidable and scores well, immediately convert it into an equivalent hidden-safe notebook rather than treating the CSV as final.
 
 ### Block 16 — tight quick-dirty calibration (2026-06-24)
 
