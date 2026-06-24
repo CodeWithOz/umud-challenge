@@ -2,7 +2,21 @@
 
 ## Current focus
 
-_Last updated: 2026-06-24 — **Best: block15-qdc-cxs8-blend = 0.93837**. June 24 manual submits recovered the failed launchd reset jobs (all three had fired but exited before submit because Kaggle access-token minting returned HTTP 429). **Block 13:** raw quick-dirty image geometry scored **1.87066**. **Block 14:** calibrated quick-dirty scored **0.96243**, improving the previous best **1.04862**. **Block 15:** hidden-safe `0.70*qdc + 0.30*cxs8-s2` blend scored **0.93837**, the new best but still above the **0.6** target. Next focus: use the Block 14/15 scores to refit/diagnose quickdirty calibration and blend weights; the old proxy was directionally useful but over-optimistic._
+_Last updated: 2026-06-24 — **Best: block15-qdc-cxs8-blend = 0.93837**. June 24 manual submits recovered the failed launchd reset jobs (all three had fired but exited before submit because Kaggle access-token minting returned HTTP 429). **Block 13:** raw quick-dirty image geometry scored **1.87066**. **Block 14:** calibrated quick-dirty scored **0.96243**, improving the previous best **1.04862**. **Block 15:** hidden-safe `0.70*qdc + 0.30*cxs8-s2` blend scored **0.93837**, the new best but still above the **0.6** target. **Block 16 active:** tighter quick-dirty calibration to test whether the remaining Block 14 per-image movement is still too noisy; local output has **309 rows / 0 NaN** and medians **18.0° / 75.2 mm / 20.4 mm**._
+
+### Block 16 — tight quick-dirty calibration (2026-06-24)
+
+**Rationale:** The real Block 14/15 scores showed that calibrated quick-dirty has useful signal, but the old proxy was far too optimistic. The actual qdc/cxs8 blend curve is already near its optimum: using real scores at qdc weights 0.0 (cxs8), 0.7 (Block 15), and 1.0 (Block 14), a quadratic fit puts the optimum at **~0.723** with an expected gain of only **~0.0002** over Block 15. Therefore a tiny blend-weight retune is not worth a submission.
+
+Block 16 instead tests whether quick-dirty's remaining per-image variation is still mostly noise. It keeps the same raw quick-dirty image measurements but applies a tighter center/shrink calibration:
+
+- `PA = 18.0 + 0.25 * (raw_PA - raw_PA_median)`
+- `FL = 75.2 + 0.10 * (raw_FL - raw_FL_median)`
+- `MT = 20.4 + 0.10 * (raw_MT - raw_MT_median)`
+
+Local output from downloaded Block 13 raw debug: **309 rows / 0 NaN**, medians PA/FL/MT **18.0° / 75.2 mm / 20.4 mm**, std **0.87 / 4.55 / 0.74**. This is intentionally a high-shrink probe: if it beats Block 15, the direct-geometry movement should be trusted less; if it regresses, Block 14/15's retained variation is carrying useful per-image signal.
+
+Artifacts: `scripts/build_submission_quickdirty_tight_nb.py`, `notebooks/submission-quickdirty-tight/`.
 
 ### Block 15 — hidden-safe blend: quickdirty-cal + cxs8-s2 (2026-06-23)
 
