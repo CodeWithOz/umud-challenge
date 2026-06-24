@@ -1,0 +1,44 @@
+[{"stream_name":"stderr","time":5.832820978,"data":"/usr/local/lib/python3.12/dist-packages/nbformat/__init__.py:96: MissingIDFieldWarning: Cell is missing an id field, this will become a hard error in future nbformat versions. You may want to use `normalize()` on your notebooks before validations (available since nbformat 5.1.4). Previous versions of nbformat are fixing this issue transparently, and will stop doing so in the future.\n"}
+,{"stream_name":"stderr","time":5.832893317,"data":"  validate(nb)\n"}
+,{"stream_name":"stderr","time":6.672923233,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":6.672952727,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":6.6729605979999995,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":6.673007766,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stderr","time":7.268237777,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":7.268266355,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":7.26826963,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":7.268272302,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stdout","time":8.326537579,"data":"TRAIN_RUN=15 | GAT15 Block7 convnext_small 200×5ep | arch=convnext_small | timm=True | eval_only=False | dataset=ucheozoemena/umud-aligned-apo-gray55-line-timing-200 | epochs=5\n"}
+,{"stream_name":"stdout","time":27.528017488,"data":"Dataset root: /kaggle/input/datasets/ucheozoemena/umud-aligned-apo-gray55-line-timing-200 (exists=True)\n"}
+,{"stream_name":"stdout","time":27.554666634,"data":"images: /kaggle/input/datasets/ucheozoemena/umud-aligned-apo-gray55-line-timing-200/images\n"}
+,{"stream_name":"stdout","time":27.554694819,"data":"masks: /kaggle/input/datasets/ucheozoemena/umud-aligned-apo-gray55-line-timing-200/masks\n"}
+,{"stream_name":"stdout","time":29.194498217,"data":"Pairs: 200\n"}
+,{"stream_name":"stdout","time":29.559220074,"data":"Stratified sklearn failed — used per-cohort manual split\n"}
+,{"stream_name":"stdout","time":29.559254219,"data":"Stratified val: 41 images across 6 resolution cohorts\n"}
+,{"stream_name":"stdout","time":31.039578127,"data":"Dataloader ready: 1.6s\n"}
+,{"stream_name":"stdout","time":35.957856926,"data":"Class weights: background=1.0, structure=15.0\n"}
+,{"stream_name":"stdout","time":202.685569686,"data":"Train wall-clock: 171.2s\n"}
+,{"stream_name":"stdout","time":205.302726932,"data":"Val Dice (reference): 0.4199\n"}
+,{"stream_name":"stdout","time":233.383689339,"data":"{'apo_img': 1048, 'apo_mask': 1048, 'fasc_img': 2761, 'fasc_mask': 2761}\n"}
+,{"stream_name":"stderr","time":233.398047067,"data":"/usr/local/lib/python3.12/dist-packages/fastai/learner.py:455: UserWarning: load_learner` uses Python's insecure pickle module, which can execute malicious arbitrary code when loading. Only load files you trust.\n"}
+,{"stream_name":"stderr","time":233.398078412,"data":"If you only need to load model weights and optimizer state, use the safe `Learner.load` instead.\n"}
+,{"stream_name":"stderr","time":233.398084632,"data":"  warn(\"load_learner` uses Python's insecure pickle module, which can execute malicious arbitrary code when loading. Only load files you trust.\\nIf you only need to load model weights and optimizer state, use the safe `Learner.load` instead.\")\n"}
+,{"stream_name":"stderr","time":233.398109224,"data":"\n"}
+,{"stream_name":"stderr","time":233.398112124,"data":"/usr/local/lib/python3.12/dist-packages/fastai/learner.py:455: UserWarning: load_learner` uses Python's insecure pickle module, which can execute malicious arbitrary code when loading. Only load files you trust.\n"}
+,{"stream_name":"stderr","time":233.398114757,"data":"If you only need to load model weights and optimizer state, use the safe `Learner.load` instead.\n"}
+,{"stream_name":"stderr","time":233.398117159,"data":"  warn(\"load_learner` uses Python's insecure pickle module, which can execute malicious arbitrary code when loading. Only load files you trust.\\nIf you only need to load model weights and optimizer state, use the safe `Learner.load` instead.\")\n"}
+,{"stream_name":"stdout","time":235.375945904,"data":"Fasc model: /kaggle/input/notebooks/ucheozoemena/umud-train-mounted-phase-3/fasc_baseline.pkl\n"}
+,{"stream_name":"stdout","time":235.376003541,"data":"Val images: 41\n"}
+,{"stream_name":"stdout","time":280.490255275,"data":"Scored 41/41 val images (skip_manifest=0, skip_fasc=0)\n"}
+,{"stream_name":"stdout","time":280.490306885,"data":"Val UMUD summary: {'n_total': 41, 'n_pred_finite': 40, 'n_gt_finite': 41, 'n_scorable': 40, 'val_mt_ok_pct': 97.56, 'val_umud_score': 2.61582, 'val_umud_score_strict': nan}\n"}
+,{"stream_name":"stderr","time":285.821515293,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":285.821549087,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":285.974377597,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":285.974403349,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":286.660381995,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to notebook\n"}
+,{"stream_name":"stderr","time":286.99187466,"data":"[NbConvertApp] Writing 322384 bytes to __notebook__.ipynb\n"}
+,{"stream_name":"stderr","time":289.403346005,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to html\n"}
+,{"stream_name":"stderr","time":290.479594478,"data":"[NbConvertApp] Support files will be in __results___files/\n"}
+,{"stream_name":"stderr","time":290.479623652,"data":"[NbConvertApp] Making directory __results___files\n"}
+,{"stream_name":"stderr","time":290.480016429,"data":"[NbConvertApp] Writing 607397 bytes to __results__.html\n"}
+]

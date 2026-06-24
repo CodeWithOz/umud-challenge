@@ -2,7 +2,7 @@
 
 ## Current focus
 
-_Last updated: 2026-06-24 — **Best public score: block17-qdc-cxs5-static-probe = 0.92273** (**static probe only, not private-final eligible**). Best hidden-safe notebook remains **block15-qdc-cxs8-blend = 0.93837**. June 24 manual submits recovered the failed launchd reset jobs (all three had fired but exited before submit because Kaggle access-token minting returned HTTP 429). **Block 13:** raw quick-dirty scored **1.87066**. **Block 14:** calibrated quick-dirty scored **0.96243**. **Block 15:** hidden-safe `0.70*qdc + 0.30*cxs8-s2` scored **0.93837**. **Block 16:** tighter quick-dirty scored **1.01521** (over-shrink regressed). **Block 17:** static `0.72*qdc + 0.28*cxs5-s2` scored **0.92273**, but CSV probes are now fallback-only because they are public-only. **Block 18:** hidden-safe `smooth5_mean(0.70*qdc + 0.30*cxs8)` notebook v1 completed with **309 rows / 0 NaN**, exactly matching local rolling-5 mean; notebook-output submit is scheduled via launchd for **2026-06-25 01:08 WAT**. **Block 19:** queued hidden-safe `0.72*qdc + 0.28*cxs5-refresh` path using a separate cxs5-refresh training kernel so the original cxs8 source is not overwritten._
+_Last updated: 2026-06-24 — **Best public score: block17-qdc-cxs5-static-probe = 0.92273** (**static probe only, not private-final eligible**). Best hidden-safe notebook remains **block15-qdc-cxs8-blend = 0.93837**. June 24 manual submits recovered the failed launchd reset jobs (all three had fired but exited before submit because Kaggle access-token minting returned HTTP 429). **Block 13:** raw quick-dirty scored **1.87066**. **Block 14:** calibrated quick-dirty scored **0.96243**. **Block 15:** hidden-safe `0.70*qdc + 0.30*cxs8-s2` scored **0.93837**. **Block 16:** tighter quick-dirty scored **1.01521** (over-shrink regressed). **Block 17:** static `0.72*qdc + 0.28*cxs5-s2` scored **0.92273**, but CSV probes are now fallback-only because they are public-only. **Block 18:** hidden-safe `smooth5_mean(0.70*qdc + 0.30*cxs8)` notebook v1 completed with **309 rows / 0 NaN**, exactly matching local rolling-5 mean; notebook-output submit is scheduled via launchd for **2026-06-25 01:08 WAT**. **Block 19:** hidden-safe `0.72*qdc + 0.28*cxs5-refresh` notebook v1 completed with **309 rows / 0 NaN**; notebook-output submit is scheduled via launchd for **2026-06-25 01:18 WAT**._
 
 ### Block 19 — hidden-safe qdc + refreshed cxs5 (2026-06-24)
 
@@ -14,7 +14,13 @@ Implementation plan:
 - Run submission kernel `umud-submission-blend-qdc-cxs5`, which mounts the refreshed cxs5 kernel and computes both components from mounted competition images.
 - Write `submission.csv = 0.72 * quickdirty_cal + 0.28 * refreshed_cxs5_s2`, matching the Block17 public probe weight while keeping the submission notebook-private eligible.
 
-Artifacts queued: `scripts/build_train_apo_gray55_cxs5_refresh_nb.py`, `notebooks/train-apo-gray55-cxs5-refresh/`, `scripts/build_submission_blend_cxs5_nb.py`, `notebooks/submission-blend-qdc-cxs5/`.
+Results so far:
+
+- Train kernel `umud-train-apo-gray55-cxs5-refresh` v1 **COMPLETE**. Output at `data/kaggle-outputs/block19-cxs5-refresh/train/`: `apo_gray55_line_200_cxs.pkl`, `timing_report.csv`, `val_umud_report.csv`, and log. Val: Dice **0.4199**, UMUD **2.61582**, `mt_ok` **97.56%** (40/41), train wall-clock **171.2s**.
+- Submission kernel `umud-submission-blend-qdc-cxs5` v1 **COMPLETE**. Output at `data/kaggle-outputs/block19-cxs5-refresh/submit/` has **309 rows / 0 NaN**. Blend formula matches `0.72*qdc + 0.28*cxs5-refresh` to floating tolerance (max deltas <3e-14). Compared with Block17 static probe, PA/FL are effectively identical; MT differs modestly (mean absolute **0.18 mm**, max **3.02 mm**) because cxs5 was refreshed.
+- Reset submit script: `scripts/submit_block19_scheduled.sh` submits notebook output only (`-k ucheozoemena/umud-submission-blend-qdc-cxs5 -v 1 -f submission.csv -m block19-qdc-cxs5-refresh`) with duplicate and `<0.6` guards. LaunchAgent `com.uche.umud-block19-submit` is registered for **2026-06-25 01:18 WAT**, ten minutes after Block18.
+
+Artifacts: `scripts/build_train_apo_gray55_cxs5_refresh_nb.py`, `notebooks/train-apo-gray55-cxs5-refresh/`, `scripts/build_submission_blend_cxs5_nb.py`, `notebooks/submission-blend-qdc-cxs5/`, `scripts/submit_block19_scheduled.sh`.
 
 ### Block 18 — sequence smoothing probes (2026-06-24)
 
