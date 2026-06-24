@@ -2,7 +2,13 @@
 
 ## Current focus
 
-_Last updated: 2026-06-24 — **Best: block15-qdc-cxs8-blend = 0.93837**. June 24 manual submits recovered the failed launchd reset jobs (all three had fired but exited before submit because Kaggle access-token minting returned HTTP 429). **Block 13:** raw quick-dirty image geometry scored **1.87066**. **Block 14:** calibrated quick-dirty scored **0.96243**, improving the previous best **1.04862**. **Block 15:** hidden-safe `0.70*qdc + 0.30*cxs8-s2` blend scored **0.93837**, the new best but still above the **0.6** target. **Block 16:** tighter quick-dirty calibration scored **1.01521** (regressed), showing that over-shrinking Block 14's per-image movement hurts. Next focus: avoid tiny qdc/cxs8 blend retunes; pursue a genuinely different signal source or a better hidden-safe way to blend qdc with the stronger cxs5 artifact._
+_Last updated: 2026-06-24 — **Best: block15-qdc-cxs8-blend = 0.93837**. June 24 manual submits recovered the failed launchd reset jobs (all three had fired but exited before submit because Kaggle access-token minting returned HTTP 429). **Block 13:** raw quick-dirty image geometry scored **1.87066**. **Block 14:** calibrated quick-dirty scored **0.96243**, improving the previous best **1.04862**. **Block 15:** hidden-safe `0.70*qdc + 0.30*cxs8-s2` blend scored **0.93837**, the new best but still above the **0.6** target. **Block 16:** tighter quick-dirty calibration scored **1.01521** (regressed), showing that over-shrinking Block 14's per-image movement hurts. **Block 17 active:** static public-score probe blending qdc with saved cxs5-s2 predictions to estimate whether recovering the hidden-safe cxs5 artifact is worthwhile._
+
+### Block 17 — static public probe: qdc + cxs5-s2 (2026-06-24)
+
+**Rationale:** Block 15 used cxs8 because the latest mutable Kaggle training-kernel source no longer exposed the stronger cxs5 artifact. But cxs5-s2 scored **1.04862** vs cxs8-s2 **1.10363**, so replacing cxs8 with cxs5 in the qdc blend may improve. This probe blends saved public-test predictions only, so it is **not hidden-safe** and must not be treated as a private-final submission. It is a cheap public LB diagnostic: if it improves meaningfully, invest in recovering/mounting the old cxs5 model output for a real notebook; if it barely moves, drop this path.
+
+Candidate: `0.72 * block14-qdc + 0.28 * cxs5-s2`, using saved `data/kaggle-outputs/block14-quickdirty-cal/submission.csv` and `data/kaggle-outputs/block10/cxs-s2/submission.csv`.
 
 ### Block 16 — tight quick-dirty calibration (2026-06-24)
 
