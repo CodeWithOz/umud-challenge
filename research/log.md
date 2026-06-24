@@ -16,7 +16,15 @@ Implementation:
 - Core setup follows the public baseline: 512x768 images, `segmentation_models_pytorch` U-Net++ with `efficientnet-b7`, BCE+Dice loss, Ranger optimizer, TTA, `PIXEL_TO_MM=0.0881`, and 5-frame sequence smoothing.
 - Main risk: GPU runtime or memory. If this first run fails, the fallback should preserve the same idea but reduce pressure first (`BATCH=1`, then a smaller EfficientNet backbone) rather than return to another calibration-only tweak.
 
-Status: notebook generated locally; Kaggle push/run pending.
+Status: full notebook v1 was pushed before a same-architecture timing ladder. That was the wrong execution order for this repo: prior lessons require timing benchmarks before long GPU runs. Treat v1 as a risky/possibly overlong run, not a model path to repeat blindly.
+
+Correction:
+
+- New timing builder: `scripts/build_lakhindar_smp_timing_nb.py`.
+- New timing notebook: `notebooks/bench-lakhindar-smp-timing/`, Kaggle kernel `ucheozoemena/umud-bench-lakhindar-smp-timing`.
+- Benchmark uses the same expensive ingredients (`efficientnet-b7`, U-Net++, 512x768, BCE+Dice, Ranger) but caps each target to 80 samples and 1 epoch.
+- It writes `timing_report.csv` with seconds per pair per epoch and projected full 30-epoch runtime for fascicle and aponeurosis.
+- Do not launch another full SMP submission run until this benchmark completes and the projected runtime is acceptable.
 
 ### Block 19 — hidden-safe qdc + refreshed cxs5 (2026-06-24)
 

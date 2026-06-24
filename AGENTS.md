@@ -109,6 +109,7 @@ _This section is updated whenever a new lesson is discovered. Any AI agent worki
 
 | Date | Lesson |
 |------|--------|
+| 2026-06-24 | **Benchmark before long GPU runs:** for any new architecture/resolution/training loop, run a capped same-architecture timing notebook first (sample cap + 1 epoch for each target) and record sec/pair/epoch before launching full training or an all-in-one submission notebook. Do not rely on timings from a different framework/backbone/resolution. |
 | 2026-06-24 | **Notebook competitions:** submit notebook outputs by default. Static CSV submits are public-only diagnostics/fallbacks, not private-final candidates; any strong CSV needs an equivalent notebook, so avoid CSV probes unless notebook submission is blocked. |
 | 2026-06-23 | **MaxViT next tier:** `maxvit_tiny_rw_256` has no ImageNet pretrained weights on Kaggle timm; use **`maxvit_rmlp_tiny_rw_256`** (~28.6M, pretrained @256) as the step up from nano. |
 | 2026-06-23 | **`run_block11 restore_prod`:** regenerate local prod submission notebook only — do **not** auto-push to Kaggle (avoids stray prod kernel versions after block runs). |
