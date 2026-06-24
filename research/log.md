@@ -2,7 +2,21 @@
 
 ## Current focus
 
-_Last updated: 2026-06-24 — **Best public score: block17-qdc-cxs5-static-probe = 0.92273** (**static probe only, not private-final eligible**). Best hidden-safe notebook remains **block15-qdc-cxs8-blend = 0.93837**. June 24 manual submits recovered the failed launchd reset jobs (all three had fired but exited before submit because Kaggle access-token minting returned HTTP 429). **Block 13:** raw quick-dirty scored **1.87066**. **Block 14:** calibrated quick-dirty scored **0.96243**. **Block 15:** hidden-safe `0.70*qdc + 0.30*cxs8-s2` scored **0.93837**. **Block 16:** tighter quick-dirty scored **1.01521** (over-shrink regressed). **Block 17:** static `0.72*qdc + 0.28*cxs5-s2` scored **0.92273**, but CSV probes are now fallback-only because they are public-only. **Block 18:** hidden-safe `smooth5_mean(0.70*qdc + 0.30*cxs8)` notebook v1 completed with **309 rows / 0 NaN**, exactly matching local rolling-5 mean; notebook-output submit is scheduled via launchd for **2026-06-25 01:08 WAT**. **Block 19:** hidden-safe `0.72*qdc + 0.28*cxs5-refresh` notebook v1 completed with **309 rows / 0 NaN**; notebook-output submit is scheduled via launchd for **2026-06-25 01:18 WAT**._
+_Last updated: 2026-06-24 - **Best public score: block17-qdc-cxs5-static-probe = 0.92273** (**static probe only, not private-final eligible**). Best hidden-safe notebook remains **block15-qdc-cxs8-blend = 0.93837**. June 24 manual submits recovered the failed launchd reset jobs (all three had fired but exited before submit because Kaggle access-token minting returned HTTP 429). **Block 13:** raw quick-dirty scored **1.87066**. **Block 14:** calibrated quick-dirty scored **0.96243**. **Block 15:** hidden-safe `0.70*qdc + 0.30*cxs8-s2` scored **0.93837**. **Block 16:** tighter quick-dirty scored **1.01521** (over-shrink regressed). **Block 17:** static `0.72*qdc + 0.28*cxs5-s2` scored **0.92273**, but CSV probes are now fallback-only because they are public-only. **Block 18:** hidden-safe `smooth5_mean(0.70*qdc + 0.30*cxs8)` notebook v1 completed with **309 rows / 0 NaN**, exactly matching local rolling-5 mean; notebook-output submit is scheduled via launchd for **2026-06-25 01:08 WAT**. **Block 19:** hidden-safe `0.72*qdc + 0.28*cxs5-refresh` notebook v1 completed with **309 rows / 0 NaN**; notebook-output submit is scheduled via launchd for **2026-06-25 01:18 WAT**. **Block 20:** queued hidden-safe SMP U-Net++ geometry notebook to test a materially different learned-mask path for PA/FL, not another blend/shrink retune._
+
+### Block 20 - SMP U-Net++ geometry notebook (2026-06-24)
+
+**Rationale:** Blocks 14-19 improved the score by calibrating and blending existing public-test/quick-dirty geometry, but the gains are now small and still far from the **<0.6** target. A public notebook by Lakhindar Pal uses a stronger segmentation path: train separate fascicle and aponeurosis U-Net++ models with an EfficientNet-B7 encoder, predict both masks on the test images, then measure PA/FL/MT from those masks with 5-frame Savitzky-Golay smoothing. This is a higher-risk, higher-upside path because it may recover real per-image PA/FL movement instead of only re-centering current outputs.
+
+Implementation:
+
+- New builder: `scripts/build_submission_lakhindar_smp_nb.py`.
+- New notebook: `notebooks/submission-lakhindar-smp/`, Kaggle kernel `ucheozoemena/umud-submission-lakhindar-smp`.
+- The notebook is hidden-safe: it trains from mounted competition train images/masks and predicts the mounted test images at run time. It does not read saved public-test predictions.
+- Core setup follows the public baseline: 512x768 images, `segmentation_models_pytorch` U-Net++ with `efficientnet-b7`, BCE+Dice loss, Ranger optimizer, TTA, `PIXEL_TO_MM=0.0881`, and 5-frame sequence smoothing.
+- Main risk: GPU runtime or memory. If this first run fails, the fallback should preserve the same idea but reduce pressure first (`BATCH=1`, then a smaller EfficientNet backbone) rather than return to another calibration-only tweak.
+
+Status: notebook generated locally; Kaggle push/run pending.
 
 ### Block 19 — hidden-safe qdc + refreshed cxs5 (2026-06-24)
 
