@@ -2,7 +2,21 @@
 
 ## Current focus
 
-_Last updated: 2026-06-25 - **Best public score: block17-qdc-cxs5-static-probe = 0.92273** (**static probe only, not private-final eligible**). Best hidden-safe notebook is now **block19-qdc-cxs5-refresh = 0.92609**. **Block 18:** hidden-safe rolling-5 smoothed qdc+cxs8 scored **0.96804**, worse than Block 15. **Block 19:** hidden-safe refreshed cxs5 blend scored **0.92609**, improving Block 15 by **0.01228** but still above the **0.6** target. **Block 20:** full SMP U-Net++ v1 completed and output is structurally valid but raw geometry is implausible (PA too low, FL clipped high); do **not** submit raw. **Block 21:** bounded B7 5ep completed but fascicle coverage collapsed and raw geometry is unusable; do **not** submit raw. **Block 22:** B3 timing benchmark completed; B3 is faster but still projects **8.1h** for 30+30 epochs, so prefer inference/calibration from existing Block20 weights before more full training._
+_Last updated: 2026-06-25 - **Best public score: block17-qdc-cxs5-static-probe = 0.92273** (**static probe only, not private-final eligible**). Best hidden-safe notebook is now **block19-qdc-cxs5-refresh = 0.92609**. **Block 18:** hidden-safe rolling-5 smoothed qdc+cxs8 scored **0.96804**, worse than Block 15. **Block 19:** hidden-safe refreshed cxs5 blend scored **0.92609**, improving Block 15 by **0.01228** but still above the **0.6** target. **Block 20:** full SMP U-Net++ v1 completed and output is structurally valid but raw geometry is implausible (PA too low, FL clipped high); do **not** submit raw. **Block 21:** bounded B7 5ep completed but fascicle coverage collapsed and raw geometry is unusable; do **not** submit raw. **Block 22:** B3 timing benchmark completed; B3 is faster but still projects **8.1h** for 30+30 epochs. **Block 23:** queued hidden-safe inference-only `0.65*Block19 + 0.35*calibrated_Block20_SMP` blend using mounted Block20 B7 weights._
+
+### Block 23 - Block19 + calibrated SMP blend (2026-06-25)
+
+**Rationale:** Block 20 trained usable-looking masks but raw geometry was badly centered/scaled. Re-running the 7h train just to change calibration is wasteful. The private-eligible path is to mount the Block20 train-derived weights, run inference on the mounted test images, calibrate the SMP geometry toward the current best notebook center, and blend it with Block19. This tests whether SMP adds useful per-image movement without depending on public-test predictions.
+
+Implementation:
+
+- New builder: `scripts/build_submission_blend_block19_smp_cal_nb.py`.
+- New notebook: `notebooks/submission-blend-block19-smpcal/`, Kaggle kernel `ucheozoemena/umud-submission-blend-block19-smpcal`.
+- Kernel sources: `umud-train-mounted-phase-3`, `umud-train-apo-gray55-cxs5-refresh`, and `umud-submission-lakhindar-smp` for the B7 SMP weights.
+- The notebook computes Block19 from mounted images, runs SMP inference from mounted weights on the same images, calibrates SMP with fixed Block20/Block19 medians, then writes `submission.csv = 0.65*block19 + 0.35*smpcal`.
+- This is hidden-safe for private re-run because the only mounted Block20 artifacts used are train-derived weights, not public-test predictions.
+
+Status: generated locally; Kaggle push/run pending.
 
 ### Block 21 - bounded SMP B7 5ep submission (2026-06-24)
 
