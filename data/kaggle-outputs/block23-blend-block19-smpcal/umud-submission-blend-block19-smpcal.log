@@ -1,0 +1,46 @@
+[{"stream_name":"stderr","time":6.761111734,"data":"/usr/local/lib/python3.12/dist-packages/nbformat/__init__.py:96: MissingIDFieldWarning: Cell is missing an id field, this will become a hard error in future nbformat versions. You may want to use `normalize()` on your notebooks before validations (available since nbformat 5.1.4). Previous versions of nbformat are fixing this issue transparently, and will stop doing so in the future.\n"}
+,{"stream_name":"stderr","time":6.7612030480000005,"data":"  validate(nb)\n"}
+,{"stream_name":"stderr","time":7.725222001,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":7.725258186,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":7.7252642609999995,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":7.725269104,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stderr","time":8.437956942,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":8.437992164,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":8.438002664,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":8.438006231,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stdout","time":9.654750388,"data":"Fasc model: /kaggle/input/notebooks/ucheozoemena/umud-train-mounted-phase-3/fasc_baseline.pkl\n"}
+,{"stream_name":"stdout","time":9.654818133,"data":"Apo model: /kaggle/input/notebooks/ucheozoemena/umud-train-apo-gray55-cxs5-refresh/apo_gray55_line_200_cxs.pkl\n"}
+,{"stream_name":"stderr","time":32.303883912,"data":"/usr/local/lib/python3.12/dist-packages/fastai/learner.py:455: UserWarning: load_learner` uses Python's insecure pickle module, which can execute malicious arbitrary code when loading. Only load files you trust.\n"}
+,{"stream_name":"stderr","time":32.303932048,"data":"If you only need to load model weights and optimizer state, use the safe `Learner.load` instead.\n"}
+,{"stream_name":"stderr","time":32.303939761,"data":"  warn(\"load_learner` uses Python's insecure pickle module, which can execute malicious arbitrary code when loading. Only load files you trust.\\nIf you only need to load model weights and optimizer state, use the safe `Learner.load` instead.\")\n"}
+,{"stream_name":"stderr","time":32.303947195,"data":"\n"}
+,{"stream_name":"stderr","time":32.303952432,"data":"/usr/local/lib/python3.12/dist-packages/fastai/learner.py:455: UserWarning: load_learner` uses Python's insecure pickle module, which can execute malicious arbitrary code when loading. Only load files you trust.\n"}
+,{"stream_name":"stderr","time":32.303958176,"data":"If you only need to load model weights and optimizer state, use the safe `Learner.load` instead.\n"}
+,{"stream_name":"stderr","time":32.303963489,"data":"  warn(\"load_learner` uses Python's insecure pickle module, which can execute malicious arbitrary code when loading. Only load files you trust.\\nIf you only need to load model weights and optimizer state, use the safe `Learner.load` instead.\")\n"}
+,{"stream_name":"stdout","time":36.708215499,"data":"Test images: 309\n"}
+,{"stream_name":"stdout","time":928.596589913,"data":"Raw NaN rates: {'pa_deg': 0.0, 'fl_mm': 0.0, 'mt_mm': 0.0032}\n"}
+,{"stream_name":"stdout","time":928.79544462,"data":"Calibrated medians: {'pa_deg': 18.0, 'fl_mm': 74.48, 'mt_mm': 21.49}\n"}
+,{"stream_name":"stdout","time":928.795484145,"data":"Calibrated NaN count: 0\n"}
+,{"stream_name":"stdout","time":928.795512229,"data":"PA_TARGET= 18.0  MT_SHRINK= 0.45  S_FL= 0.088  S_MT= 0.0725\n"}
+,{"stream_name":"stdout","time":928.932001361,"data":"Template has only 2 rows; writing 309 predictions instead\n"}
+,{"stream_name":"stdout","time":928.932053023,"data":"Wrote /kaggle/working/submission.csv (309 rows, 0 NaN)\n"}
+,{"stream_name":"stdout","time":986.397545278,"data":"Overwrote submission.csv with blend: QD=0.72, CXS=0.28\n"}
+,{"stream_name":"stdout","time":986.397591017,"data":"Rows: 309 NaNs: 0\n"}
+,{"stream_name":"stdout","time":989.998209117,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 154.8/154.8 kB 3.6 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":990.200589664,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 154.8/154.8 kB 3.6 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":1423.359721888,"data":"Overwrote submission.csv with Block19/SMP-cal blend: block19=0.65, smpcal=0.35\n"}
+,{"stream_name":"stdout","time":1423.359808588,"data":"Rows: 309 NaNs: 0\n"}
+,{"stream_name":"stdout","time":1423.359818925,"data":"SMP status counts:\n"}
+,{"stream_name":"stdout","time":1423.359824251,"data":"status\n"}
+,{"stream_name":"stdout","time":1423.35982953,"data":"mt_ok+pa_ok    304\n"}
+,{"stream_name":"stdout","time":1423.359840248,"data":"fallback         5\n"}
+,{"stream_name":"stdout","time":1423.359844208,"data":"Name: count, dtype: int64\n"}
+,{"stream_name":"stderr","time":1428.794382673,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":1428.794434507,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":1428.979349863,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":1428.97938414,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":1429.739517562,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to notebook\n"}
+,{"stream_name":"stderr","time":1430.358627627,"data":"[NbConvertApp] Writing 237520 bytes to __notebook__.ipynb\n"}
+,{"stream_name":"stderr","time":1433.189526596,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to html\n"}
+,{"stream_name":"stderr","time":1434.631871385,"data":"[NbConvertApp] Writing 646665 bytes to __results__.html\n"}
+]
