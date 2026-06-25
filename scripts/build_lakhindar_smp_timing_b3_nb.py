@@ -49,7 +49,7 @@ def main() -> None:
     }
     (OUT_DIR / "bench-lakhindar-smp-b3-timing.ipynb").write_text(json.dumps(nb, indent=1))
     meta = {
-        "id": "ucheozoemena/umud-bench-lakhindar-smp-b3-timing",
+        "id": "ucheozoemena/umud-bench-lakhindar-smp-timing",
         "title": "UMUD Bench Lakhindar SMP B3 Timing",
         "code_file": "bench-lakhindar-smp-b3-timing.ipynb",
         "language": "python",

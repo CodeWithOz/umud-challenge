@@ -29,7 +29,7 @@ Implementation:
 - Same timing design as Block 20 benchmark: 80 samples per target, 1 epoch, writes projected full-runtime estimates.
 - Do not create or run a full B3 submission notebook until this timing benchmark is scored locally from its `timing_report.csv`.
 
-Status: Kaggle push attempted on 2026-06-24 but rejected with `Maximum batch GPU session count of 2 reached` because Block 20 full v1 and Block 21 B7 5ep were both still running. Retry only after one GPU session is free, or explicitly delete/cancel the mistaken Block 20 full v1 run.
+Status: Kaggle push attempted on 2026-06-24 but rejected with `Maximum batch GPU session count of 2 reached` because Block 20 full v1 and Block 21 B7 5ep were both still running. Retry after the sessions complete. On 2026-06-25, retrying the new B3 slug returned `Notebook not found`; the practical fallback is to push B3 as a new version of the existing timing kernel `ucheozoemena/umud-bench-lakhindar-smp-timing`.
 
 ### Block 20 - SMP U-Net++ geometry notebook (2026-06-24)
 
