@@ -2,7 +2,7 @@
 
 ## Current focus
 
-_Last updated: 2026-06-25 - **Best public score: block17-qdc-cxs5-static-probe = 0.92273** (**static probe only, not private-final eligible**). Best hidden-safe notebook is now **block19-qdc-cxs5-refresh = 0.92609**. **Block 18:** hidden-safe rolling-5 smoothed qdc+cxs8 scored **0.96804**, worse than Block 15. **Block 19:** hidden-safe refreshed cxs5 blend scored **0.92609**, improving Block 15 by **0.01228** but still above the **0.6** target. **Block 20:** full SMP U-Net++ v1 completed and output is structurally valid but raw geometry is implausible (PA too low, FL clipped high); do **not** submit raw. **Block 21:** bounded B7 5ep completed but fascicle coverage collapsed and raw geometry is unusable; do **not** submit raw. **Block 22:** B3 timing benchmark is prepared; retry now that GPU sessions are free._
+_Last updated: 2026-06-25 - **Best public score: block17-qdc-cxs5-static-probe = 0.92273** (**static probe only, not private-final eligible**). Best hidden-safe notebook is now **block19-qdc-cxs5-refresh = 0.92609**. **Block 18:** hidden-safe rolling-5 smoothed qdc+cxs8 scored **0.96804**, worse than Block 15. **Block 19:** hidden-safe refreshed cxs5 blend scored **0.92609**, improving Block 15 by **0.01228** but still above the **0.6** target. **Block 20:** full SMP U-Net++ v1 completed and output is structurally valid but raw geometry is implausible (PA too low, FL clipped high); do **not** submit raw. **Block 21:** bounded B7 5ep completed but fascicle coverage collapsed and raw geometry is unusable; do **not** submit raw. **Block 22:** B3 timing benchmark completed; B3 is faster but still projects **8.1h** for 30+30 epochs, so prefer inference/calibration from existing Block20 weights before more full training._
 
 ### Block 21 - bounded SMP B7 5ep submission (2026-06-24)
 
@@ -29,7 +29,16 @@ Implementation:
 - Same timing design as Block 20 benchmark: 80 samples per target, 1 epoch, writes projected full-runtime estimates.
 - Do not create or run a full B3 submission notebook until this timing benchmark is scored locally from its `timing_report.csv`.
 
-Status: Kaggle push attempted on 2026-06-24 but rejected with `Maximum batch GPU session count of 2 reached` because Block 20 full v1 and Block 21 B7 5ep were both still running. Retry after the sessions complete. On 2026-06-25, retrying the new B3 slug returned `Notebook not found`; the practical fallback is to push B3 as a new version of the existing timing kernel `ucheozoemena/umud-bench-lakhindar-smp-timing`.
+Status: Kaggle push attempted on 2026-06-24 but rejected with `Maximum batch GPU session count of 2 reached` because Block 20 full v1 and Block 21 B7 5ep were both still running. Retry after the sessions complete. On 2026-06-25, retrying the new B3 slug returned `Notebook not found`; B3 was pushed successfully as **v2** of the existing timing kernel `ucheozoemena/umud-bench-lakhindar-smp-timing`.
+
+Benchmark result:
+
+| Target | Samples | Train sec | sec/pair/epoch | Projected 30ep full |
+|--------|--------:|----------:|---------------:|--------------------:|
+| Fascicle | 80 | 24.9 | 0.311 | 7.12 h |
+| Aponeurosis | 80 | 8.7 | 0.109 | 0.95 h |
+
+Projected total is **8.1 h** for 30+30 epochs. A 5ep B3 run would be feasible, but Block21 showed that 5ep can collapse fascicle coverage. Next priority is a faster hidden-safe inference/calibration notebook using the already-trained Block20 B7 weights before spending more GPU time on new full training.
 
 ### Block 20 - SMP U-Net++ geometry notebook (2026-06-24)
 
