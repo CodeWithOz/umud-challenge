@@ -2,7 +2,7 @@
 
 ## Current focus
 
-_Last updated: 2026-06-25 - **Best public score: block17-qdc-cxs5-static-probe = 0.92273** (**static probe only, not private-final eligible**). Best hidden-safe notebook is now **block19-qdc-cxs5-refresh = 0.92609**. **Block 18:** hidden-safe rolling-5 smoothed qdc+cxs8 scored **0.96804**, worse than Block 15. **Block 19:** hidden-safe refreshed cxs5 blend scored **0.92609**, improving Block 15 by **0.01228** but still above the **0.6** target. **Block 20:** full SMP U-Net++ v1 and **Block 21:** bounded B7 5ep SMP both completed on Kaggle and need output download/validation before any submission decision. **Block 22:** B3 timing benchmark is prepared but not pushed yet; retry after Block 20/21 output handling._
+_Last updated: 2026-06-25 - **Best public score: block17-qdc-cxs5-static-probe = 0.92273** (**static probe only, not private-final eligible**). Best hidden-safe notebook is now **block19-qdc-cxs5-refresh = 0.92609**. **Block 18:** hidden-safe rolling-5 smoothed qdc+cxs8 scored **0.96804**, worse than Block 15. **Block 19:** hidden-safe refreshed cxs5 blend scored **0.92609**, improving Block 15 by **0.01228** but still above the **0.6** target. **Block 20:** full SMP U-Net++ v1 completed and output is structurally valid but raw geometry is implausible (PA too low, FL clipped high); do **not** submit raw. **Block 21:** bounded B7 5ep completed but fascicle coverage collapsed and raw geometry is unusable; do **not** submit raw. **Block 22:** B3 timing benchmark is prepared; retry now that GPU sessions are free._
 
 ### Block 21 - bounded SMP B7 5ep submission (2026-06-24)
 
@@ -15,6 +15,8 @@ Implementation:
 - Reuses the Block 20 notebook structure and hidden-safe training/inference flow.
 - Changes only the bounded run settings: EfficientNet-B7 remains, 512x768 remains, epochs drop from **30** to **5**.
 - Push with a hard Kaggle timeout around **3 hours**. If it errors or times out, stop this exact path and benchmark a smaller backbone before another full submission notebook.
+
+Result: kernel v1 **COMPLETE** in roughly **79.6 minutes**. Output at `data/kaggle-outputs/block21-lakhindar-smp-b7-5ep/` has **309 rows / 0 NaN**, but raw geometry is not submission-worthy: PA median **15.0°** with many values clipped to **45°**, FL median **98.3 mm**, MT median **28.1 mm**, and fascicle mask coverage median is effectively **0.0000**. Debug status shows only **92/309** `pa_ok`; most rows rely on fallback PA. Do **not** submit raw Block 21.
 
 ### Block 22 - SMP B3 timing fallback (2026-06-24)
 
@@ -59,6 +61,8 @@ Benchmark result:
 | Aponeurosis | 80 | 27.0 | 0.338 | 2.95 h |
 
 Projected total is **12.2 h**, before dependency install, model download, inference, and notebook packaging. This is too close to Kaggle session limits and should be treated as infeasible as written. Next SMP variants should cut one or more of: backbone size, resolution, epochs, or train both models outside the submission notebook and mount outputs.
+
+Result: despite the projection, kernel v1 eventually **COMPLETE** in roughly **7.0 h**. Output at `data/kaggle-outputs/block20-lakhindar-smp/` has **309 rows / 0 NaN**, but raw geometry is not submission-worthy: PA median **7.05°**, FL median **197.2 mm** with the upper clip hit heavily, MT median **28.5 mm**, and 5 fallback rows. The model learned some masks (`304/309` `mt_ok+pa_ok`) but the measurement/calibration is far from the current LB-fit centers. Do **not** submit raw Block 20; use only as a possible calibrated component after offline checks.
 
 ### Block 19 — hidden-safe qdc + refreshed cxs5 (2026-06-24)
 

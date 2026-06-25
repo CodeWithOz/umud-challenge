@@ -1,0 +1,828 @@
+[{"stream_name":"stderr","time":24645.807099145,"data":"[ WARN:0@24630.350] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24646.010532215,"data":"[ WARN:0@24630.350] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24646.01057402,"data":"[ WARN:0@24630.350] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24646.010578711,"data":"\n"}
+,{"stream_name":"stderr","time":24646.010581376,"data":"[ WARN:0@24630.350] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24646.010584978,"data":"[ WARN:0@24630.350] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24647.536537089,"data":"[ WARN:0@24632.080] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24647.536977136,"data":"[ WARN:0@24632.080] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24647.73966621,"data":"[ WARN:0@24632.080] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24647.739705098,"data":"[ WARN:0@24632.080] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24647.739708877,"data":"\n"}
+,{"stream_name":"stderr","time":24647.739711606,"data":"[ WARN:0@24632.080] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24647.739719412,"data":"[ WARN:0@24632.080] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24648.362979921,"data":"[ WARN:0@24632.906] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24648.363016585,"data":"[ WARN:0@24632.906] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24648.373773922,"data":"[ WARN:0@24632.917] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24648.373878439,"data":"[ WARN:0@24632.917] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24648.565691388,"data":"[ WARN:0@24632.906] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24648.565758057,"data":"[ WARN:0@24632.906] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24648.565765203,"data":"[ WARN:0@24632.917] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24648.565770168,"data":"[ WARN:0@24632.917] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24648.565774382,"data":"\n"}
+,{"stream_name":"stderr","time":24648.565777934,"data":"[ WARN:0@24632.906] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24648.565805598,"data":"[ WARN:0@24632.906] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24648.565808931,"data":"[ WARN:0@24632.917] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24648.565811545,"data":"[ WARN:0@24632.917] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24648.772580358,"data":"[ WARN:0@24633.316] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24648.773084271,"data":"[ WARN:0@24633.316] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24648.9749984,"data":"[ WARN:0@24633.316] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24648.975031474,"data":"[ WARN:0@24633.316] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24648.975036355,"data":"\n"}
+,{"stream_name":"stderr","time":24648.975040009,"data":"[ WARN:0@24633.316] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24648.975043444,"data":"[ WARN:0@24633.316] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24649.593627791,"data":"[ WARN:0@24634.137] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24649.593660739,"data":"[ WARN:0@24634.137] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24649.796207013,"data":"[ WARN:0@24634.137] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24649.79624451,"data":"[ WARN:0@24634.137] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24649.796249491,"data":"\n"}
+,{"stream_name":"stderr","time":24649.796252853,"data":"[ WARN:0@24634.137] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24649.796256586,"data":"[ WARN:0@24634.137] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24650.068856584,"data":"[ WARN:0@24634.612] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24650.068898537,"data":"[ WARN:0@24634.612] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24650.271967985,"data":"[ WARN:0@24634.612] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24650.272003601,"data":"[ WARN:0@24634.612] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24650.272009947,"data":"\n"}
+,{"stream_name":"stderr","time":24650.272014572,"data":"[ WARN:0@24634.612] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24650.272040954,"data":"[ WARN:0@24634.612] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24650.532533533,"data":"[ WARN:0@24635.076] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24650.532566796,"data":"[ WARN:0@24635.076] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24650.73551606,"data":"[ WARN:0@24635.076] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24650.735553421,"data":"[ WARN:0@24635.076] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24650.735563345,"data":"\n"}
+,{"stream_name":"stderr","time":24650.735566117,"data":"[ WARN:0@24635.076] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24650.735569232,"data":"[ WARN:0@24635.076] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24653.9153126,"data":"[ WARN:0@24638.458] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24653.915348011,"data":"[ WARN:0@24638.458] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24654.117990353,"data":"[ WARN:0@24638.458] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24654.118028878,"data":"[ WARN:0@24638.458] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24654.11803251,"data":"\n"}
+,{"stream_name":"stderr","time":24654.118035116,"data":"[ WARN:0@24638.458] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24654.118038021,"data":"[ WARN:0@24638.458] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24654.7269096,"data":"[ WARN:0@24639.270] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24654.727357713,"data":"[ WARN:0@24639.270] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24654.929507569,"data":"[ WARN:0@24639.270] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24654.929548425,"data":"[ WARN:0@24639.270] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24654.929554855,"data":"\n"}
+,{"stream_name":"stderr","time":24654.929559453,"data":"[ WARN:0@24639.270] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24654.929564282,"data":"[ WARN:0@24639.270] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24656.3696348,"data":"[ WARN:0@24640.913] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24656.369927077,"data":"[ WARN:0@24640.913] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24656.572151135,"data":"[ WARN:0@24640.913] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24656.572187923,"data":"[ WARN:0@24640.913] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24656.572194568,"data":"\n"}
+,{"stream_name":"stderr","time":24656.572198871,"data":"[ WARN:0@24640.913] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24656.572203549,"data":"[ WARN:0@24640.913] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24658.916783005,"data":"[ WARN:0@24643.460] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24658.91721255,"data":"[ WARN:0@24643.460] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24659.118976388,"data":"[ WARN:0@24643.460] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24659.119018255,"data":"[ WARN:0@24643.460] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24659.119025546,"data":"\n"}
+,{"stream_name":"stderr","time":24659.119031505,"data":"[ WARN:0@24643.460] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24659.119037693,"data":"[ WARN:0@24643.460] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24659.804055374,"data":"[ WARN:0@24644.347] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24659.804092319,"data":"[ WARN:0@24644.347] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24660.00620761,"data":"[ WARN:0@24644.347] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24660.006245791,"data":"[ WARN:0@24644.347] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24660.006253033,"data":"\n"}
+,{"stream_name":"stderr","time":24660.00626136,"data":"[ WARN:0@24644.347] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24660.006266896,"data":"[ WARN:0@24644.347] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24661.494480584,"data":"[ WARN:0@24646.037] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24661.494525973,"data":"[ WARN:0@24646.037] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24661.697675229,"data":"[ WARN:0@24646.037] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24661.697712511,"data":"[ WARN:0@24646.037] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24661.697718671,"data":"\n"}
+,{"stream_name":"stderr","time":24661.697722171,"data":"[ WARN:0@24646.037] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24661.697726144,"data":"[ WARN:0@24646.037] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24661.90025709,"data":"[ WARN:0@24646.443] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24661.900297335,"data":"[ WARN:0@24646.443] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24662.104135906,"data":"[ WARN:0@24646.443] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24662.104170536,"data":"[ WARN:0@24646.443] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24662.104176689,"data":"\n"}
+,{"stream_name":"stderr","time":24662.104181324,"data":"[ WARN:0@24646.443] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24662.104186071,"data":"[ WARN:0@24646.443] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24662.694944249,"data":"[ WARN:0@24647.238] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24662.695090354,"data":"[ WARN:0@24647.238] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24662.898056682,"data":"[ WARN:0@24647.238] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24662.898098624,"data":"[ WARN:0@24647.238] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24662.898105763,"data":"\n"}
+,{"stream_name":"stderr","time":24662.898110514,"data":"[ WARN:0@24647.238] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24662.898115542,"data":"[ WARN:0@24647.238] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24664.444771367,"data":"[ WARN:0@24648.988] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24664.444810877,"data":"[ WARN:0@24648.988] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24664.64772713,"data":"[ WARN:0@24648.988] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24664.647758132,"data":"[ WARN:0@24648.988] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24664.64777628,"data":"\n"}
+,{"stream_name":"stderr","time":24664.647780643,"data":"[ WARN:0@24648.988] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24664.64778496,"data":"[ WARN:0@24648.988] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24666.540638374,"data":"[ WARN:0@24651.084] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24666.540813521,"data":"[ WARN:0@24651.084] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24666.743351765,"data":"[ WARN:0@24651.084] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24666.743389981,"data":"[ WARN:0@24651.084] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24666.743394015,"data":"\n"}
+,{"stream_name":"stderr","time":24666.743396626,"data":"[ WARN:0@24651.084] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24666.743413073,"data":"[ WARN:0@24651.084] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24667.375539605,"data":"[ WARN:0@24651.918] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24667.375573772,"data":"[ WARN:0@24651.918] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24667.578186431,"data":"[ WARN:0@24651.918] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24667.578225648,"data":"[ WARN:0@24651.918] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24667.57823308,"data":"\n"}
+,{"stream_name":"stderr","time":24667.578238239,"data":"[ WARN:0@24651.918] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24667.578243181,"data":"[ WARN:0@24651.918] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24668.224339452,"data":"[ WARN:0@24652.767] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24668.224509392,"data":"[ WARN:0@24652.767] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24668.797625069,"data":"[ WARN:0@24652.767] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24668.797657774,"data":"[ WARN:0@24652.767] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24668.797663877,"data":"\n"}
+,{"stream_name":"stderr","time":24668.79766807,"data":"[ WARN:0@24652.767] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24668.797684488,"data":"[ WARN:0@24652.767] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24669.430326497,"data":"[ WARN:0@24653.973] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24669.430362932,"data":"[ WARN:0@24653.973] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24669.633654497,"data":"[ WARN:0@24653.973] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24669.633694779,"data":"[ WARN:0@24653.973] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24669.633699143,"data":"\n"}
+,{"stream_name":"stderr","time":24669.633707802,"data":"[ WARN:0@24653.973] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24669.633730254,"data":"[ WARN:0@24653.973] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24669.904698981,"data":"[ WARN:0@24654.448] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24669.90475691,"data":"[ WARN:0@24654.448] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24670.108093531,"data":"[ WARN:0@24654.448] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24670.108134688,"data":"[ WARN:0@24654.448] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24670.108139403,"data":"\n"}
+,{"stream_name":"stderr","time":24670.108142291,"data":"[ WARN:0@24654.448] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24670.108145387,"data":"[ WARN:0@24654.448] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24670.784857898,"data":"[ WARN:0@24655.328] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24670.784890612,"data":"[ WARN:0@24655.328] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24670.988253028,"data":"[ WARN:0@24655.328] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24670.98828065,"data":"[ WARN:0@24655.328] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24670.988286093,"data":"\n"}
+,{"stream_name":"stderr","time":24670.988289669,"data":"[ WARN:0@24655.328] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24670.988294068,"data":"[ WARN:0@24655.328] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24671.209476959,"data":"[ WARN:0@24655.752] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24671.209652386,"data":"[ WARN:0@24655.752] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24671.412064814,"data":"[ WARN:0@24655.752] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24671.412105029,"data":"[ WARN:0@24655.752] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24671.41210998,"data":"\n"}
+,{"stream_name":"stderr","time":24671.412113325,"data":"[ WARN:0@24655.752] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24671.412118151,"data":"[ WARN:0@24655.752] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24671.64381498,"data":"[ WARN:0@24656.187] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24671.643849211,"data":"[ WARN:0@24656.187] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24671.846463807,"data":"[ WARN:0@24656.187] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24671.846501913,"data":"[ WARN:0@24656.187] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24671.846507502,"data":"\n"}
+,{"stream_name":"stderr","time":24671.84651092,"data":"[ WARN:0@24656.187] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24671.84651491,"data":"[ WARN:0@24656.187] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24675.37311699,"data":"[ WARN:0@24659.916] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24675.373159611,"data":"[ WARN:0@24659.916] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24675.576301972,"data":"[ WARN:0@24659.916] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24675.57633932,"data":"[ WARN:0@24659.916] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24675.576344601,"data":"\n"}
+,{"stream_name":"stderr","time":24675.57636005,"data":"[ WARN:0@24659.916] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24675.576366007,"data":"[ WARN:0@24659.916] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24682.510165832,"data":"[ WARN:0@24667.053] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24682.510317912,"data":"[ WARN:0@24667.053] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24682.712785368,"data":"[ WARN:0@24667.053] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24682.712819096,"data":"[ WARN:0@24667.053] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24682.712825067,"data":"\n"}
+,{"stream_name":"stderr","time":24682.712828758,"data":"[ WARN:0@24667.053] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24682.712832649,"data":"[ WARN:0@24667.053] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24684.646737143,"data":"[ WARN:0@24669.189] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24684.646772419,"data":"[ WARN:0@24669.189] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24684.848599539,"data":"[ WARN:0@24669.189] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24684.848636577,"data":"[ WARN:0@24669.189] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24684.848643298,"data":"\n"}
+,{"stream_name":"stderr","time":24684.848647075,"data":"[ WARN:0@24669.189] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24684.848651241,"data":"[ WARN:0@24669.189] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24686.686900511,"data":"[ WARN:0@24671.230] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24686.686961762,"data":"[ WARN:0@24671.230] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24686.889982544,"data":"[ WARN:0@24671.230] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24686.890024729,"data":"[ WARN:0@24671.230] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24686.890028753,"data":"\n"}
+,{"stream_name":"stderr","time":24686.890031604,"data":"[ WARN:0@24671.230] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24686.890034713,"data":"[ WARN:0@24671.230] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24687.972883401,"data":"[ WARN:0@24672.516] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24687.973423423,"data":"[ WARN:0@24672.516] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24688.010030549,"data":"[ WARN:0@24672.553] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24688.010064277,"data":"[ WARN:0@24672.553] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24688.175689146,"data":"[ WARN:0@24672.516] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24688.175737782,"data":"[ WARN:0@24672.516] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24688.175743073,"data":"[ WARN:0@24672.553] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24688.17574688,"data":"[ WARN:0@24672.553] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24688.175750423,"data":"\n"}
+,{"stream_name":"stderr","time":24688.175753768,"data":"[ WARN:0@24672.516] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24688.175757361,"data":"[ WARN:0@24672.516] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24688.175760954,"data":"[ WARN:0@24672.553] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24688.175764488,"data":"[ WARN:0@24672.553] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24688.402915571,"data":"[ WARN:0@24672.946] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24688.402981569,"data":"[ WARN:0@24672.946] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24688.605572122,"data":"[ WARN:0@24672.946] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24688.605629038,"data":"[ WARN:0@24672.946] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24688.60563594,"data":"\n"}
+,{"stream_name":"stderr","time":24688.605640912,"data":"[ WARN:0@24672.946] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24688.605646062,"data":"[ WARN:0@24672.946] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24689.227519111,"data":"[ WARN:0@24673.770] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24689.227552452,"data":"[ WARN:0@24673.771] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24689.430333377,"data":"[ WARN:0@24673.770] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24689.430366859,"data":"[ WARN:0@24673.771] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24689.430372245,"data":"\n"}
+,{"stream_name":"stderr","time":24689.43037611,"data":"[ WARN:0@24673.770] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24689.430395377,"data":"[ WARN:0@24673.771] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24692.619410151,"data":"[ WARN:0@24677.162] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24692.619467161,"data":"[ WARN:0@24677.162] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24692.821757709,"data":"[ WARN:0@24677.162] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24692.821790662,"data":"[ WARN:0@24677.162] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24692.821795806,"data":"\n"}
+,{"stream_name":"stderr","time":24692.821799297,"data":"[ WARN:0@24677.162] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24692.821802893,"data":"[ WARN:0@24677.162] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24693.476757029,"data":"[ WARN:0@24678.019] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24693.476800173,"data":"[ WARN:0@24678.019] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24693.678980897,"data":"[ WARN:0@24678.019] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24693.679025284,"data":"[ WARN:0@24678.019] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24693.679031662,"data":"\n"}
+,{"stream_name":"stderr","time":24693.679050286,"data":"[ WARN:0@24678.019] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24693.679056503,"data":"[ WARN:0@24678.019] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24695.140335828,"data":"[ WARN:0@24679.683] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24695.140373004,"data":"[ WARN:0@24679.683] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24695.342818719,"data":"[ WARN:0@24679.683] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24695.342876819,"data":"[ WARN:0@24679.683] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24695.342884999,"data":"\n"}
+,{"stream_name":"stderr","time":24695.342890749,"data":"[ WARN:0@24679.683] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24695.342897038,"data":"[ WARN:0@24679.683] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24696.846799279,"data":"[ WARN:0@24681.390] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24696.847302354,"data":"[ WARN:0@24681.390] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24697.049292396,"data":"[ WARN:0@24681.390] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24697.049325895,"data":"[ WARN:0@24681.390] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24697.049331093,"data":"\n"}
+,{"stream_name":"stderr","time":24697.049334381,"data":"[ WARN:0@24681.390] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24697.049338213,"data":"[ WARN:0@24681.390] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24697.246099003,"data":"[ WARN:0@24681.789] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24697.246134843,"data":"[ WARN:0@24681.789] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24697.44842737,"data":"[ WARN:0@24681.789] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24697.448492912,"data":"[ WARN:0@24681.789] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24697.448506807,"data":"\n"}
+,{"stream_name":"stderr","time":24697.448509795,"data":"[ WARN:0@24681.789] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24697.448512775,"data":"[ WARN:0@24681.789] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24698.937115244,"data":"[ WARN:0@24683.480] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24698.937155089,"data":"[ WARN:0@24683.480] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24699.282420301,"data":"[ WARN:0@24683.480] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24699.282478729,"data":"[ WARN:0@24683.480] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24699.282491782,"data":"\n"}
+,{"stream_name":"stderr","time":24699.282496989,"data":"[ WARN:0@24683.480] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24699.282502119,"data":"[ WARN:0@24683.480] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24699.317497297,"data":"[ WARN:0@24683.860] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24699.317554215,"data":"[ WARN:0@24683.860] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24699.519521935,"data":"[ WARN:0@24683.860] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24699.519596508,"data":"[ WARN:0@24683.860] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24699.519604383,"data":"\n"}
+,{"stream_name":"stderr","time":24699.519608479,"data":"[ WARN:0@24683.860] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24699.519612642,"data":"[ WARN:0@24683.860] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24701.044143236,"data":"[ WARN:0@24685.587] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24701.044172986,"data":"[ WARN:0@24685.587] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24701.247045499,"data":"[ WARN:0@24685.587] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24701.247073406,"data":"[ WARN:0@24685.587] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24701.247079179,"data":"\n"}
+,{"stream_name":"stderr","time":24701.247082772,"data":"[ WARN:0@24685.587] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24701.247086846,"data":"[ WARN:0@24685.587] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24701.859825469,"data":"[ WARN:0@24686.403] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24701.85990298,"data":"[ WARN:0@24686.403] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24702.061995356,"data":"[ WARN:0@24686.403] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24702.062029036,"data":"[ WARN:0@24686.403] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24702.062034578,"data":"\n"}
+,{"stream_name":"stderr","time":24702.062038341,"data":"[ WARN:0@24686.403] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24702.062043772,"data":"[ WARN:0@24686.403] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24703.516084793,"data":"[ WARN:0@24688.059] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24703.516118856,"data":"[ WARN:0@24688.059] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24703.719103062,"data":"[ WARN:0@24688.059] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24703.719142125,"data":"[ WARN:0@24688.059] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24703.719160654,"data":"\n"}
+,{"stream_name":"stderr","time":24703.719163929,"data":"[ WARN:0@24688.059] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24703.71918106,"data":"[ WARN:0@24688.059] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24705.218997438,"data":"[ WARN:0@24689.762] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24705.219042718,"data":"[ WARN:0@24689.762] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24705.421330428,"data":"[ WARN:0@24689.762] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24705.421370653,"data":"[ WARN:0@24689.762] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24705.421376828,"data":"\n"}
+,{"stream_name":"stderr","time":24705.421386886,"data":"[ WARN:0@24689.762] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24705.421391552,"data":"[ WARN:0@24689.762] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24706.102394123,"data":"[ WARN:0@24690.645] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24706.102782213,"data":"[ WARN:0@24690.645] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24706.306571751,"data":"[ WARN:0@24690.645] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24706.306608999,"data":"[ WARN:0@24690.645] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24706.306616215,"data":"\n"}
+,{"stream_name":"stderr","time":24706.306620964,"data":"[ WARN:0@24690.645] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24706.30662704,"data":"[ WARN:0@24690.645] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24708.175548156,"data":"[ WARN:0@24692.718] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24708.175586086,"data":"[ WARN:0@24692.718] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24708.378496979,"data":"[ WARN:0@24692.718] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24708.378538453,"data":"[ WARN:0@24692.718] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24708.378544979,"data":"\n"}
+,{"stream_name":"stderr","time":24708.378551982,"data":"[ WARN:0@24692.718] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24708.378589503,"data":"[ WARN:0@24692.718] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24709.061138464,"data":"[ WARN:0@24693.604] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24709.061174004,"data":"[ WARN:0@24693.604] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24709.263804921,"data":"[ WARN:0@24693.604] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24709.263847466,"data":"[ WARN:0@24693.604] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24709.263866903,"data":"\n"}
+,{"stream_name":"stderr","time":24709.263871146,"data":"[ WARN:0@24693.604] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24709.263875636,"data":"[ WARN:0@24693.604] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24711.235211009,"data":"[ WARN:0@24695.778] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24711.237941956,"data":"[ WARN:0@24695.778] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24711.4381018,"data":"[ WARN:0@24695.778] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24711.438136737,"data":"[ WARN:0@24695.778] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24711.438148062,"data":"\n"}
+,{"stream_name":"stderr","time":24711.438151345,"data":"[ WARN:0@24695.778] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24711.438154873,"data":"[ WARN:0@24695.778] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24711.633912443,"data":"[ WARN:0@24696.177] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24711.633950514,"data":"[ WARN:0@24696.177] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24711.836768708,"data":"[ WARN:0@24696.177] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24711.836804581,"data":"[ WARN:0@24696.177] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24711.836808981,"data":"\n"}
+,{"stream_name":"stderr","time":24711.836812128,"data":"[ WARN:0@24696.177] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24711.836816075,"data":"[ WARN:0@24696.177] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24713.631523096,"data":"[ WARN:0@24698.174] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24713.631577414,"data":"[ WARN:0@24698.174] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24713.833129367,"data":"[ WARN:0@24698.174] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24713.83316106,"data":"[ WARN:0@24698.174] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24713.833165844,"data":"\n"}
+,{"stream_name":"stderr","time":24713.833169561,"data":"[ WARN:0@24698.174] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24713.833173516,"data":"[ WARN:0@24698.174] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24714.591213562,"data":"[ WARN:0@24699.134] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24714.5912541,"data":"[ WARN:0@24699.134] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24714.793562215,"data":"[ WARN:0@24699.134] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24714.793613104,"data":"[ WARN:0@24699.134] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24714.793619291,"data":"\n"}
+,{"stream_name":"stderr","time":24714.793622867,"data":"[ WARN:0@24699.134] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24714.793626751,"data":"[ WARN:0@24699.134] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24715.375742131,"data":"[ WARN:0@24699.918] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24715.375789633,"data":"[ WARN:0@24699.918] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24715.577454116,"data":"[ WARN:0@24699.918] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24715.57749167,"data":"[ WARN:0@24699.918] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24715.5774976,"data":"\n"}
+,{"stream_name":"stderr","time":24715.577501554,"data":"[ WARN:0@24699.918] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24715.57750572,"data":"[ WARN:0@24699.918] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24718.36481217,"data":"[ WARN:0@24702.908] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24718.36497132,"data":"[ WARN:0@24702.908] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24718.567483589,"data":"[ WARN:0@24702.908] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24718.567538021,"data":"[ WARN:0@24702.908] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24718.567542307,"data":"\n"}
+,{"stream_name":"stderr","time":24718.567544678,"data":"[ WARN:0@24702.908] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24718.567547126,"data":"[ WARN:0@24702.908] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24719.598555159,"data":"[ WARN:0@24704.142] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24719.598589911,"data":"[ WARN:0@24704.142] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24719.801383192,"data":"[ WARN:0@24704.142] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24719.801461121,"data":"[ WARN:0@24704.142] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24719.801471213,"data":"\n"}
+,{"stream_name":"stderr","time":24719.801475325,"data":"[ WARN:0@24704.142] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24719.801479323,"data":"[ WARN:0@24704.142] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24720.347646828,"data":"[ WARN:0@24704.891] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24720.347682603,"data":"[ WARN:0@24704.891] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24720.550157054,"data":"[ WARN:0@24704.891] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24720.550201324,"data":"[ WARN:0@24704.891] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24720.550208798,"data":"\n"}
+,{"stream_name":"stderr","time":24720.55021357,"data":"[ WARN:0@24704.891] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24720.550219398,"data":"[ WARN:0@24704.891] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24721.669576007,"data":"[ WARN:0@24706.212] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24721.669613084,"data":"[ WARN:0@24706.212] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24721.871575021,"data":"[ WARN:0@24706.212] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24721.871606803,"data":"[ WARN:0@24706.212] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24721.871625379,"data":"\n"}
+,{"stream_name":"stderr","time":24721.871629408,"data":"[ WARN:0@24706.212] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24721.871633128,"data":"[ WARN:0@24706.212] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24722.082194385,"data":"[ WARN:0@24706.625] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24722.082228979,"data":"[ WARN:0@24706.625] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24722.285386436,"data":"[ WARN:0@24706.625] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24722.285420798,"data":"[ WARN:0@24706.625] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24722.285454252,"data":"\n"}
+,{"stream_name":"stderr","time":24722.285461426,"data":"[ WARN:0@24706.625] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24722.285465899,"data":"[ WARN:0@24706.625] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24723.377684178,"data":"[ WARN:0@24707.921] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24723.377853213,"data":"[ WARN:0@24707.921] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24723.580087928,"data":"[ WARN:0@24707.921] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24723.580128883,"data":"[ WARN:0@24707.921] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24723.580134759,"data":"\n"}
+,{"stream_name":"stderr","time":24723.580138431,"data":"[ WARN:0@24707.921] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24723.580142201,"data":"[ WARN:0@24707.921] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24724.702721475,"data":"[ WARN:0@24709.246] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24724.7028675,"data":"[ WARN:0@24709.246] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24724.905398108,"data":"[ WARN:0@24709.246] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24724.905453801,"data":"[ WARN:0@24709.246] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24724.905470866,"data":"\n"}
+,{"stream_name":"stderr","time":24724.905475532,"data":"[ WARN:0@24709.246] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24724.905480438,"data":"[ WARN:0@24709.246] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24727.0864001,"data":"[ WARN:0@24711.629] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24727.086758053,"data":"[ WARN:0@24711.629] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24727.288666863,"data":"[ WARN:0@24711.629] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24727.288701728,"data":"[ WARN:0@24711.629] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24727.288717077,"data":"\n"}
+,{"stream_name":"stderr","time":24727.288720534,"data":"[ WARN:0@24711.629] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24727.288723972,"data":"[ WARN:0@24711.629] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24728.039752915,"data":"[ WARN:0@24712.583] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24728.039788397,"data":"[ WARN:0@24712.583] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24728.2419349,"data":"[ WARN:0@24712.583] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24728.241967911,"data":"[ WARN:0@24712.583] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24728.241972689,"data":"\n"}
+,{"stream_name":"stderr","time":24728.241975938,"data":"[ WARN:0@24712.583] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24728.241979602,"data":"[ WARN:0@24712.583] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24729.270642939,"data":"[ WARN:0@24713.814] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24729.270811484,"data":"[ WARN:0@24713.814] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24729.622679762,"data":"[ WARN:0@24714.166] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24729.623081782,"data":"[ WARN:0@24714.166] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24729.833932873,"data":"[ WARN:0@24713.814] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24729.833968132,"data":"[ WARN:0@24713.814] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24729.833974548,"data":"\n"}
+,{"stream_name":"stderr","time":24729.834006208,"data":"[ WARN:0@24713.814] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24729.834026296,"data":"[ WARN:0@24713.814] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24729.836608701,"data":"[ WARN:0@24714.166] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24729.836628082,"data":"[ WARN:0@24714.166] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24729.836633391,"data":"\n"}
+,{"stream_name":"stderr","time":24729.836637568,"data":"[ WARN:0@24714.166] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24729.836642474,"data":"[ WARN:0@24714.166] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24731.400982898,"data":"[ WARN:0@24715.944] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24731.401127717,"data":"[ WARN:0@24715.944] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24731.603494201,"data":"[ WARN:0@24715.944] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24731.603532353,"data":"[ WARN:0@24715.944] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24731.603539894,"data":"\n"}
+,{"stream_name":"stderr","time":24731.603546246,"data":"[ WARN:0@24715.944] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24731.603552626,"data":"[ WARN:0@24715.944] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24731.806250453,"data":"[ WARN:0@24716.349] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24731.806623714,"data":"[ WARN:0@24716.349] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24732.00943409,"data":"[ WARN:0@24716.349] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24732.009524578,"data":"[ WARN:0@24716.349] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24732.009532149,"data":"\n"}
+,{"stream_name":"stderr","time":24732.009536633,"data":"[ WARN:0@24716.349] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24732.009541535,"data":"[ WARN:0@24716.349] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24732.626303513,"data":"[ WARN:0@24717.169] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24732.626339365,"data":"[ WARN:0@24717.169] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24732.828524674,"data":"[ WARN:0@24717.169] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24732.828583806,"data":"[ WARN:0@24717.169] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24732.828590346,"data":"\n"}
+,{"stream_name":"stderr","time":24732.828594474,"data":"[ WARN:0@24717.169] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24732.828599562,"data":"[ WARN:0@24717.169] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24733.0385033,"data":"[ WARN:0@24717.582] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24733.03891011,"data":"[ WARN:0@24717.582] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24733.24127832,"data":"[ WARN:0@24717.582] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24733.24131542,"data":"[ WARN:0@24717.582] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24733.241321397,"data":"\n"}
+,{"stream_name":"stderr","time":24733.241325961,"data":"[ WARN:0@24717.582] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24733.241330941,"data":"[ WARN:0@24717.582] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24734.762039681,"data":"[ WARN:0@24719.305] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24734.762341107,"data":"[ WARN:0@24719.305] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24734.966055446,"data":"[ WARN:0@24719.305] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24734.96609299,"data":"[ WARN:0@24719.305] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24734.966100333,"data":"\n"}
+,{"stream_name":"stderr","time":24734.966107904,"data":"[ WARN:0@24719.305] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24734.966111294,"data":"[ WARN:0@24719.305] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24736.866233155,"data":"[ WARN:0@24721.409] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24736.866470656,"data":"[ WARN:0@24721.409] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24737.069306925,"data":"[ WARN:0@24721.409] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24737.069343397,"data":"[ WARN:0@24721.409] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24737.06934996,"data":"\n"}
+,{"stream_name":"stderr","time":24737.069371178,"data":"[ WARN:0@24721.409] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24737.069375224,"data":"[ WARN:0@24721.409] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24737.62858478,"data":"[ WARN:0@24722.172] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24737.62861926,"data":"[ WARN:0@24722.172] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24737.831474874,"data":"[ WARN:0@24722.172] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24737.831514558,"data":"[ WARN:0@24722.172] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24737.831520386,"data":"\n"}
+,{"stream_name":"stderr","time":24737.831524711,"data":"[ WARN:0@24722.172] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24737.831529309,"data":"[ WARN:0@24722.172] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24738.526518901,"data":"[ WARN:0@24723.069] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24738.526554457,"data":"[ WARN:0@24723.069] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24738.729295344,"data":"[ WARN:0@24723.069] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24738.729334656,"data":"[ WARN:0@24723.069] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24738.729342846,"data":"\n"}
+,{"stream_name":"stderr","time":24738.729352418,"data":"[ WARN:0@24723.069] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24738.729355943,"data":"[ WARN:0@24723.069] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24739.401492406,"data":"[ WARN:0@24723.944] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24739.402109966,"data":"[ WARN:0@24723.945] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24739.604513827,"data":"[ WARN:0@24723.944] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24739.604554927,"data":"[ WARN:0@24723.945] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24739.604559121,"data":"\n"}
+,{"stream_name":"stderr","time":24739.604562029,"data":"[ WARN:0@24723.944] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24739.604565926,"data":"[ WARN:0@24723.945] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24741.059901836,"data":"[ WARN:0@24725.603] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24741.059942942,"data":"[ WARN:0@24725.603] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24741.264064973,"data":"[ WARN:0@24725.603] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24741.264091892,"data":"[ WARN:0@24725.603] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24741.264097203,"data":"\n"}
+,{"stream_name":"stderr","time":24741.264215799,"data":"[ WARN:0@24725.603] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24741.264225661,"data":"[ WARN:0@24725.603] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24744.417074516,"data":"[ WARN:0@24728.960] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24744.417119197,"data":"[ WARN:0@24728.960] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24744.619359043,"data":"[ WARN:0@24728.960] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24744.619395281,"data":"[ WARN:0@24728.960] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24744.61940208,"data":"\n"}
+,{"stream_name":"stderr","time":24744.619407119,"data":"[ WARN:0@24728.960] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24744.619412595,"data":"[ WARN:0@24728.960] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24744.845919271,"data":"[ WARN:0@24729.389] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24744.848760751,"data":"[ WARN:0@24729.389] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24745.048655597,"data":"[ WARN:0@24729.389] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24745.048695098,"data":"[ WARN:0@24729.389] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24745.048699788,"data":"\n"}
+,{"stream_name":"stderr","time":24745.048702861,"data":"[ WARN:0@24729.389] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24745.048706236,"data":"[ WARN:0@24729.389] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24745.661588481,"data":"[ WARN:0@24730.205] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24745.661682614,"data":"[ WARN:0@24730.205] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24745.863632716,"data":"[ WARN:0@24730.205] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24745.863666564,"data":"[ WARN:0@24730.205] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24745.863672134,"data":"\n"}
+,{"stream_name":"stderr","time":24745.863676015,"data":"[ WARN:0@24730.205] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24745.863680735,"data":"[ WARN:0@24730.205] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24746.127618538,"data":"[ WARN:0@24730.670] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24746.127651201,"data":"[ WARN:0@24730.670] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24746.3292802,"data":"[ WARN:0@24730.670] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24746.329320726,"data":"[ WARN:0@24730.670] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24746.329326311,"data":"\n"}
+,{"stream_name":"stderr","time":24746.32933004,"data":"[ WARN:0@24730.670] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24746.329333573,"data":"[ WARN:0@24730.670] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24746.892982671,"data":"[ WARN:0@24731.436] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24746.893019709,"data":"[ WARN:0@24731.436] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24746.911391819,"data":"[ WARN:0@24731.454] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24746.911642484,"data":"[ WARN:0@24731.455] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24747.096314283,"data":"[ WARN:0@24731.436] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24747.096350138,"data":"[ WARN:0@24731.436] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24747.096356547,"data":"[ WARN:0@24731.454] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24747.096361274,"data":"[ WARN:0@24731.455] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24747.09636692,"data":"\n"}
+,{"stream_name":"stderr","time":24747.096370673,"data":"[ WARN:0@24731.436] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24747.096399171,"data":"[ WARN:0@24731.436] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24747.096402521,"data":"[ WARN:0@24731.454] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24747.096405158,"data":"[ WARN:0@24731.455] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24747.78976669,"data":"[ WARN:0@24732.333] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24747.789802896,"data":"[ WARN:0@24732.333] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24747.99281612,"data":"[ WARN:0@24732.333] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24747.992850006,"data":"[ WARN:0@24732.333] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24747.992856059,"data":"\n"}
+,{"stream_name":"stderr","time":24747.992860738,"data":"[ WARN:0@24732.333] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24747.99286492,"data":"[ WARN:0@24732.333] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24748.613025532,"data":"[ WARN:0@24733.156] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24748.613060117,"data":"[ WARN:0@24733.156] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24748.815764202,"data":"[ WARN:0@24733.156] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24748.815812725,"data":"[ WARN:0@24733.156] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24748.815819061,"data":"\n"}
+,{"stream_name":"stderr","time":24748.8158233,"data":"[ WARN:0@24733.156] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24748.8158275,"data":"[ WARN:0@24733.156] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24749.022663518,"data":"[ WARN:0@24733.566] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24749.0227134,"data":"[ WARN:0@24733.566] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24749.224820299,"data":"[ WARN:0@24733.566] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24749.224856089,"data":"[ WARN:0@24733.566] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24749.22486233,"data":"\n"}
+,{"stream_name":"stderr","time":24749.224866704,"data":"[ WARN:0@24733.566] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24749.224885495,"data":"[ WARN:0@24733.566] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24750.695069035,"data":"[ WARN:0@24735.238] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24750.69511146,"data":"[ WARN:0@24735.238] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24750.897528234,"data":"[ WARN:0@24735.238] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24750.897565914,"data":"[ WARN:0@24735.238] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24750.897572523,"data":"\n"}
+,{"stream_name":"stderr","time":24750.897576967,"data":"[ WARN:0@24735.238] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24750.897581708,"data":"[ WARN:0@24735.238] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24751.077376199,"data":"[ WARN:0@24735.619] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24751.077455796,"data":"[ WARN:0@24735.619] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24751.279988895,"data":"[ WARN:0@24735.619] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24751.280014792,"data":"[ WARN:0@24735.619] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24751.280021586,"data":"\n"}
+,{"stream_name":"stderr","time":24751.280254869,"data":"[ WARN:0@24735.619] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24751.280274053,"data":"[ WARN:0@24735.619] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24751.661992011,"data":"[ WARN:0@24736.205] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24751.662295125,"data":"[ WARN:0@24736.205] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24751.864619957,"data":"[ WARN:0@24736.205] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24751.864657185,"data":"[ WARN:0@24736.205] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24751.864664757,"data":"\n"}
+,{"stream_name":"stderr","time":24751.86467028,"data":"[ WARN:0@24736.205] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24751.86467597,"data":"[ WARN:0@24736.205] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24752.007528651,"data":"[ WARN:0@24736.550] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24752.007564779,"data":"[ WARN:0@24736.550] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24752.210209822,"data":"[ WARN:0@24736.550] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24752.210246679,"data":"[ WARN:0@24736.550] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24752.210251911,"data":"\n"}
+,{"stream_name":"stderr","time":24752.210255292,"data":"[ WARN:0@24736.550] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24752.210261318,"data":"[ WARN:0@24736.550] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24753.23754494,"data":"[ WARN:0@24737.780] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24753.237583697,"data":"[ WARN:0@24737.781] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24753.303220757,"data":"[ WARN:0@24737.846] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24753.303259674,"data":"[ WARN:0@24737.846] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24753.440552332,"data":"[ WARN:0@24737.780] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24753.44058861,"data":"[ WARN:0@24737.781] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24753.440594923,"data":"[ WARN:0@24737.846] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24753.440599945,"data":"[ WARN:0@24737.846] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24753.440604632,"data":"\n"}
+,{"stream_name":"stderr","time":24753.440609397,"data":"[ WARN:0@24737.780] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24753.440613896,"data":"[ WARN:0@24737.781] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24753.440618386,"data":"[ WARN:0@24737.846] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24753.440622828,"data":"[ WARN:0@24737.846] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24753.712206954,"data":"[ WARN:0@24738.255] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24753.712243429,"data":"[ WARN:0@24738.255] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24753.914556155,"data":"[ WARN:0@24738.255] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24753.914609773,"data":"[ WARN:0@24738.255] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24753.914616568,"data":"\n"}
+,{"stream_name":"stderr","time":24753.914620507,"data":"[ WARN:0@24738.255] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24753.914625056,"data":"[ WARN:0@24738.255] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24754.469002502,"data":"[ WARN:0@24739.012] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24754.469040422,"data":"[ WARN:0@24739.012] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24754.672100162,"data":"[ WARN:0@24739.012] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24754.672142076,"data":"[ WARN:0@24739.012] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24754.672160656,"data":"\n"}
+,{"stream_name":"stderr","time":24754.672165295,"data":"[ WARN:0@24739.012] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24754.672170299,"data":"[ WARN:0@24739.012] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24757.425422163,"data":"[ WARN:0@24741.969] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24757.425689828,"data":"[ WARN:0@24741.969] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24757.628424443,"data":"[ WARN:0@24741.969] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24757.628480748,"data":"[ WARN:0@24741.969] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24757.628488053,"data":"\n"}
+,{"stream_name":"stderr","time":24757.628492604,"data":"[ WARN:0@24741.969] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24757.628497062,"data":"[ WARN:0@24741.969] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24760.381709977,"data":"[ WARN:0@24744.925] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24760.381783366,"data":"[ WARN:0@24744.925] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24760.585724098,"data":"[ WARN:0@24744.925] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24760.585763259,"data":"[ WARN:0@24744.925] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24760.585781245,"data":"\n"}
+,{"stream_name":"stderr","time":24760.58578387,"data":"[ WARN:0@24744.925] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24760.585787009,"data":"[ WARN:0@24744.925] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24762.121508536,"data":"[ WARN:0@24746.664] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24762.121545363,"data":"[ WARN:0@24746.665] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24762.323917948,"data":"[ WARN:0@24746.664] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24762.323958387,"data":"[ WARN:0@24746.665] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24762.323963353,"data":"\n"}
+,{"stream_name":"stderr","time":24762.323966745,"data":"[ WARN:0@24746.664] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24762.323970864,"data":"[ WARN:0@24746.665] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24763.747970967,"data":"[ WARN:0@24748.291] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24763.748014908,"data":"[ WARN:0@24748.291] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24763.950550232,"data":"[ WARN:0@24748.291] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24763.950602298,"data":"[ WARN:0@24748.291] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24763.950610567,"data":"\n"}
+,{"stream_name":"stderr","time":24763.950619808,"data":"[ WARN:0@24748.291] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24763.950624117,"data":"[ WARN:0@24748.291] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24764.161193062,"data":"[ WARN:0@24748.704] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24764.161274718,"data":"[ WARN:0@24748.704] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24764.200587921,"data":"[ WARN:0@24748.744] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24764.200623655,"data":"[ WARN:0@24748.744] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24764.364826247,"data":"[ WARN:0@24748.704] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24764.364867538,"data":"[ WARN:0@24748.704] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24764.364892968,"data":"[ WARN:0@24748.744] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24764.36489908,"data":"[ WARN:0@24748.744] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24764.364904043,"data":"\n"}
+,{"stream_name":"stderr","time":24764.364908738,"data":"[ WARN:0@24748.704] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24764.364913395,"data":"[ WARN:0@24748.704] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24764.364918188,"data":"[ WARN:0@24748.744] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24764.364922669,"data":"[ WARN:0@24748.744] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24764.570255461,"data":"[ WARN:0@24749.113] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24764.570291248,"data":"[ WARN:0@24749.113] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24764.61523531,"data":"[ WARN:0@24749.158] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24764.615393192,"data":"[ WARN:0@24749.158] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24764.772235409,"data":"[ WARN:0@24749.113] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24764.772277767,"data":"[ WARN:0@24749.113] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24764.772284726,"data":"[ WARN:0@24749.158] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24764.772289884,"data":"[ WARN:0@24749.158] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24764.772293647,"data":"\n"}
+,{"stream_name":"stderr","time":24764.772296909,"data":"[ WARN:0@24749.113] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24764.772300391,"data":"[ WARN:0@24749.113] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24764.772304037,"data":"[ WARN:0@24749.158] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24764.772307555,"data":"[ WARN:0@24749.158] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24765.878577876,"data":"[ WARN:0@24750.421] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24765.87861862,"data":"[ WARN:0@24750.421] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24766.081926514,"data":"[ WARN:0@24750.421] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24766.081962119,"data":"[ WARN:0@24750.421] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24766.081967332,"data":"\n"}
+,{"stream_name":"stderr","time":24766.081970781,"data":"[ WARN:0@24750.421] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24766.081974859,"data":"[ WARN:0@24750.421] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24768.891420575,"data":"[ WARN:0@24753.434] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24768.89166606,"data":"[ WARN:0@24753.434] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24769.09431995,"data":"[ WARN:0@24753.434] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24769.094358701,"data":"[ WARN:0@24753.434] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24769.094366078,"data":"\n"}
+,{"stream_name":"stderr","time":24769.094371146,"data":"[ WARN:0@24753.434] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24769.094376365,"data":"[ WARN:0@24753.434] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24770.886149171,"data":"[ WARN:0@24755.429] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24770.886193957,"data":"[ WARN:0@24755.429] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24771.088416622,"data":"[ WARN:0@24755.429] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24771.088468413,"data":"[ WARN:0@24755.429] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24771.088476933,"data":"\n"}
+,{"stream_name":"stderr","time":24771.088482648,"data":"[ WARN:0@24755.429] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24771.088488833,"data":"[ WARN:0@24755.429] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24774.282090995,"data":"[ WARN:0@24758.825] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24774.28229887,"data":"[ WARN:0@24758.825] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24774.484222259,"data":"[ WARN:0@24758.825] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24774.48428134,"data":"[ WARN:0@24758.825] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24774.484288074,"data":"\n"}
+,{"stream_name":"stderr","time":24774.484292887,"data":"[ WARN:0@24758.825] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24774.484298011,"data":"[ WARN:0@24758.825] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24775.185781572,"data":"[ WARN:0@24759.729] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24775.185816617,"data":"[ WARN:0@24759.729] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24775.389588755,"data":"[ WARN:0@24759.729] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24775.389648659,"data":"[ WARN:0@24759.729] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24775.38965514,"data":"\n"}
+,{"stream_name":"stderr","time":24775.389659332,"data":"[ WARN:0@24759.729] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24775.389663667,"data":"[ WARN:0@24759.729] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24775.589147612,"data":"[ WARN:0@24760.132] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24775.589183233,"data":"[ WARN:0@24760.132] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24775.791577497,"data":"[ WARN:0@24760.132] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24775.791615718,"data":"[ WARN:0@24760.132] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24775.791621281,"data":"\n"}
+,{"stream_name":"stderr","time":24775.79162519,"data":"[ WARN:0@24760.132] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24775.791629507,"data":"[ WARN:0@24760.132] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24776.847598389,"data":"[ WARN:0@24761.390] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24776.847636168,"data":"[ WARN:0@24761.391] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24777.050576081,"data":"[ WARN:0@24761.390] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24777.050611625,"data":"[ WARN:0@24761.391] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24777.050621926,"data":"\n"}
+,{"stream_name":"stderr","time":24777.05065379,"data":"[ WARN:0@24761.390] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24777.050659601,"data":"[ WARN:0@24761.391] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24777.704102754,"data":"[ WARN:0@24762.247] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24777.704138161,"data":"[ WARN:0@24762.247] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24777.906453602,"data":"[ WARN:0@24762.247] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24777.906491389,"data":"[ WARN:0@24762.247] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24777.906496856,"data":"\n"}
+,{"stream_name":"stderr","time":24777.906500656,"data":"[ WARN:0@24762.247] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24777.9065052,"data":"[ WARN:0@24762.247] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24778.10815704,"data":"[ WARN:0@24762.651] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24778.108191307,"data":"[ WARN:0@24762.651] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24778.310405645,"data":"[ WARN:0@24762.651] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24778.310455092,"data":"[ WARN:0@24762.651] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24778.310464595,"data":"\n"}
+,{"stream_name":"stderr","time":24778.310468468,"data":"[ WARN:0@24762.651] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24778.310472192,"data":"[ WARN:0@24762.651] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24779.780853599,"data":"[ WARN:0@24764.324] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24779.780894857,"data":"[ WARN:0@24764.324] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24779.790316161,"data":"[ WARN:0@24764.333] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24779.790346918,"data":"[ WARN:0@24764.333] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24779.982999308,"data":"[ WARN:0@24764.324] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24779.983039826,"data":"[ WARN:0@24764.324] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24779.983063515,"data":"[ WARN:0@24764.333] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24779.983067525,"data":"[ WARN:0@24764.333] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24779.983071142,"data":"\n"}
+,{"stream_name":"stderr","time":24779.983074622,"data":"[ WARN:0@24764.324] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24779.98307792,"data":"[ WARN:0@24764.324] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24779.983081554,"data":"[ WARN:0@24764.333] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24779.983084961,"data":"[ WARN:0@24764.333] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24780.191654299,"data":"[ WARN:0@24764.735] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24780.191686932,"data":"[ WARN:0@24764.735] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24780.394606375,"data":"[ WARN:0@24764.735] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24780.394641209,"data":"[ WARN:0@24764.735] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24780.394669978,"data":"\n"}
+,{"stream_name":"stderr","time":24780.394674295,"data":"[ WARN:0@24764.735] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24780.394678234,"data":"[ WARN:0@24764.735] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24780.636705464,"data":"[ WARN:0@24765.180] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24780.636777538,"data":"[ WARN:0@24765.180] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24780.839646785,"data":"[ WARN:0@24765.180] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24780.839681895,"data":"[ WARN:0@24765.180] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24780.839721295,"data":"\n"}
+,{"stream_name":"stderr","time":24780.83972594,"data":"[ WARN:0@24765.180] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24780.839730533,"data":"[ WARN:0@24765.180] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24781.033115436,"data":"[ WARN:0@24765.576] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24781.033149519,"data":"[ WARN:0@24765.576] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24781.235980638,"data":"[ WARN:0@24765.576] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24781.236010451,"data":"[ WARN:0@24765.576] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24781.236015833,"data":"\n"}
+,{"stream_name":"stderr","time":24781.23601922,"data":"[ WARN:0@24765.576] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24781.236023021,"data":"[ WARN:0@24765.576] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24781.424046568,"data":"[ WARN:0@24765.967] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24781.42408515,"data":"[ WARN:0@24765.967] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24781.625493011,"data":"[ WARN:0@24765.967] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24781.625535543,"data":"[ WARN:0@24765.967] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24781.625541697,"data":"\n"}
+,{"stream_name":"stderr","time":24781.625546872,"data":"[ WARN:0@24765.967] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24781.625551827,"data":"[ WARN:0@24765.967] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24783.559479405,"data":"[ WARN:0@24768.102] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24783.559975165,"data":"[ WARN:0@24768.102] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24783.605907918,"data":"[ WARN:0@24768.149] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24783.605942048,"data":"[ WARN:0@24768.149] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24783.762059301,"data":"[ WARN:0@24768.102] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24783.762119615,"data":"[ WARN:0@24768.102] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24783.762126955,"data":"[ WARN:0@24768.149] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24783.762132161,"data":"[ WARN:0@24768.149] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24783.762137212,"data":"\n"}
+,{"stream_name":"stderr","time":24783.762141538,"data":"[ WARN:0@24768.102] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24783.762146275,"data":"[ WARN:0@24768.102] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24783.762170358,"data":"[ WARN:0@24768.149] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24783.762175523,"data":"[ WARN:0@24768.149] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24784.8615417,"data":"[ WARN:0@24769.404] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24784.861585114,"data":"[ WARN:0@24769.404] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24785.06385504,"data":"[ WARN:0@24769.404] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24785.063891572,"data":"[ WARN:0@24769.404] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24785.063898036,"data":"\n"}
+,{"stream_name":"stderr","time":24785.063903287,"data":"[ WARN:0@24769.404] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24785.063908008,"data":"[ WARN:0@24769.404] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24786.125526227,"data":"[ WARN:0@24770.669] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24786.125570285,"data":"[ WARN:0@24770.669] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24786.327831111,"data":"[ WARN:0@24770.669] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24786.327870613,"data":"[ WARN:0@24770.669] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24786.327877505,"data":"\n"}
+,{"stream_name":"stderr","time":24786.327888362,"data":"[ WARN:0@24770.669] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24786.327894178,"data":"[ WARN:0@24770.669] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24786.536030132,"data":"[ WARN:0@24771.079] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24786.536069595,"data":"[ WARN:0@24771.079] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24786.738527412,"data":"[ WARN:0@24771.079] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24786.738570399,"data":"[ WARN:0@24771.079] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stderr","time":24786.738576054,"data":"\n"}
+,{"stream_name":"stderr","time":24786.738579672,"data":"[ WARN:0@24771.079] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50838 (0xc696) encountered\n"}
+,{"stream_name":"stderr","time":24786.73859959,"data":"[ WARN:0@24771.079] global grfmt_tiff.cpp:122 TIFF_Warning TIFFReadDirectory: Unknown field with tag 50839 (0xc697) encountered\n"}
+,{"stream_name":"stdout","time":24790.763784906,"data":"aponeurosis epoch 30: train_dice=0.6077\n"}
+,{"stream_name":"stdout","time":25239.865965438,"data":"debug rows: 309 raw NaNs: 0 smooth NaNs: 0\n"}
+,{"stream_name":"stderr","time":25246.164876727,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":25246.164914929,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":25246.34141057,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":25246.341439968,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":25247.029922029,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to notebook\n"}
+,{"stream_name":"stderr","time":25248.562075639,"data":"[NbConvertApp] Writing 3026699 bytes to __notebook__.ipynb\n"}
+,{"stream_name":"stderr","time":25251.036392884,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to html\n"}
+,{"stream_name":"stderr","time":25252.16637565,"data":"[NbConvertApp] Writing 3039398 bytes to __results__.html\n"}
+]
