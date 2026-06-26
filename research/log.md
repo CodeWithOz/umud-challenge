@@ -2,7 +2,7 @@
 
 ## Current focus
 
-_Last updated: 2026-06-26 - **Best hidden-safe notebook: block19-qdc-cxs5-refresh = 0.92609**; target **<0.6**. Leaderboard context (pulled 2026-06-26): top=0.328, ~10 teams <0.6, published `DLTrack_0.3.1_benchmark`=0.679 — so <0.6 IS achievable but requires real per-image segmentation signal, not calibration. **Constant/near-constant prediction floor is ~0.9** (NOT the tracking model's c0=0.024; the constant-truth model breaks down near center — block23 was tighter yet scored worse). **Block 24 (PA-center probe, RESOLVED a long-standing unknown):** clean PA-only static probes from block19 (FL/MT fixed) — PA8->1.229, PA16.8->0.926, PA20->1.021, PA24->1.230. Parabola vertex ~16°, so **block19 PA center is already optimal; PA calibration is exhausted (~0 gain).** Mask-derived PA (~6°) was wrong because whole-cloud line-fitting flattens the angle across stacked parallel fascicles. **Block 25 (the real unlock):** per-connected-component PCA recovers the true fascicle angle (~13-16°), validated locally (251 test imgs): SMP-PCA PA correlates +0.28 with the independent quickdirty estimator (naive PA: +0.03=noise), MT +0.29, FL +0.37 — genuine but weak per-image signal. Built hidden-safe `notebooks/submission-block25-smp-pca` ensembling z-scored SMP-PCA geometry into block19 (PA0.50/FL0.35/MT0.40), 309 rows / 0 NaN, ready to push+submit. **Next:** submit block25; if the fix helps, the path to <0.6 is retraining stronger fascicle/apo segmentation (cleaner masks -> stronger angle signal) + this fixed geometry._
+_Last updated: 2026-06-26 - **Best hidden-safe notebook: block25-smp-pca = 0.90470** (beat block19 0.92609 by 0.0214); target **<0.6**. Leaderboard context (pulled 2026-06-26): top=0.328, ~10 teams <0.6, published `DLTrack_0.3.1_benchmark`=0.679 — so <0.6 IS achievable but requires real per-image segmentation signal, not calibration. **Constant/near-constant prediction floor is ~0.9** (NOT the tracking model's c0=0.024; the constant-truth model breaks down near center — block23 was tighter yet scored worse). **Block 24 (PA-center probe, RESOLVED a long-standing unknown):** clean PA-only static probes from block19 (FL/MT fixed) — PA8->1.229, PA16.8->0.926, PA20->1.021, PA24->1.230. Parabola vertex ~16°, so **block19 PA center is already optimal; PA calibration is exhausted (~0 gain).** Mask-derived PA (~6°) was wrong because whole-cloud line-fitting flattens the angle across stacked parallel fascicles. **Block 25 (the real unlock):** per-connected-component PCA recovers the true fascicle angle (~13-16°), validated locally (251 test imgs): SMP-PCA PA correlates +0.28 with the independent quickdirty estimator (naive PA: +0.03=noise), MT +0.29, FL +0.37 — genuine but weak per-image signal. Built hidden-safe `notebooks/submission-block25-smp-pca` ensembling z-scored SMP-PCA geometry into block19 (PA0.50/FL0.35/MT0.40), 309 rows / 0 NaN, ready to push+submit. **Next:** submit block25; if the fix helps, the path to <0.6 is retraining stronger fascicle/apo segmentation (cleaner masks -> stronger angle signal) + this fixed geometry._
 
 ### Wrap-up notes for next decision (2026-06-25)
 
@@ -37,7 +37,16 @@ marginals (center=block19 median, spread=block19 std), then ensembles
 `W*smp + (1-W)*block19` with PA0.50/FL0.35/MT0.40, falling back to block19 / global
 centers on any non-finite value. Local integration test: 309 rows / 0 NaN, final
 PA 17.0±2.3 / FL 75±8.5 / MT 20.4±1.3. Hidden-safe (recomputes from mounted images
-and train-derived weights). Status: built, pending push+submit.
+and train-derived weights).
+
+**Result: kernel v1 COMPLETE, all 309 `mt_ok+pa_ok` (0 fallback). Notebook-output
+submit scored 0.90470 on 2026-06-26 — NEW BEST hidden-safe notebook, beating block19
+(0.92609) by 0.0214.** Confirms the per-component-PCA geometry fix adds real
+leaderboard signal. Still far above the <0.6 target; the ~0.28 fascicle-signal
+ceiling is set by block20 mask quality, so the next big lever is stronger
+segmentation (retrain), not the angle method (Block24 follow-up: per-component PCA
++0.286 vs QD beats structure-tensor +0.275 and an elongation filter — already
+optimal for these masks).
 
 Tooling added: `scripts/local_smp_geom_probe.py` (local SMP inference + geometry
 comparison; no Kaggle slot), `segmentation-models-pytorch` added to the venv.
