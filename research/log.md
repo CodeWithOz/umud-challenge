@@ -2,13 +2,65 @@
 
 ## Current focus
 
-_Last updated: 2026-06-25 - **Best public score: block17-qdc-cxs5-static-probe = 0.92273** (**static probe only, not private-final eligible**). Best hidden-safe notebook remains **block19-qdc-cxs5-refresh = 0.92609**. **Block 18:** hidden-safe rolling-5 smoothed qdc+cxs8 scored **0.96804**, worse than Block 15. **Block 19:** hidden-safe refreshed cxs5 blend scored **0.92609**, improving Block 15 by **0.01228** but still above the **0.6** target. **Block 20:** full SMP U-Net++ v1 completed and output is structurally valid but raw geometry is implausible (PA too low, FL clipped high); do **not** submit raw. **Block 21:** bounded B7 5ep completed but fascicle coverage collapsed and raw geometry is unusable; do **not** submit raw. **Block 22:** B3 timing benchmark completed; B3 is faster but still projects **8.1h** for 30+30 epochs. **Block 23:** hidden-safe `0.65*Block19 + 0.35*calibrated_Block20_SMP` blend scored **0.95631**, worse than Block19. **Wrap-up:** no active Kaggle runs remain; stop new experiments until the user reviews the latest block outcomes._
+_Last updated: 2026-06-26 - **Best hidden-safe notebook: block19-qdc-cxs5-refresh = 0.92609**; target **<0.6**. Leaderboard context (pulled 2026-06-26): top=0.328, ~10 teams <0.6, published `DLTrack_0.3.1_benchmark`=0.679 — so <0.6 IS achievable but requires real per-image segmentation signal, not calibration. **Constant/near-constant prediction floor is ~0.9** (NOT the tracking model's c0=0.024; the constant-truth model breaks down near center — block23 was tighter yet scored worse). **Block 24 (PA-center probe, RESOLVED a long-standing unknown):** clean PA-only static probes from block19 (FL/MT fixed) — PA8->1.229, PA16.8->0.926, PA20->1.021, PA24->1.230. Parabola vertex ~16°, so **block19 PA center is already optimal; PA calibration is exhausted (~0 gain).** Mask-derived PA (~6°) was wrong because whole-cloud line-fitting flattens the angle across stacked parallel fascicles. **Block 25 (the real unlock):** per-connected-component PCA recovers the true fascicle angle (~13-16°), validated locally (251 test imgs): SMP-PCA PA correlates +0.28 with the independent quickdirty estimator (naive PA: +0.03=noise), MT +0.29, FL +0.37 — genuine but weak per-image signal. Built hidden-safe `notebooks/submission-block25-smp-pca` ensembling z-scored SMP-PCA geometry into block19 (PA0.50/FL0.35/MT0.40), 309 rows / 0 NaN, ready to push+submit. **Next:** submit block25; if the fix helps, the path to <0.6 is retraining stronger fascicle/apo segmentation (cleaner masks -> stronger angle signal) + this fixed geometry._
 
 ### Wrap-up notes for next decision (2026-06-25)
 
 - Block23 consumed one notebook-output submission slot and regressed. Do **not** continue simple Block19/SMP-cal blend weights without a new diagnostic showing that the SMP component adds leaderboard signal.
 - Public notebook scan found no newer high-signal public kernels beyond the already pulled set (`ambrosm`, `lakhindarpal`, `zaouiyassine`, `avikdas567`, `jek`, `stpeteishii`). The pulled `zaouiyassine` direct-regression outputs are nearly constant and FL-clipped at **200 mm**, so they are not a submit-ready path.
 - A possible future direction is train-mask-calibrated quick-dirty correction: use train masks as approximate geometry labels and quick-dirty image measurements as features, then apply a fixed correction to test/hidden images. This was **not started as a new block**. Local feasibility check showed the current quick-dirty extractor only handles the public/test layouts; train images include additional shapes such as **600x800**, **652x800**, **556x660**, and **688x1234**, so this needs deliberate extractor work before it can become a notebook submission candidate.
+
+### Block 25 - SMP-PCA-geometry ensemble (2026-06-26)
+
+**The geometry fix.** The whole project plateaued at ~0.92 partly because every
+mask-based PA came out ~5-6° while the true test PA centers ~16° (Block24). Root
+cause: `cv2.fitLine`/`polyfit` on the *whole* fascicle point cloud flattens the
+angle, because the fascicle mask is many **stacked parallel fascicles** that overlap
+in x (for each x there is a range of y -> regression slope ~0). Fix: estimate the
+angle **per connected component** via PCA principal direction, size-weighted median.
+On the true train fascicle masks this gives ~13° (vs ~5° naive); combined with the
+deep-aponeurosis tilt (~-2.6°) -> PA ~15.6°, matching the LB.
+
+Local validation (251 local test imgs, block20 B7 weights run locally on MPS):
+- SMP-PCA PA median **13.5°** (naive 4.9°), MT 28.7mm, FL(=MT/sin PA) 127mm.
+- **Independent-method agreement** (SMP-PCA vs quickdirty): PA Spearman **+0.279**
+  (naive PA +0.028 = noise), MT **+0.293**, FL **+0.374**. MT vs block19 **+0.579**.
+  Real but weak per-image signal -> not enough alone for <0.6, but ensembling two
+  independent estimators denoises.
+
+Implementation: `scripts/build_submission_block25_smp_pca_nb.py`,
+`notebooks/submission-block25-smp-pca/`, kernel
+`ucheozoemena/umud-submission-block25-smp-pca`. Mounts block20 SMP weights (via
+`umud-submission-lakhindar-smp`), runs inference on mounted test images, measures
+geometry with per-component PCA, z-scores the SMP signal onto block19's proven
+marginals (center=block19 median, spread=block19 std), then ensembles
+`W*smp + (1-W)*block19` with PA0.50/FL0.35/MT0.40, falling back to block19 / global
+centers on any non-finite value. Local integration test: 309 rows / 0 NaN, final
+PA 17.0±2.3 / FL 75±8.5 / MT 20.4±1.3. Hidden-safe (recomputes from mounted images
+and train-derived weights). Status: built, pending push+submit.
+
+Tooling added: `scripts/local_smp_geom_probe.py` (local SMP inference + geometry
+comparison; no Kaggle slot), `segmentation-models-pytorch` added to the venv.
+
+### Block 24 - clean PA-center probe (2026-06-26) - RESOLVED
+
+Long-standing open question ("PA center offline-unidentifiable") resolved by clean
+**PA-only** static probes derived from block19 (FL/MT held identical, only the PA
+median shifted):
+
+| PA median | public LB |
+|----------:|----------:|
+| 8.0  | 1.22869 |
+| 16.78 (block19) | 0.92609 |
+| 20.0 | 1.02129 |
+| 24.0 | 1.22957 |
+
+Parabola vertex ≈ **16°**, so **block19's PA center is already optimal**; further PA
+re-centering yields ≈0 gain. The earlier cross-block "lower-PA-is-better" trend
+(16.8<17.45<18.0) was an artifact of differing FL/MT shrink, not PA. Static CSV
+probes (public-only diagnostics) at
+`data/kaggle-outputs/block24-pa-center-probe/`. Lesson: the mask-derived ~6° PA was
+a *measurement* error (flattened angle), not a true low pennation.
 
 ### Block 23 - Block19 + calibrated SMP blend (2026-06-25)
 

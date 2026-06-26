@@ -109,6 +109,8 @@ _This section is updated whenever a new lesson is discovered. Any AI agent worki
 
 | Date | Lesson |
 |------|--------|
+| 2026-06-26 | **Fascicle pennation angle: measure per-connected-component, not whole-cloud.** `cv2.fitLine`/`polyfit` over all fascicle-mask pixels flattens the angle (~5°) because stacked parallel fascicles overlap in x. Per-component PCA principal direction (size-weighted median) recovers the true ~13-16°. This was the root cause of mask-PA (~6°) disagreeing with the LB-true PA (~16°). See Block 25. |
+| 2026-06-26 | **PA center is ~16° and already optimal** (Block24 clean PA-only probes: vertex ≈16°). Calibration of centers is exhausted; further LB gains require real per-image signal (segmentation), not re-centering. The constant-prediction floor is **~0.9**, not the tracking model's c0=0.024 (that model breaks down near the true center). |
 | 2026-06-24 | **Benchmark before long GPU runs:** for any new architecture/resolution/training loop, run a capped same-architecture timing notebook first (sample cap + 1 epoch for each target) and record sec/pair/epoch before launching full training or an all-in-one submission notebook. Do not rely on timings from a different framework/backbone/resolution. |
 | 2026-06-24 | **Notebook competitions:** submit notebook outputs by default. Static CSV submits are public-only diagnostics/fallbacks, not private-final candidates; any strong CSV needs an equivalent notebook, so avoid CSV probes unless notebook submission is blocked. |
 | 2026-06-23 | **MaxViT next tier:** `maxvit_tiny_rw_256` has no ImageNet pretrained weights on Kaggle timm; use **`maxvit_rmlp_tiny_rw_256`** (~28.6M, pretrained @256) as the step up from nano. |
