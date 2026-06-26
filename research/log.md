@@ -72,6 +72,16 @@ genuine segmentation difficulty, not polarity. **Next-session lever to <0.6:** c
 higher-res segmentation retrain (apo polarity fix is a fast ~3h apo-only win for MT;
 fascicle needs a stronger/higher-res model), then PCA geometry + calibrate + ensemble.
 
+**Block27 corrected timing benchmark (2026-06-26):** apo polarity fix + 640x960, B7,
+batch 1 -> peak GPU mem only **5.9 GB** (huge T4 headroom), 0.49/0.46 sec/pair/epoch
+(fascicle/apo). 30 epochs both = 15.3h (too long); ~16-18 epochs fits ~8h. **Block28
+corrected train-only retrain LAUNCHED:** `scripts/build_corrected_smp_train_nb.py`,
+`notebooks/train-corrected-smp/`, kernel `ucheozoemena/umud-train-corrected-smp`. Apo
+polarity fix + 640x960 + batch 2 + 18 epochs, with a per-target wall-clock guard (fasc
+5h / apo 3h, saves best-Dice checkpoint) so it never exceeds the session limit. Outputs
+`best_fascicle_model.pth` + `best_aponeurosis_model.pth` for a later fast inference
+notebook to mount (PCA geometry + calibrate + ensemble, then submit on a fresh slot-day).
+
 ### Block 24 - clean PA-center probe (2026-06-26) - RESOLVED
 
 Long-standing open question ("PA center offline-unidentifiable") resolved by clean
