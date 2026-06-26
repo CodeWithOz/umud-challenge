@@ -51,6 +51,27 @@ optimal for these masks).
 Tooling added: `scripts/local_smp_geom_probe.py` (local SMP inference + geometry
 comparison; no Kaggle slot), `segmentation-models-pytorch` added to the venv.
 
+**Weight tuning exhausted (2026-06-26):** re-ensembled block25 components locally with
+higher SMP weights (PA.75/FL.50/MT.60) and submitted a static public probe ->
+**0.91209, WORSE than block25's 0.90470 (PA.50/FL.35/MT.40).** Over-injecting the
+weak SMP signal adds noise; block25's weights are near-optimal. Confirms the existing
+signal is tapped at ~0.905 — **the only lever left for <0.6 is stronger per-image
+masks** (retrain or a stronger pretrained model such as DLTrack, the domain tool, whose
+default benchmark already scores 0.679). All 5 daily slots used 2026-06-26.
+
+**Apo-mask polarity bug (found 2026-06-26):** the competition apo masks have
+INCONSISTENT polarity. Sampled fg(>127) fraction is bimodal: a cluster ~5% (aponeurosis
+= thin WHITE bands) and a cluster ~98% (INVERTED: aponeurosis = thin BLACK bands on a
+white field). `image_0000..0199` are all inverted; a random sample across all masks is
+~60% normal / ~40% inverted. block20 trained the apo model on `(mask>0)` as foreground,
+so ~40% of apo targets were inverted -> the apo/MT model trained on corrupted labels.
+Fix is clean and detectable: **if mask fg-fraction > 0.5, invert it** so the aponeurosis
+(thin minority structure) is always foreground; then retrain. Fascicle masks are
+consistently ~0.3% thin lines (NOT inverted), so the fascicle/PA weakness (r~0.28) is
+genuine segmentation difficulty, not polarity. **Next-session lever to <0.6:** corrected,
+higher-res segmentation retrain (apo polarity fix is a fast ~3h apo-only win for MT;
+fascicle needs a stronger/higher-res model), then PCA geometry + calibrate + ensemble.
+
 ### Block 24 - clean PA-center probe (2026-06-26) - RESOLVED
 
 Long-standing open question ("PA center offline-unidentifiable") resolved by clean
