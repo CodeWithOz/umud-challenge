@@ -82,6 +82,21 @@ polarity fix + 640x960 + batch 2 + 18 epochs, with a per-target wall-clock guard
 `best_fascicle_model.pth` + `best_aponeurosis_model.pth` for a later fast inference
 notebook to mount (PCA geometry + calibrate + ensemble, then submit on a fresh slot-day).
 
+**Block28 retrain COMPLETE (2026-06-27):** fascicle best-dice 0.210 (4.56h), apo 0.194
+(1.76h), both 18 epochs @ 640x960. Local signal probe (251 imgs) vs the independent
+quickdirty: **MT 0.29 -> 0.40, FL 0.37 -> 0.40 (apo polarity fix WORKED), but PA
+0.29 -> 0.21 (fascicle undertrained — dice still climbing at epoch 18, cosine schedule
+ended early).** Net: better MT/FL, worse PA. **Block29 corrected submission** built
+(`scripts/build_submission_block29_corrected_nb.py`) mounting block28 weights @640x960,
+PCA geometry, ensemble weights tuned to block28's profile (PA 0.30 / FL 0.45 / MT 0.55).
+
+**Score-math reality check:** the constant floor ~0.92 means weighted MAD sum ~2.76; to
+hit <0.6 needs ~35% MAE reduction => per-image correlation **~0.76 across all targets**.
+block28 gives ~0.40 (MT/FL), 0.21 (PA), so the SMP approach realistically ceilings
+~0.85-0.88, NOT <0.6. **Reaching <0.6 needs DL_Track-level accuracy** (PA within 1.5deg
+of manual; its default benchmark already = 0.679). SMP retraining is now diminishing
+returns; the genuine <0.6 lever is DL_Track (pretrained or replicated) — investigate next.
+
 ### Block 24 - clean PA-center probe (2026-06-26) - RESOLVED
 
 Long-standing open question ("PA center offline-unidentifiable") resolved by clean
