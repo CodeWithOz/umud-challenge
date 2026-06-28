@@ -97,6 +97,17 @@ line-fit between fitted aponeurosis lines) = 0.406 vs median-row 0.400 (no gain)
 fascicle angle (structure tensor) +0.275 vs per-component PCA +0.286 (no gain). The
 per-image signal ceiling (~0.40) is **mask-quality-bound**, not geometry-bound.
 
+**Block30 dilated-fascicle retrain (2026-06-28) - fascicle lever EXHAUSTED.** Dilated the
+~0.3%-fg fascicle masks to bands (7x7) + 32 epochs @640x960. Dice jumped **0.21 -> 0.652**
+(converged), BUT the PA angle signal got WORSE: PA vs QD **+0.202** (thick PCA) / **+0.057**
+(skeletonized). Dilation triples coverage (0.95% -> 2.66%) so fascicles MERGE -> orientation
+is lost (skeleton of merged bands is near-horizontal, med 2.2deg). Higher dice != better
+angle. **block20's thin-mask fascicle (PA 0.286) remains the best fascicle model**; block28
+apo (MT 0.40, polarity fix) the best apo. Every SMP lever is now tapped:
+geometry/angle-method/resolution/epochs/dilation/weights all flat or negative; only the apo
+polarity fix ever moved the LB (block25 0.905 -> block29 0.897). **SMP best is block29
+0.89723; the approach is fully plateaued. <0.6 requires DL_Track-level masks (separate big lever).**
+
 **Score-math reality check:** the constant floor ~0.92 means weighted MAD sum ~2.76; to
 hit <0.6 needs ~35% MAE reduction => per-image correlation **~0.76 across all targets**.
 block28 gives ~0.40 (MT/FL), 0.21 (PA), so the SMP approach realistically ceilings
