@@ -2,7 +2,9 @@
 
 ## Current focus
 
-_Last updated: 2026-06-28 - **CONSOLIDATED / paused at user request. Best hidden-safe notebook: block29-corrected = 0.89723** (private-eligible; down from the 0.92609 start). Target <0.6 NOT met; user chose to stop after the SMP approach was exhaustively shown to plateau ~0.89._
+_Last updated: 2026-06-28 (DL_Track probe round) - **DL_Track now runs locally (no Kaggle GPU)** via downloaded OSF VGG16 weights + tf_keras + its own `doCalculations` geometry (patched for numpy-2 compat). Static probes: naive-geometry-on-DL_Track-masks = **1.15601**; DL_Track NATIVE geometry (doCalculations, 61% coverage + block19) = **0.91489** — both WORSE than our block29 0.89723. Gaps: per-image mm scale (used fixed 0.0881; competition images have per-image scale bars quickdirty reads), 61% coverage, calibration. **KEY: DL_Track's own official benchmark = 0.679 (ABOVE 0.6), so even a perfect DL_Track integration can't reach <0.6 — that requires FINE-TUNING DL_Track / a strong custom model on the competition train masks (the leaders' approach, a real GPU effort).** Assets secured for that: `data/dltrack-models/` (apo+fasc VGG16 .h5), `scripts/dltrack_*.py` (local runner + patched geometry). Best remains block29 0.89723._
+
+_Earlier 2026-06-28 - **CONSOLIDATED / paused at user request.** Best hidden-safe notebook: block29-corrected = 0.89723** (private-eligible; down from the 0.92609 start). Target <0.6 NOT met; user chose to stop after the SMP approach was exhaustively shown to plateau ~0.89._
 
 **Final state (2026-06-28):**
 - **Best submission:** `notebooks/submission-block29-corrected` (kernel `umud-submission-block29-corrected` v1) = **0.89723**. Mounts block28 polarity-fixed apo + fascicle weights @640x960, per-component-PCA geometry, z-score ensemble into block19 (PA.30/FL.45/MT.55).
